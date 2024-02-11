@@ -1,0 +1,54 @@
+body {
+    margin-top: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#App {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+nav {
+    background-color: #DDDDDD;
+    width: 23em;
+    text-align: center;
+    border-radius: 0em 0em 1em 1em;
+}
+
+main {
+    width: 23em;
+}
+
+.clock {
+    margin-top: 3em;
+    background-color: #FF9393;
+    height: 25em;
+    border-radius: 1em;
+    padding: 3em;
+}
+
+.counter {
+    background-color: #FFB3B3;
+    text-align: center;
+    font-size: 1.70em;
+    color: white;
+    padding-top: 0.001em;
+    padding-bottom: 0.001em;
+    border-radius: 0.5em;
+    margin-bottom: 2em;
+}
+
+.select-time{
+    display: flex;
+    justify-content: space-between;
+}
+
+.select-time>button {
+    background-color: #FFB3B3;
+    border: transparent;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    font-size: 1em;
+}
