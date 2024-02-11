@@ -6,7 +6,8 @@ let audio = new Audio();
 audio.src = "./src/assets/Note_block_click_scale.ogg";
 
 const App = () => {
-  const [status, setStatus] = useState("Pomodoro");
+  const choices = ['Pomodoro', 'Short Break', 'Long Break'];
+  const [status, setStatus] = useState(choices[0]);
   const [counting, setCounting] = useState(false);
   const [sec, setSec] = useState(1500)
   const [session, setSession] = useState(1)
@@ -26,22 +27,22 @@ const App = () => {
     }
   }, [counting])
 
-  const setTime = (newStatus) => {
+  const setTime = newStatus => {
     setStatus(newStatus)
     setCounting(false)
-    if (newStatus === "Pomodoro") {
+    if (newStatus === choices[0]) {
       setSec(1500);
-    } else if (newStatus === "Short Break") {
+    } else if (newStatus === choices[1]) {
       setSec(300);
     } else {
       setSec(900);
     }
   }
 
-  const makeMessage = () => { //Determine the message for user
+  const makeMessage = () => {
     if (!counting) {
       message = "Click Start and let's get things done!";
-    } else if (counting && status === "Pomodoro") {
+    } else if (counting && status === choices[0]) {
       message = "Time to Work!";
     } else {
       message = "Time to Rest!"
@@ -49,18 +50,18 @@ const App = () => {
     return message
   }
 
-  const resetClock = () => { //When user clicks reset button
+  const resetClock = () => {
     setCounting(false);
-    setStatus("Pomodoro");
+    setStatus(choices[0]);
     setSec(1500);
     setSession(1);
   }
 
-  const countdown = () => {//Responsible for counting down
+  const countdown = () => {
     setSec(prevSec => prevSec - 1);
   }
 
-  const rewind = () => { //When user clicks backward button
+  const rewind = () => {
     setTime(status);
   }
 
@@ -75,23 +76,24 @@ const App = () => {
   const min = Math.floor(sec / 60);
   const secs = sec % 60;
 
-  //When time is up
   if (sec === 0) {
     audio.play();
-    if ((status === "Pomodoro") && (session % 2 === 0)) {
-      setStatus("Long Break");
-      setTime("Long Break");
-      setSession(prevSession => prevSession + 1);
-    } else if (status === "Pomodoro") {
-      setStatus("Short Break");
-      setTime("Short Break");
-      setSession(prevSession => prevSession + 1)
+    if ((status === choices[0]) && (session % 2 === 0)) {
+      setTime(choices[2]);
+    } else if (status === choices[0]) {
+      setTime(choices[1]);
     } else {
-      setStatus("Pomodoro");
-      setTime("Pomodoro");
+      setTime(choices[0]);
+      setSession(prevSession => prevSession + 1);
     }
     setCounting(true)
   }
+
+  const selectTime = choices.map((choice) => {
+    return (
+      <TimeButton name={choice} onClick={setTime} key={choice}/>
+    )
+  })
 
   return (
     <div id="App">
@@ -103,9 +105,7 @@ const App = () => {
           </div>
 
           <div className="select-time">
-            <TimeButton name="Pomodoro" onClick={setTime} />
-            <TimeButton name="Short Break" onClick={setTime} />
-            <TimeButton name="Long Break" onClick={setTime} />
+            {selectTime}
           </div>
 
           <div className="control-section">

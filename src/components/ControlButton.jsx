@@ -1,5 +1,4 @@
-import React from "react";
-
+/* eslint-disable react/prop-types */
 const ControlButton = (props) => {
     let func;
     if (props.file === "play" || props.file === "pause") {
