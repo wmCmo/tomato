@@ -91,35 +91,36 @@ const App = () => {
 
   const selectTime = choices.map((choice) => {
     return (
-      <TimeButton name={choice} onClick={setTime} key={choice}/>
+      <TimeButton name={choice} onClick={setTime} key={choice} />
     )
   })
 
   return (
     <div id="App">
-      <Navbar />
-      <main>
-        <div className="clock">
-          <div className="counter">
-            <h1>{min < 10 ? "0" + min : min} : {secs < 10 ? "0" + secs : secs}</h1>
+      <div className="wrapper">
+        <Navbar />
+        <main>
+          <div className={`clock ${status.toLowerCase()}`}>
+            <div className={`counter ${status.toLocaleLowerCase()}`}>
+              <h1>{min < 10 ? "0" + min : min} : {secs < 10 ? "0" + secs : secs}</h1>
+            </div>
+            <div className={`select ${status.toLocaleLowerCase()}`}>
+              {selectTime}
+            </div>
+
+            <div className={`ctrl ${status.toLocaleLowerCase()}`}>
+              <ControlButton file="reset" reset={resetClock} />
+              <ControlButton file="backward" rewind={rewind} />
+              <ControlButton file={counting ? "pause" : "play"} toggle={toggleCountdown} />
+              <ControlButton file="forward" forward={skipClock} />
+            </div>
           </div>
 
-          <div className="select-time">
-            {selectTime}
+          <div className="message">
+            <b>Session {session}</b>: {makeMessage()}
           </div>
-
-          <div className="control-section">
-            <ControlButton file="reset" reset={resetClock} />
-            <ControlButton file="backward" rewind={rewind} />
-            <ControlButton file={counting ? "pause" : "play"} toggle={toggleCountdown} />
-            <ControlButton file="forward" forward={skipClock} />
-          </div>
-        </div>
-
-        <div className="message">
-          <b>Session {session}</b>: {makeMessage()}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   )
 }

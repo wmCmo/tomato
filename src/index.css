@@ -1,54 +1,213 @@
-body {
-    margin-top: 0;
+:root {
+    --pink-prim: #FF9393;
+    --pink-sec: #FFB3B3;
+    --yellow-prim: #FFC367;
+    --yellow-sec: #FFD28D;
+    --blue-prim: #88E0FF;
+    --blue-sec: #B1EBFF;
+    --gradient-start: #fd746c;
+    --gradient-end: #ff9068;
+    --font-color: white;
+    --bord-rad: 0.5em;
+}
+
+html {
     font-family: 'Montserrat', sans-serif;
+    color: var(--font-color);
+}
+
+.wrapper {
+    max-width: 800px;
+}
+
+#root {
+    display: grid;
+    place-items: center;
 }
 
 #App {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    height: 90vh;
 }
 
 nav {
-    background-color: #DDDDDD;
-    width: 23em;
-    text-align: center;
-    border-radius: 0em 0em 1em 1em;
+    background-image: linear-gradient(to right, var(--pink-prim), var(--yellow-prim));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: var(--bord-rad);
+    padding: 1em;
+    font-size: 1rem;
 }
 
-main {
-    width: 23em;
+nav>h1 {}
+
+
+nav>p {
+    font-size: 0.8em;
+    margin-top: 0;
+    color: black;
 }
 
 .clock {
-    margin-top: 3em;
-    background-color: #FF9393;
-    height: 25em;
-    border-radius: 1em;
-    padding: 3em;
+    min-height: 15em;
+    margin: 2em 0;
+    padding: 2em 2em;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--bord-rad);
+}
+
+.clock.pomodoro {
+    background-color: var(--pink-prim);
+}
+
+.clock.short {
+    background-color: var(--yellow-prim);
+}
+
+.clock.long {
+    background-color: var(--blue-prim);
 }
 
 .counter {
-    background-color: #FFB3B3;
-    text-align: center;
-    font-size: 1.70em;
-    color: white;
-    padding-top: 0.001em;
-    padding-bottom: 0.001em;
-    border-radius: 0.5em;
-    margin-bottom: 2em;
+    display: grid;
+    place-items: center;
+    border-radius: var(--bord-rad);
 }
 
-.select-time{
+button {
+    border: transparent;
+    cursor: pointer;
+}
+
+.counter.pomodoro,
+.ctrl.pomodoro>*,
+.select.pomodoro>* {
+    background-color: var(--pink-sec);
+}
+
+.counter.short,
+.ctrl.short>*,
+.select.short>* {
+    background-color: var(--yellow-sec);
+}
+
+.counter.long,
+.ctrl.long>*,
+.select.long>* {
+    background-color: var(--blue-sec);
+}
+
+.counter>h1 {
+    font-size: 3rem;
+    color: white;
+}
+
+.select {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 0.8em;
+    gap: 1em;
+}
+
+.select>* {
+    padding: 1em;
+    border-radius: var(--bord-rad);
+    margin-top: 1em;
+    color: white;
+    font-size: 1rem;
+}
+
+.ctrl {
     display: flex;
     justify-content: space-between;
 }
 
-.select-time>button {
-    background-color: #FFB3B3;
-    border: transparent;
-    padding: 0.5em;
-    border-radius: 0.5em;
-    font-size: 1em;
+.ctrl>* {
+    width: 5em;
+    height: 5em;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin-top: 2em;
+    margin-bottom: 0;
+}
+
+.message {
+    background-color: #DDDDDD;
+    color: #414141;
+    padding: 1em;
+    border-radius: var(--bord-rad);
+}
+
+@media (max-width:380px) {
+    #App {
+        max-width: 235px;
+    }
+
+    nav {
+        padding: .5em;
+    }
+
+    .clock {
+        margin: 1em 0 0.5em;
+        padding: 0.9em;
+    }
+
+    .counter>h1 {
+        font-size: 2rem;
+    }
+
+    .select {
+        display: grid;
+        grid-template-columns: auto;
+        gap: 0;
+    }
+
+    .select>* {
+        font-size: 0.8em;
+    }
+
+    .ctrl {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        place-items: center;
+    }
+
+    .ctrl>* {
+        margin-top: 0.8em;
+        width: 4em;
+        height: 4em;
+    }
+}
+
+@media (min-height:1000px) {
+    nav {
+        font-size: 1.8rem;
+    }
+
+    .clock {
+        padding: 5em;
+    }
+
+    .counter>h1 {
+        font-size: 5em;
+    }
+
+    .select>* {
+        font-size: 1.5em;
+    }
+
+    .ctrl>* {
+        width: 6em;
+        height: 6em;
+    }
+
+    .message {
+        font-size: 1.5em;
+    }
 }
