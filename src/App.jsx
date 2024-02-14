@@ -109,13 +109,12 @@ const App = () => {
             </div>
 
             <div className={`ctrl ${status.toLocaleLowerCase()}`}>
-              <ControlButton file="reset" reset={resetClock} />
-              <ControlButton file="backward" rewind={rewind} />
-              <ControlButton file={counting ? "pause" : "play"} toggle={toggleCountdown} />
-              <ControlButton file="forward" forward={skipClock} />
+              <ControlButton file="reset" btnFunc={resetClock} />
+              <ControlButton file="backward" btnFunc={rewind} />
+              <ControlButton file={counting ? "pause" : "play"} btnFunc={toggleCountdown} />
+              <ControlButton file="forward" btnFunc={skipClock} />
             </div>
           </div>
-
           <div className="message">
             <b>Session {session}</b>: {makeMessage()}
           </div>
