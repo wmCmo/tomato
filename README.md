@@ -1,7 +1,8 @@
 # Zach's Tomato
-- An attempt to rewrite my [old Pomodoro timer](https://github.com/wmcmo/pomodoro) using React Library as a practice.
+- An attempt to rewrite my [old Pomodoro timer](https://github.com/wmcmo/pomodoro) using React Library (+Vite) as a practice.
 - This is also my first responsive application.
-- The executable download will be available _soon_.
+- The executable for Windows is available now, using Electron.
+  - Release [1.0.0](https://github.com/wmCmo/tomato/releases/tag/v1.0.0)
 ### Usage
 - Pomodoro = 25 mins of focusing
 - Short Break = 5 mins
