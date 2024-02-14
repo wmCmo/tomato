@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import TimeButton from "./components/TimeButton";
 import ControlButton from "./components/ControlButton";
 let audio = new Audio();
-audio.src = "./src/assets/Note_block_click_scale.ogg";
+audio.src = "ticks.ogg";
 
 const App = () => {
   const choices = ['Pomodoro', 'Short Break', 'Long Break'];
