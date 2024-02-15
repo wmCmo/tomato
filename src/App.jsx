@@ -20,11 +20,13 @@ const App = () => {
       work = setInterval(() => {
         countdown();
       }, 1000);
-    } else {
+    } else if (work !== undefined) {
       clearInterval(work);
     }
     return () => {
-      clearInterval(work);
+      if (work !== undefined) {
+        clearInterval(work);
+      }
     }
   }, [counting])
 
