@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { setInterval, clearInterval } from 'worker-timers'
 import Navbar from "./components/Navbar";
 import TimeButton from "./components/TimeButton";
 import ControlButton from "./components/ControlButton";
