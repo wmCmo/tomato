@@ -17,7 +17,7 @@ const ControlButton = (props: {
         render = <ArrowArcRight />;
     }
     return (
-        <button onClick={props.btnFunc} className={`rounded-full ${props.color[1]} p-4 mt-4 ${props.color[3]}`}>
+        <button onClick={props.btnFunc} className={`rounded-full ${props.color[1]} p-4 mt-6 ${props.color[3]}`}>
             <IconContext.Provider value={{
                 color: 'white',
                 size: 25,

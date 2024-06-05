@@ -114,37 +114,37 @@ export default function App() {
   }
 
   return (
-    <div className={`relative h-screen flex justify-center items-center p-8 font-display ${theme === 'light' ? 'bg-neutral-50' : theme === 'dark' ? 'bg-gray-700' : 'bg-neutral-50 dark:bg-gray-700'}`}>
-      <div className={`hidden absolute top-4 right-6 bg-gray-800 rounded-full sm:flex gap-4 p-2 ${theme === 'light' ? 'bg-neutral-200' : theme === 'dark' ? 'bg-gray-900' : theme === 'light' ? 'dark:bg-neutral-200 bg-gray-900 ' : 'bg-neutral-200 dark:bg-gray-900'} transition-colors duration-200 ease-in-out`}>
+    <div className={`relative h-screen flex justify-center items-center p-4 sm:p-8 font-display ${theme === 'light' ? 'bg-neutral-50' : theme === 'dark' ? 'bg-neutral-900' : 'bg-neutral-50 dark:bg-neutral-900'}`}>
+      <div className={`hidden absolute top-4 right-6 rounded-full sm:flex gap-4 p-2 ${theme === 'light' ? 'bg-neutral-200' : theme === 'dark' ? 'bg-neutral-800' : theme === 'light' ? 'dark:bg-neutral-200 bg-neutral-800 ' : 'bg-neutral-200 dark:bg-neutral-800'} transition-colors duration-200 ease-in-out`}>
         <IconContext.Provider value={{
           size: 20,
           weight: 'fill'
         }}>
-          <Sun className={`transition-all ease-in-out duration-200 ${theme === 'light' ? 'fill-gray-700' : theme === 'dark' ? 'fill-gray-700' : 'fill-gray-400 dark:fill-gray-700'}`} onClick={() => { changeTheme('light') }} />
-          <Moon className={`transition-all ease-in-out duration-200 ${theme === 'dark' ? 'fill-gray-400' : theme === 'system' ? 'fill-gray-400 dark:fill-gray-700' : 'fill-gray-400'}`} onClick={() => { changeTheme('dark') }} />
-          <Desktop className={`transition-all ease-in-out duration-200 ${theme === 'system' ? 'fill-gray-700 dark:fill-gray-400' : theme === 'light' ? 'fill-gray-400' : 'fill-gray-700'}`} onClick={() => { changeTheme('system') }} />
+          <Sun className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-700 hover:fill-neutral-600' : 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600'}`} onClick={() => { changeTheme('light') }} />
+          <Moon className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'dark' ? 'fill-neutral-400' : theme === 'system' ? 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600' : 'fill-neutral-400 hover:fill-neutral-500'}`} onClick={() => { changeTheme('dark') }} />
+          <Desktop className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'system' ? 'fill-neutral-700 dark:fill-neutral-400' : theme === 'light' ? 'fill-neutral-400 hover:fill-neutral-500' : 'fill-neutral-700 hover:fill-neutral-600'}`} onClick={() => { changeTheme('system') }} />
         </IconContext.Provider>
       </div>
       <div className="flex flex-col flex-grow max-w-lg w-6/12">
         <Navbar />
-        <main className="mt-8">
-          <div className={`${color[0]} p-8 shadow-lg rounded-lg ${color[2]}`}>
+        <main className="mt-4 sm:mt-8">
+          <div className={`${color[0]} p-8 shadow-md sm:shadow-lg rounded-lg ${color[2]}`}>
             <div className={`${color[1]} rounded-lg`}>
-              <h1 className={`text-5xl sm:text-6xl text-center py-10 font-bold text-white`}>{min < 10 ? "0" + min : min} : {secs < 10 ? "0" + secs : secs}</h1>
+              <h1 className={`text-5xl sm:text-6xl text-center py-5 sm:py-10 font-bold text-white`}>{min < 10 ? "0" + min : min} : {secs < 10 ? "0" + secs : secs}</h1>
             </div>
-            {/* <div className="justify-center flex"> */}
-            <div className="flex flex-col sm:px-0 gap-4 mt-8 sm:flex-row sm:justify-between">
-              {selectTime}
-            </div>
-            {/* </div> */}
-            <div className="grid grid-cols-2 place-items-center mt-2 sm:flex justify-between">
-              <ControlButton file="reset" btnFunc={resetClock} color={color} />
-              <ControlButton file="backward" btnFunc={rewind} color={color} />
-              <ControlButton file={counting ? "pause" : "play"} btnFunc={toggleCountdown} color={color} />
-              <ControlButton file="forward" btnFunc={skipClock} color={color} />
+            <div className="flex sm:block justify-between">
+              <div className="flex flex-col flex-grow mr-6 sm:mr-0 sm:px-0 gap-4 mt-8 sm:flex-row sm:justify-between">
+                {selectTime}
+              </div>
+              <div className="grid grid-cols-2 place-items-center gap-6 sm:flex justify-between sm:gap-0">
+                <ControlButton file="reset" btnFunc={resetClock} color={color} />
+                <ControlButton file="backward" btnFunc={rewind} color={color} />
+                <ControlButton file={counting ? "pause" : "play"} btnFunc={toggleCountdown} color={color} />
+                <ControlButton file="forward" btnFunc={skipClock} color={color} />
+              </div>
             </div>
           </div>
-          <div className="mt-8 bg-neutral-300 px-8 py-4 rounded-lg text-neutral-700 drop-shadow-md">
+          <div className="mt-4 sm:mt-8 bg-neutral-300 px-8 py-4 rounded-lg text-neutral-700 drop-shadow-md">
             <b>Session {session}</b>: {makeMessage()}
           </div>
         </main>
