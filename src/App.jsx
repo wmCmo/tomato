@@ -128,7 +128,7 @@ export default function App() {
       <div className="flex flex-col flex-grow max-w-lg w-6/12">
         <Navbar />
         <main className="mt-4 sm:mt-8">
-          <div className={`${color[0]} p-8 shadow-md sm:shadow-lg rounded-lg ${color[2]}`}>
+          <div className={`${color[0]} p-8 shadow-md rounded-lg ${color[2]}`}>
             <div className={`${color[1]} rounded-lg`}>
               <h1 className={`text-5xl sm:text-6xl text-center py-5 sm:py-10 font-bold text-white`}>{min < 10 ? "0" + min : min} : {secs < 10 ? "0" + secs : secs}</h1>
             </div>

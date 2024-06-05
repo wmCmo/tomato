@@ -8,6 +8,6 @@
 - Short Break = 5 mins
 - Long Break = 15 mins break. You will get this every 2 sets of Pomodoro (i.e. every 50 + 10 mins, an hour)
 ### Things I want to work on
-- [ ] Togglable dark theme
+- [x] Togglable dark theme
 - [ ] Able to pin the app window
-- [ ] Adjust white color
+- [x] Adjust white color
