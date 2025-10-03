@@ -15,3 +15,9 @@
 - [x] Togglable dark theme
 - [ ] Able to pin the app window
 - [x] Adjust white color
+
+---
+
+## Attribution
+
+- Icons: [phosphor-icon](https://github.com/phosphor-icons/react) for react, one of the best icon llibraries I have ever used
