@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'pink-prim':'#FF9393',
+        'pink-prim': '#FF9393',
         'pink-sec': '#FFB3B3',
         'yellow-prim': '#FFC367',
         'yellow-sec': '#FFD28D',
@@ -17,7 +17,8 @@ export default {
       }
     },
     fontFamily: {
-      display: 'Montserrat, Arial, sans-serif'
+      display: 'Montserrat, Arial, sans-serif',
+      zenMaru: 'Zen Maru Gothic, sans-serif'
     }
   },
   plugins: [],
