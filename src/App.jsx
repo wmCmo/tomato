@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { setInterval, clearInterval } from 'worker-timers';
 import { IconContext, Sun, Moon, Desktop, Translate } from "@phosphor-icons/react";
 import Navbar from "./components/Navbar";
@@ -22,103 +22,69 @@ const colorVariants = [
 export default function App() {
   const [lang, setLang] = useState('en');
   const dict = dictionary[lang];
-  const choices = dict.choices;
-  const [status, setStatus] = useState(choices[0]);
+  const [status, setStatus] = useState(0);
   const [counting, setCounting] = useState(false);
   const [sec, setSec] = useState(1500);
   const [session, setSession] = useState(1);
   const [theme, setTheme] = useState('system');
-  let message;
+
+  const work = useRef(null);
 
   useEffect(() => {
-    let work;
     if (counting) {
-      work = setInterval(() => {
-        countdown();
-      }, 1000);
-    } else if (work !== undefined) {
-      clearInterval(work);
+      work.current = setInterval(() => setSec(prev => prev - 1), 1000);
+    } else if (work.current) {
+      clearInterval(work.current);
     }
     return () => {
-      if (work !== undefined) {
-        clearInterval(work);
+      if (work.current) {
+        clearInterval(work.current);
       }
     };
   }, [counting]);
 
-  useEffect(() => {
-    setStatus(dict.choices[0]);
-  }, [lang]);
-
   const setTime = newStatus => {
     setStatus(newStatus);
     setCounting(false);
-    if (newStatus === choices[0]) {
+    if (newStatus === 0) {
       setSec(1500);
-    } else if (newStatus === choices[1]) {
+    } else if (newStatus === 1) {
       setSec(300);
     } else {
       setSec(900);
     }
   };
 
-  const makeMessage = () => {
-    if (!counting) {
-      message = dict.messages.start;
-    } else if (counting && status === choices[0]) {
-      message = dict.messages.work;
-    } else {
-      message = dict.messages.rest;
-    }
-    return message;
-  };
+  const message = !counting ? dict.messages.start : (counting && status === 0 ? dict.messages.work : dict.messages.rest);
 
   const resetClock = () => {
     setCounting(false);
-    setStatus(choices[0]);
+    setStatus(0);
     setSec(1500);
     setSession(1);
-  };
-
-  const countdown = () => {
-    setSec(prevSec => prevSec - 1);
-  };
-
-  const rewind = () => {
-    setTime(status);
-  };
-
-  const toggleCountdown = () => {
-    setCounting(prevCounting => !prevCounting);
-  };
-
-  const skipClock = () => {
-    setSec(0);
   };
 
   const min = Math.floor(sec / 60);
   const secs = sec % 60;
 
-  if (sec === 0) {
-    audio.play();
-    if ((status === choices[0]) && (session % 2 === 0)) {
-      setTime(choices[2]);
-    } else if (status === choices[0]) {
-      setTime(choices[1]);
-    } else {
-      setTime(choices[0]);
-      setSession(prevSession => prevSession + 1);
+  useEffect(() => {
+    if (sec === 0) {
+      audio.play();
+      if ((status === 0) && (session % 2 === 0)) {
+        setTime(2);
+      } else if (status === 0) {
+        setTime(1);
+      } else {
+        setTime(0);
+        setSession(prevSession => prevSession + 1);
+      }
+      setCounting(true);
     }
-    setCounting(true);
-  }
+  }, [sec]);
 
-  const color = colorVariants[choices.indexOf(status)];
+  const color = colorVariants[status];
 
-  const selectTime = choices.map(choice => <TimeButton name={choice} onClick={setTime} key={choice} color={color} />);
-
-  const changeTheme = (value) => {
-    setTheme(() => value);
-  };
+  const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.choices[choice]} onClick={setTime} status={choice} key={choice} color={color} />);
 
   return (
     <div className={`relative h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? 'font-display' : 'font-zenMaru'} ${theme === 'light' ? 'bg-neutral-50' : theme === 'dark' ? 'bg-neutral-900' : 'bg-neutral-50 dark:bg-neutral-900'}`}>
@@ -130,9 +96,9 @@ export default function App() {
           size: 20,
           weight: 'fill'
         }}>
-          <Sun className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-700 hover:fill-neutral-600' : 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600'}`} onClick={() => { changeTheme('light'); }} />
-          <Moon className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'dark' ? 'fill-neutral-400' : theme === 'system' ? 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600' : 'fill-neutral-400 hover:fill-neutral-500'}`} onClick={() => { changeTheme('dark'); }} />
-          <Desktop className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'system' ? 'fill-neutral-700 dark:fill-neutral-400' : theme === 'light' ? 'fill-neutral-400 hover:fill-neutral-500' : 'fill-neutral-700 hover:fill-neutral-600'}`} onClick={() => { changeTheme('system'); }} />
+          <Sun className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-700 hover:fill-neutral-600' : 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600'}`} onClick={() => { setTheme('light'); }} />
+          <Moon className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'dark' ? 'fill-neutral-400' : theme === 'system' ? 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600' : 'fill-neutral-400 hover:fill-neutral-500'}`} onClick={() => { setTheme('dark'); }} />
+          <Desktop className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'system' ? 'fill-neutral-700 dark:fill-neutral-400' : theme === 'light' ? 'fill-neutral-400 hover:fill-neutral-500' : 'fill-neutral-700 hover:fill-neutral-600'}`} onClick={() => { setTheme('system'); }} />
         </IconContext.Provider>
       </div>
       <div className="flex flex-col flex-grow max-w-lg w-6/12">
@@ -148,14 +114,14 @@ export default function App() {
               </div>
               <div className="grid grid-cols-2 place-items-center gap-6 sm:flex justify-between sm:gap-0">
                 <ControlButton file="reset" btnFunc={resetClock} color={color} />
-                <ControlButton file="backward" btnFunc={rewind} color={color} />
-                <ControlButton file={counting ? "pause" : "play"} btnFunc={toggleCountdown} color={color} />
-                <ControlButton file="forward" btnFunc={skipClock} color={color} />
+                <ControlButton file="backward" btnFunc={() => setTime(status)} color={color} />
+                <ControlButton file={counting ? "pause" : "play"} btnFunc={() => setCounting(prev => !prev)} color={color} />
+                <ControlButton file="forward" btnFunc={() => setSec(0)} color={color} />
               </div>
             </div>
           </div>
           <div className="mt-4 sm:mt-8 bg-neutral-300 px-8 py-4 rounded-lg text-neutral-700 drop-shadow-md">
-            <b>{dict.session} {session}</b>: {makeMessage()}
+            <b>{dict.session} {session}</b>: {message}
           </div>
         </main>
       </div>
