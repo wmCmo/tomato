@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { setInterval, clearInterval } from 'worker-timers';
-import { IconContext, Sun, Moon, Desktop, Translate } from "@phosphor-icons/react";
+import { IconContext, Sun, Moon, Desktop, Translate, WindowsLogo } from "@phosphor-icons/react";
 import Navbar from "./components/Navbar";
 import TimeButton from "./components/TimeButton";
 import ControlButton from "./components/ControlButton";
@@ -33,12 +33,11 @@ export default function App() {
   useEffect(() => {
     if (counting) {
       work.current = setInterval(() => setSec(prev => prev - 1), 1000);
-    } else if (work.current) {
-      clearInterval(work.current);
     }
     return () => {
       if (work.current) {
         clearInterval(work.current);
+        work.current = null;
       }
     };
   }, [counting]);
@@ -82,6 +81,28 @@ export default function App() {
     }
   }, [sec]);
 
+  useEffect(() => {
+    const handleKeys = e => {
+      const code = e.code;
+      switch (code) {
+        case 'Space':
+          setCounting(prev => !prev);
+          break;
+        case 'KeyT':
+          setTheme(prev => prev === 'light' ? 'dark' : 'light');
+          break;
+        case 'KeyL':
+          setLang(prev => prev === 'en' ? 'ja' : 'en');
+          break;
+      }
+    };
+    window.addEventListener('keydown', handleKeys);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeys);
+    };
+  }, []);
+
   const color = colorVariants[status];
 
   const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.choices[choice]} onClick={setTime} status={choice} key={choice} color={color} />);
@@ -89,7 +110,7 @@ export default function App() {
   return (
     <div className={`relative h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? 'font-display' : 'font-zenMaru'} ${theme === 'light' ? 'bg-neutral-50' : theme === 'dark' ? 'bg-neutral-900' : 'bg-neutral-50 dark:bg-neutral-900'}`}>
       <div className={`p-2 absolute cursor-pointer top-4 left-6 rounded-md ${theme === 'light' ? 'bg-neutral-200' : theme === 'dark' ? 'bg-neutral-800' : 'bg-neutral-00 dark:bg-neutral-800'}`}>
-        <Translate onClick={() => setLang(prev => (prev === 'en') ? 'ja' : 'en')} className={theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-400' : 'fill-neutral-700 dark:fill-neutral-400'} weight={'bold'} />
+        <Translate onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} className={theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-400' : 'fill-neutral-700 dark:fill-neutral-400'} weight={'bold'} />
       </div>
       <div className={`absolute top-4 right-6 rounded-full flex items-center gap-4 p-2 ${theme === 'light' ? 'bg-neutral-200' : theme === 'dark' ? 'bg-neutral-800' : theme === 'light' ? 'dark:bg-neutral-200 bg-neutral-800 ' : 'bg-neutral-200 dark:bg-neutral-800'} transition-colors duration-200 ease-in-out`}>
         <IconContext.Provider value={{
