@@ -1,0 +1,112 @@
+import { setInterval, clearInterval } from 'worker-timers';
+import { useEffect, useRef, useState } from 'react';
+import TimeButton from "./TimeButton";
+import Navbar from "./Navbar";
+import ControlButton from "./ControlButton";
+import colorVariants from "../utils/colorVariants";
+const ticksUrl = new URL(`${import.meta.env.BASE_URL}ticks.ogg`, window.location.origin).toString();
+const audio = new Audio(ticksUrl);
+
+export default function Clock({ dict }) {
+
+    const [status, setStatus] = useState(0);
+    const [counting, setCounting] = useState(false);
+    const [sec, setSec] = useState(1500);
+    const [session, setSession] = useState(1);
+    const work = useRef(null);
+
+    useEffect(() => {
+        if (counting) {
+            work.current = setInterval(() => setSec(prev => Math.max(0, prev - 1)), 1000);
+        }
+        return () => {
+            if (work.current) {
+                clearInterval(work.current);
+                work.current = null;
+            }
+        };
+    }, [counting]);
+
+    const setTime = newStatus => {
+        setStatus(newStatus);
+        setCounting(false);
+        if (newStatus === 0) {
+            setSec(1500);
+        } else if (newStatus === 1) {
+            setSec(300);
+        } else {
+            setSec(900);
+        }
+    };
+
+    useEffect(() => {
+        if (sec === 0) {
+            audio.play();
+            if ((status === 0) && (session % 2 === 0)) {
+                setTime(2);
+            } else if (status === 0) {
+                setTime(1);
+            } else {
+                setTime(0);
+                setSession(prevSession => prevSession + 1);
+            }
+            setCounting(true);
+        }
+    }, [sec, session, status]);
+
+    useEffect(() => {
+        const handleKeys = e => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                setCounting(prev => !prev);
+            }
+        };
+        window.addEventListener('keydown', handleKeys);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeys);
+        };
+    }, []);
+
+    const resetClock = () => {
+        setCounting(false);
+        setStatus(0);
+        setSec(1500);
+        setSession(1);
+    };
+
+    const message = !counting ? dict.messages.start : (counting && status === 0 ? dict.messages.work : dict.messages.rest);
+
+    const min = Math.floor(sec / 60);
+    const secs = sec % 60;
+
+    const color = colorVariants[status];
+
+    const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.choices[choice]} onClick={setTime} status={choice} key={choice} color={color} />);
+    return (
+        <div className="flex flex-col flex-grow max-w-lg w-6/12">
+            <Navbar dict={dict} />
+            <main className="mt-4 sm:mt-8">
+                <div className={`${color?.[0]} p-8 shadow-md rounded-lg ${color?.[2]}`}>
+                    <div className={`${color?.[1]} rounded-lg`}>
+                        <h1 className={`text-5xl sm:text-6xl text-center py-5 sm:py-10 font-bold text-white font-display`}>{min < 10 ? "0" + min : min} : {secs < 10 ? "0" + secs : secs}</h1>
+                    </div>
+                    <div className="flex sm:block justify-between">
+                        <div className="flex flex-col flex-grow mr-6 sm:mr-0 sm:px-0 gap-4 mt-8 sm:flex-row sm:justify-between">
+                            {selectTime}
+                        </div>
+                        <div className="grid grid-cols-2 place-items-center gap-6 sm:flex justify-between sm:gap-0">
+                            <ControlButton file="reset" btnFunc={resetClock} color={color} />
+                            <ControlButton file="backward" btnFunc={() => setTime(status)} color={color} />
+                            <ControlButton file={counting ? "pause" : "play"} btnFunc={() => setCounting(prev => !prev)} color={color} />
+                            <ControlButton file="forward" btnFunc={() => setSec(0)} color={color} />
+                        </div>
+                    </div>
+                </div>
+                <div className="mt-4 sm:mt-8 bg-neutral-300 px-8 py-4 rounded-lg text-neutral-700 drop-shadow-md">
+                    <b>{dict.session} {session}</b>: {message}
+                </div>
+            </main>
+        </div>
+    );
+}
