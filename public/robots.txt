@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wmcmo.github.io/tomato/sitemap.xml
