@@ -16,6 +16,8 @@
 - [x] Togglable dark theme
 - [ ] Able to pin the app window
 - [x] Adjust white color
+- [ ] Coutdown timer (maybe in `/timer`) 
+- [ ] Use `localStorage` to locally save current session number and state
 
 ---
 
