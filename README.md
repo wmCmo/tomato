@@ -14,10 +14,11 @@
 ## Things I want to work on
 
 - [x] Togglable dark theme
-- [ ] Able to pin the app window
+- [ ] Make it PWA friendly for mobile (IOS+Android)
 - [x] Adjust white color
 - [ ] Countdown timer (maybe in `/timer`) 
 - [ ] Use `localStorage` to locally save current session number and state
+- [ ] Ability to customize the in-app title (From `Zach's Tomato`)
 
 ---
 
