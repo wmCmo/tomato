@@ -1,3 +1,5 @@
+<img width="1200" height="600" alt="tomato-banner" src="https://github.com/user-attachments/assets/05d8c6a7-215b-4df5-9366-5e872de70a34" />
+
 # Zach's Tomato
 
 - An attempt to rewrite my [old Pomodoro timer](https://github.com/wmcmo/pomodoro) using React Framework (Vite) as a practice.
@@ -14,8 +16,11 @@
 ## Things I want to work on
 
 - [x] Togglable dark theme
-- [ ] Able to pin the app window
+- [ ] Make it PWA friendly for mobile (IOS+Android)
 - [x] Adjust white color
+- [ ] Countdown timer (maybe in `/timer`) 
+- [ ] Use `localStorage` to locally save current session number and state
+- [ ] Ability to customize the in-app title (From `Zach's Tomato`)
 
 ---
 
