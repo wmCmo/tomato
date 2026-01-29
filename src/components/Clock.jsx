@@ -8,12 +8,17 @@ const ticksUrl = new URL(`${import.meta.env.BASE_URL}ticks.ogg`, window.location
 const audio = new Audio(ticksUrl);
 
 export default function Clock({ dict }) {
-
     const [status, setStatus] = useState(0);
     const [counting, setCounting] = useState(false);
     const [sec, setSec] = useState(1500);
-    const [session, setSession] = useState(1);
+    const [session, setSession] = useState(JSON.parse(localStorage.getItem('session')) || 1);
     const work = useRef(null);
+
+    useEffect(() => {
+        if (window !== undefined) {
+            localStorage.setItem('session', session);
+        }
+    }, [session]);
 
     useEffect(() => {
         if (counting) {
