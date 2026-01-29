@@ -1,3 +1,5 @@
+<img width="1200" height="600" alt="tomato-banner" src="https://github.com/user-attachments/assets/05d8c6a7-215b-4df5-9366-5e872de70a34" />
+
 # Zach's Tomato
 
 - An attempt to rewrite my [old Pomodoro timer](https://github.com/wmcmo/pomodoro) using React Framework (Vite) as a practice.
