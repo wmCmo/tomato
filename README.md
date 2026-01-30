@@ -19,7 +19,7 @@
 - [ ] Make it PWA friendly for mobile (IOS+Android)
 - [x] Adjust white color
 - [ ] Countdown timer (maybe in `/timer`) 
-- [ ] Use `localStorage` to locally save current session number and state
+- [x] Use `localStorage` to locally save current session number and state
 - [ ] Ability to customize the in-app title (From `Zach's Tomato`)
 
 ---
