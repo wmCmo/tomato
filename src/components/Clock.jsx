@@ -6,6 +6,7 @@ import ControlButton from "./ControlButton";
 import colorVariants from "../utils/colorVariants";
 const ticksUrl = new URL(`${import.meta.env.BASE_URL}ticks.ogg`, window.location.origin).toString();
 const audio = new Audio(ticksUrl);
+audio.preload = 'auto';
 
 export default function Clock({ dict }) {
     const [status, setStatus] = useState(0);
@@ -19,6 +20,10 @@ export default function Clock({ dict }) {
             localStorage.setItem('session', session);
         }
     }, [session]);
+
+    useEffect(() => {
+        audio.load();
+    }, []);
 
     useEffect(() => {
         if (counting) {
@@ -89,10 +94,10 @@ export default function Clock({ dict }) {
 
     const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.choices[choice]} onClick={setTime} status={choice} key={choice} color={color} />);
     return (
-        <div className="flex flex-col flex-grow max-w-lg w-6/12">
+        <div className="flex flex-col flex-grow max-w-lg">
             <Navbar dict={dict} />
             <main className="mt-4 sm:mt-8">
-                <div className={`${color?.[0]} p-8 shadow-md rounded-lg ${color?.[2]}`}>
+                <div className={`${color?.[0]} p-8 shadow-md rounded-xl ${color?.[2]}`}>
                     <div className={`${color?.[1]} rounded-lg`}>
                         <h1 className={`text-5xl sm:text-6xl text-center py-5 sm:py-10 font-bold text-white font-display`}>{min < 10 ? "0" + min : min} : {secs < 10 ? "0" + secs : secs}</h1>
                     </div>

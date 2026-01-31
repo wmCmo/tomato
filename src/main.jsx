@@ -6,6 +6,8 @@ import App from './App.jsx';
 import ClockPage from './pages/ClockPage.jsx';
 import SignupPage from './pages/SignupPage.jsx';
 import './index.css';
+import { ThemeProvider } from './providers/theme-providers.jsx';
+import SigninPage from './pages/SigninPage.jsx';
 
 const configuredBase = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
 const devDetectedBase = import.meta.env.DEV && window.location.pathname.startsWith('/tomato')
@@ -20,12 +22,15 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <ClockPage /> },
       { path: 'signup', element: <SignupPage /> },
+      { path: 'signin', element: <SigninPage /> }
     ],
   },
 ], { basename });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>,
 );

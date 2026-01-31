@@ -18,7 +18,7 @@
 - [x] Togglable dark theme
 - [ ] Make it PWA friendly for mobile (IOS+Android)
 - [x] Adjust white color
-- [ ] Countdown timer (maybe in `/timer`) 
+- [x] Countdown timer component (`v1.6.0`)
 - [x] Use `localStorage` to locally save current session number and state
 - [ ] Ability to customize the in-app title (From `Zach's Tomato`)
 

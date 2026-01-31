@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'selector',
   theme: {
     extend: {
       colors: {
@@ -12,8 +13,12 @@ export default {
         'yellow-prim': '#FFC367',
         'yellow-sec': '#FFD28D',
         'blue-prim': '#88E0FF',
-        'blue-sec': '#B1EBFF'
-
+        'blue-sec': '#B1EBFF',
+        'background': 'var(--background)',
+        'foreground': 'var(--foreground)',
+        'muted': 'var(--muted)',
+        'muted-foreground': 'var(--muted-foreground)',
+        'accent': 'var(--accent)'
       }
     },
     fontFamily: {

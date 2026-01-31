@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router";
-import { IconContext, Sun, Moon, Desktop, Translate } from "@phosphor-icons/react";
+import { NavLink, Outlet } from "react-router";
+import { IconContext, Sun, Moon, Desktop, Translate, House, Timer, UserCircle } from "@phosphor-icons/react";
 import en from "./dictionary/en";
 import ja from "./dictionary/ja";
+import { useTheme } from "./hooks/use-theme";
 
 const dictionary = {
   en, ja
@@ -10,7 +11,8 @@ const dictionary = {
 
 export default function App() {
   const [lang, setLang] = useState('en');
-  const [theme, setTheme] = useState('system');
+  const { theme, setTheme, toggleTheme } = useTheme();
+  const [timerOn, setTimerOn] = useState(false);
 
   const dict = dictionary[lang];
 
@@ -19,7 +21,7 @@ export default function App() {
       const code = e.code;
       switch (code) {
         case 'KeyT':
-          setTheme(prev => prev === 'light' ? 'dark' : 'light');
+          toggleTheme();
           break;
         case 'KeyL':
           setLang(prev => prev === 'en' ? 'ja' : 'en');
@@ -33,23 +35,43 @@ export default function App() {
     };
   }, []);
 
+  const navFunc = isActive => {
+    return `${isActive ? 'text-accent' : 'text-muted hover:text-muted-foreground'} transition-`;
+  };
 
+  const navAnimate = 'transition-all ease-in-out duration-200';
   return (
-    <div className={`relative h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? 'font-display' : 'font-zenMaru'} ${theme === 'light' ? 'bg-neutral-50' : theme === 'dark' ? 'bg-neutral-900' : 'bg-neutral-50 dark:bg-neutral-900'}`}>
-      <div className={`p-2 absolute cursor-pointer top-4 left-6 rounded-md ${theme === 'light' ? 'bg-neutral-200' : theme === 'dark' ? 'bg-neutral-800' : 'bg-neutral-00 dark:bg-neutral-800'}`}>
-        <Translate onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} className={theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-400' : 'fill-neutral-700 dark:fill-neutral-400'} weight={'bold'} />
+    <div className={`relative min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? 'font-display' : 'font-zenMaru'} bg-background ${navAnimate}`}>
+      <div className="fixed top-6 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr]">
+        <div className={`justify-self-start p-2 cursor-pointer rounded-md bg-foreground`}>
+          <Translate onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} className='text-accent' weight={'bold'} />
+        </div>
+        <nav className={`py-2 px-6 flex items-center justify-center gap-4 rounded-lg bg-foreground`}>
+          <IconContext.Provider value={{
+            size: 28,
+            weight: "fill",
+          }}>
+            <NavLink to={'/'} className={({ isActive }) => navFunc(isActive)}>
+              <House className={navAnimate} />
+            </NavLink>
+            <Timer className={`${timerOn ? 'text-accent' : 'text-muted hover:text-muted-foreground'} ${navAnimate}`} onClick={() => setTimerOn(prev => !prev)} />
+            <NavLink to={'/signin'} className={({ isActive }) => navFunc(isActive)}>
+              <UserCircle className={navAnimate} />
+            </NavLink>
+          </IconContext.Provider>
+        </nav>
+        <div className={`hidden justify-self-end rounded-full sm:flex items-center gap-4 p-2 bg-foreground transition-colors duration-200 ease-in-out`}>
+          <IconContext.Provider value={{
+            size: 20,
+            weight: 'fill'
+          }}>
+            <Sun className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-700 hover:fill-neutral-600' : 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600'}`} onClick={() => { setTheme('light'); }} />
+            <Moon className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'dark' ? 'fill-neutral-400' : theme === 'system' ? 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600' : 'fill-neutral-400 hover:fill-neutral-500'}`} onClick={() => { setTheme('dark'); }} />
+            <Desktop className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'system' ? 'fill-neutral-700 dark:fill-neutral-400' : theme === 'light' ? 'fill-neutral-400 hover:fill-neutral-500' : 'fill-neutral-700 hover:fill-neutral-600'}`} onClick={() => { setTheme('system'); }} />
+          </IconContext.Provider>
+        </div>
       </div>
-      <div className={`absolute top-4 right-6 rounded-full flex items-center gap-4 p-2 ${theme === 'light' ? 'bg-neutral-200' : theme === 'dark' ? 'bg-neutral-800' : theme === 'light' ? 'dark:bg-neutral-200 bg-neutral-800 ' : 'bg-neutral-200 dark:bg-neutral-800'} transition-colors duration-200 ease-in-out`}>
-        <IconContext.Provider value={{
-          size: 20,
-          weight: 'fill'
-        }}>
-          <Sun className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-700 hover:fill-neutral-600' : 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600'}`} onClick={() => { setTheme('light'); }} />
-          <Moon className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'dark' ? 'fill-neutral-400' : theme === 'system' ? 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600' : 'fill-neutral-400 hover:fill-neutral-500'}`} onClick={() => { setTheme('dark'); }} />
-          <Desktop className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'system' ? 'fill-neutral-700 dark:fill-neutral-400' : theme === 'light' ? 'fill-neutral-400 hover:fill-neutral-500' : 'fill-neutral-700 hover:fill-neutral-600'}`} onClick={() => { setTheme('system'); }} />
-        </IconContext.Provider>
-      </div>
-      <Outlet context={{ dict }} />
+      <Outlet context={{ dict, timerOn }} />
     </div>
   );
 }

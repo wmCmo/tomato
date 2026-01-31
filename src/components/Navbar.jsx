@@ -1,6 +1,6 @@
 export default function Navbar({ dict }) {
     return (
-        <nav className="bg-red-300 rounded-lg p-6">
+        <nav className="bg-red-300 rounded-xl p-6">
             <a href="https://exzachly.notion.site" target="_blank" rel="noreferrer">
                 <div className="flex flex-col items-center">
                     <h1 className="text-3xl font-bold text-white text-center">{dict.nav.header}🍅</h1>
