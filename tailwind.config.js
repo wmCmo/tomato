@@ -23,7 +23,8 @@ export default {
     },
     fontFamily: {
       display: 'Montserrat, Arial, sans-serif',
-      zenMaru: 'Zen Maru Gothic, sans-serif'
+      zenMaru: 'Zen Maru Gothic, sans-serif',
+      pixel: "Pixelify Sans, sans-serif"
     }
   },
   plugins: [],

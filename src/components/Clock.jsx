@@ -1,14 +1,15 @@
 import { setInterval, clearInterval } from 'worker-timers';
 import { useEffect, useRef, useState } from 'react';
 import TimeButton from "./TimeButton";
-import Navbar from "./Navbar";
 import ControlButton from "./ControlButton";
 import colorVariants from "../utils/colorVariants";
 const ticksUrl = new URL(`${import.meta.env.BASE_URL}ticks.ogg`, window.location.origin).toString();
 const audio = new Audio(ticksUrl);
 audio.preload = 'auto';
 
-export default function Clock({ dict }) {
+const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg";
+
+export default function Clock({ dict, isPixel }) {
     const [status, setStatus] = useState(0);
     const [counting, setCounting] = useState(false);
     const [sec, setSec] = useState(1500);
@@ -94,8 +95,15 @@ export default function Clock({ dict }) {
 
     const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.choices[choice]} onClick={setTime} status={choice} key={choice} color={color} />);
     return (
-        <div className="flex flex-col flex-grow max-w-lg">
-            <Navbar dict={dict} />
+        <div className={`flex flex-col flex-grow max-w-lg`}>
+            <section className="bg-red-300 rounded-xl p-6">
+                <a href="https://exzachly.notion.site" target="_blank" rel="noreferrer">
+                    <div className="flex flex-col items-center">
+                        <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{dict.nav.header}<img src={isPixel ? "/tomato.webp" : fluentTomato} className="w-8 h-auto" /></h1>
+                        <p className="text-center text-red-400 bg-red-200 px-4 py-1 mt-2 rounded-lg font-medium">{dict.nav.desc}</p>
+                    </div>
+                </a>
+            </section>
             <main className="mt-4 sm:mt-8">
                 <div className={`${color?.[0]} p-8 shadow-md rounded-xl ${color?.[2]}`}>
                     <div className={`${color?.[1]} rounded-lg`}>
@@ -113,7 +121,7 @@ export default function Clock({ dict }) {
                         </div>
                     </div>
                 </div>
-                <div className="mt-4 sm:mt-8 bg-neutral-300 px-8 py-4 rounded-lg text-neutral-700 drop-shadow-md">
+                <div className="mt-4 sm:mt-8 bg-[#FBEBCC] px-8 py-4 rounded-lg text-[#33270d] drop-shadow-md">
                     <b>{dict.session} {session}</b>: {message}
                 </div>
             </main>
