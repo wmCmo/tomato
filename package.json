@@ -2,9 +2,6 @@
   "name": "zach-s-tomato",
   "private": true,
   "version": "1.6.1",
-  "overrides": {
-    "browserslist": "4.28.1"
-  },
   "type": "module",
   "scripts": {
     "dev": "vite",
