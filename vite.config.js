@@ -4,6 +4,11 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // server: {
+  //   allowedHosts: [
+  //     'e72c48d82986.ngrok-free.app'
+  //   ]
+  // },
   plugins: [react(), VitePWA({
     registerType: 'autoUpdate', includeAssets: [
       'favicon.ico',
@@ -14,8 +19,11 @@ export default defineConfig(({ mode }) => ({
       'maskable-icon-512x512.png',
       'apple-touch-icon-180x180.png',
       'og.png',
-      'manifest.webmanifest'
     ],
+    // Single source of truth for the manifest is `public/manifest.webmanifest`.
+    // Without this, the plugin may generate/overwrite `dist/manifest.webmanifest`
+    // from `package.json` (which can lead to the installed app name being slugified).
+    manifest: false,
     devOptions: {
       enabled: true
     },
