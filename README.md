@@ -16,11 +16,12 @@
 ## Things I want to work on
 
 - [x] Togglable dark theme
-- [ ] Make it PWA friendly for mobile (IOS+Android)
+- [ ] Make it PWA friendly for mobile (iOS+Android)
 - [x] Adjust white color
 - [x] Countdown timer component (`v1.6.0`)
 - [x] Use `localStorage` to locally save current session number and state
 - [ ] Ability to customize the in-app title (From `Zach's Tomato`)
+- [ ] Signin to save information and sync to your Notion Page.
 
 ---
 
