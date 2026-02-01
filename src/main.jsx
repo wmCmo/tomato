@@ -9,6 +9,12 @@ import './index.css';
 import { ThemeProvider } from './providers/theme-providers.jsx';
 import SigninPage from './pages/SigninPage.jsx';
 
+import { registerSW } from 'virtual:pwa-register';
+
+registerSW({
+  immediate: true
+});
+
 const configuredBase = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
 const devDetectedBase = import.meta.env.DEV && window.location.pathname.startsWith('/tomato')
   ? '/tomato'

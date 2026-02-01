@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [react(), VitePWA({
-    registerType: 'autoUpdate', injectRegister: "auto", includeAssets: [
+    registerType: 'autoUpdate', includeAssets: [
       'favicon.ico',
       'logo.svg',
       'pwa-64x64.png',
