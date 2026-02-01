@@ -99,7 +99,7 @@ export default function Clock({ dict, isPixel }) {
             <section className="bg-red-300 rounded-xl p-6">
                 <a href="https://exzachly.notion.site" target="_blank" rel="noreferrer">
                     <div className="flex flex-col items-center">
-                        <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{dict.nav.header}<img src={isPixel ? "/tomato.webp" : fluentTomato} className="w-8 h-auto" /></h1>
+                        <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{dict.nav.header}<img src={isPixel ? `${import.meta.env.BASE_URL}tomato.webp` : fluentTomato} className="w-8 h-auto" /></h1>
                         <p className="text-center text-red-400 bg-red-200 px-4 py-1 mt-2 rounded-lg font-medium">{dict.nav.desc}</p>
                     </div>
                 </a>
@@ -121,7 +121,7 @@ export default function Clock({ dict, isPixel }) {
                         </div>
                     </div>
                 </div>
-                <div className="mt-4 sm:mt-8 bg-[#FBEBCC] px-8 py-4 rounded-lg text-[#33270d] drop-shadow-md">
+                <div className="mt-4 sm:mt-8 bg-neutral-300 px-8 py-4 rounded-lg text-[#33270d] drop-shadow-md">
                     <b>{dict.session} {session}</b>: {message}
                 </div>
             </main>
