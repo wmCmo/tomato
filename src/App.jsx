@@ -4,6 +4,7 @@ import { IconContext, SunIcon, MoonIcon, DesktopIcon, TranslateIcon, HouseIcon, 
 import en from "./dictionary/en";
 import ja from "./dictionary/ja";
 import { useTheme } from "./hooks/use-theme";
+import useAuth from "./hooks/use-auth";
 
 const dictionary = {
   en, ja
@@ -15,11 +16,13 @@ export default function App() {
   const [timerOn, setTimerOn] = useState(false);
   const [isPixel, setIsPixel] = useState(JSON.parse(localStorage.getItem('isPixel') || 'false'));
   const [showInfo, setShowInfo] = useState(false);
+  const { user } = useAuth();
 
   const dict = dictionary[lang];
 
   useEffect(() => {
     const handleKeys = e => {
+      if (!e.altKey) return;
       const code = e.code;
       switch (code) {
         case 'KeyT':
@@ -40,7 +43,7 @@ export default function App() {
   }, []);
 
   const navFunc = isActive => {
-    return `${isActive ? 'text-accent' : 'text-muted hover:text-muted-foreground'} transition-`;
+    return `${isActive ? 'text-accent' : 'text-muted hover:text-muted-foreground'}`;
   };
 
   useEffect(() => {
@@ -49,14 +52,14 @@ export default function App() {
 
   const navAnimate = 'transition-all ease-in-out duration-200';
   return (
-    <div className={`relative min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-zenMaru'} bg-background ${navAnimate}`}>
+    <div className={`relative min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-zenMaru'} bg-background`}>
       <div className="fixed top-6 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr]">
         <div className={`flex gap-4 justify-self-start items-center cursor-pointer text-accent`}>
           <div className="p-2 rounded-md bg-foreground">
-            <TranslateIcon onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} weight={'bold'} />
+            <TranslateIcon className="" onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} weight={'bold'} />
           </div>
           <div className="p-2 rounded-md bg-foreground">
-            <SquaresFourIcon onClick={() => setIsPixel(prev => !prev)} weight="fill" />
+            <SquaresFourIcon className={`icon ${isPixel && 'text-accent'}`} onClick={() => setIsPixel(prev => !prev)} weight="fill" />
           </div>
         </div>
         <nav className={`py-2 px-6 flex items-center justify-center gap-4 rounded-lg bg-foreground`}>
@@ -65,11 +68,11 @@ export default function App() {
             weight: "fill",
           }}>
             <NavLink to={'/'} className={({ isActive }) => navFunc(isActive)}>
-              <HouseIcon className={navAnimate} />
+              <HouseIcon className='icon' />
             </NavLink>
-            <TimerIcon className={`cursor-pointer ${timerOn ? 'text-accent' : 'text-muted hover:text-muted-foreground'} ${navAnimate}`} onClick={() => setTimerOn(prev => !prev)} />
-            <NavLink to={'/signin'} className={({ isActive }) => navFunc(isActive)}>
-              <UserCircleIcon className={navAnimate} />
+            <TimerIcon className={`cursor-pointer ${timerOn ? 'text-accent' : 'text-muted hover:text-muted-foreground'} icon`} onClick={() => setTimerOn(prev => !prev)} />
+            <NavLink to={user?.id ? `/profile/${user?.id || ''}` : "/login"} className={({ isActive }) => navFunc(isActive)}>
+              {user ? <img src={user?.user_metadata?.avatar_url} alt="user avatar" className="h-6 w-auto rounded-full" /> : <UserCircleIcon className='icon' />}
             </NavLink>
           </IconContext.Provider>
         </nav>
@@ -78,9 +81,9 @@ export default function App() {
             size: 20,
             weight: 'fill'
           }}>
-            <SunIcon className={`${navAnimate} ${theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-700 hover:fill-neutral-600' : 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600'}`} onClick={() => { setTheme('light'); }} />
-            <MoonIcon className={`${navAnimate} ${theme === 'dark' ? 'fill-neutral-400' : theme === 'system' ? 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600' : 'fill-neutral-400 hover:fill-neutral-500'}`} onClick={() => { setTheme('dark'); }} />
-            <DesktopIcon className={`hidden sm:block ${navAnimate} ${theme === 'system' ? 'fill-neutral-700 dark:fill-neutral-400' : theme === 'light' ? 'fill-neutral-400 hover:fill-neutral-500' : 'fill-neutral-700 hover:fill-neutral-600'}`} onClick={() => { setTheme('system'); }} />
+            <SunIcon className={`icon ${theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-700 hover:fill-neutral-600' : 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600'}`} onClick={() => { setTheme('light'); }} />
+            <MoonIcon className={`icon ${theme === 'dark' ? 'fill-neutral-400' : theme === 'system' ? 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600' : 'fill-neutral-400 hover:fill-neutral-500'}`} onClick={() => { setTheme('dark'); }} />
+            <DesktopIcon className={`hidden sm:block icon ${theme === 'system' ? 'fill-neutral-700 dark:fill-neutral-400' : theme === 'light' ? 'fill-neutral-400 hover:fill-neutral-500' : 'fill-neutral-700 hover:fill-neutral-600'}`} onClick={() => { setTheme('system'); }} />
           </IconContext.Provider>
         </div>
       </div>

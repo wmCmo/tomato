@@ -4,22 +4,26 @@ import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import App from './App.jsx';
 import ClockPage from './pages/ClockPage.jsx';
-import SignupPage from './pages/SignupPage.jsx';
 import './index.css';
 import { ThemeProvider } from './providers/theme-providers.jsx';
-import SigninPage from './pages/SigninPage.jsx';
-
 import { registerSW } from 'virtual:pwa-register';
+import QueryProvider from './providers/query-provider.jsx';
+import AuthProvider from './providers/auth-provider.jsx';
+import ProfilePage from './pages/ProfilePage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
+import SettingPage from './pages/SettingPage.jsx';
+import RecordPage from './pages/RecordPage.jsx';
 
 registerSW({
   immediate: true
 });
 
-const configuredBase = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
-const devDetectedBase = import.meta.env.DEV && window.location.pathname.startsWith('/tomato')
-  ? '/tomato'
-  : null;
-const basename = devDetectedBase ?? configuredBase;
+// const configuredBase = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+// const devDetectedBase = import.meta.env.DEV && window.location.pathname.startsWith('/tomato')
+//   ? '/tomato'
+//   : null;
+const basename = import.meta.env.BASE_URL
 
 const router = createBrowserRouter([
   {
@@ -27,8 +31,11 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <ClockPage /> },
-      { path: 'signup', element: <SignupPage /> },
-      { path: 'signin', element: <SigninPage /> }
+      { path: 'login', element: <LoginPage /> },
+      { path: 'profile/:userId', element: <ProfilePage /> },
+      { path: 'setting', element: <SettingPage /> },
+      { path: 'record', element: <RecordPage /> },
+      { path: "*", element: <NotFoundPage /> }
     ],
   },
 ], { basename });
@@ -36,7 +43,11 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <QueryProvider>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </QueryProvider>
     </ThemeProvider>
   </React.StrictMode>,
 );

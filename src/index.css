@@ -1,10 +1,24 @@
 @tailwind base;
+
 @tailwind components;
+
+@layer components {
+    .card {
+        @apply bg-extreme border border-border rounded-lg;
+    }
+    .icon {
+        @apply text-muted hover:text-muted-foreground transition-all ease-in duration-100 cursor-pointer
+    }
+}
+
 @tailwind utilities;
 
 @layer base {
     :root {
+        --extreme: oklch(1 0 0);
         --background: oklch(0.9851 0 0);
+        --faded: oklch(0.9702 0 0);
+        --border: var(--faded);
         --foreground: oklch(0.9219 0 0);
         --muted: oklch(0.7155 0 0);
         --muted-foreground: oklch(0.5555 0 0);
@@ -12,9 +26,12 @@
     }
 
     .dark {
+        --extreme: oklch(0.2686 0 0);
         --background: oklch(0.2046 0 0);
+        --faded: oklch(0.2686 0 0);
         --foreground: oklch(0.2686 0 0);
         --muted: oklch(0.3715 0 0);
+        --border: var(--muted);
         --muted-foreground: oklch(0.4386 0 0);
         --accent: oklch(0.7155 0 0);
     }

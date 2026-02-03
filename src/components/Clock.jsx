@@ -3,18 +3,24 @@ import { useEffect, useRef, useState } from 'react';
 import TimeButton from "./TimeButton";
 import ControlButton from "./ControlButton";
 import colorVariants from "../utils/colorVariants";
+import useAuth from '../hooks/use-auth';
+import { supabase } from '../lib/supabase';
 const ticksUrl = new URL(`${import.meta.env.BASE_URL}ticks.ogg`, window.location.origin).toString();
 const audio = new Audio(ticksUrl);
 audio.preload = 'auto';
 
 const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg";
+const activeSessionIdKey = 'active_session_id';
 
 export default function Clock({ dict, isPixel }) {
     const [status, setStatus] = useState(0);
     const [counting, setCounting] = useState(false);
     const [sec, setSec] = useState(1500);
     const [session, setSession] = useState(JSON.parse(localStorage.getItem('session')) || 1);
+
     const work = useRef(null);
+
+    const { user } = useAuth();
 
     useEffect(() => {
         if (window !== undefined) {
@@ -25,6 +31,30 @@ export default function Clock({ dict, isPixel }) {
     useEffect(() => {
         audio.load();
     }, []);
+
+    useEffect(() => {
+        if (!user) return;
+
+        const syncSession = async () => {
+            const storedDbId = localStorage.getItem(activeSessionIdKey);
+
+            if (!storedDbId) {
+                const { data } = await supabase
+                    .from('study_sessions')
+                    .insert([{
+                        user_id: user.id,
+                        sessions: session === 1 ? 0 : session
+                    }])
+                    .select()
+                    .single();
+
+                if (data) {
+                    localStorage.setItem(activeSessionIdKey, data.id);
+                }
+            }
+        };
+        syncSession();
+    }, [user]);
 
     useEffect(() => {
         if (counting) {
@@ -79,11 +109,41 @@ export default function Clock({ dict, isPixel }) {
         };
     }, []);
 
-    const resetClock = () => {
+    useEffect(() => {
+        if (session === 1 || !user) return;
+        const currentId = localStorage.getItem(activeSessionIdKey);
+        if (!currentId) return;
+
+        const updateSession = async () => {
+            await supabase
+                .from('study_sessions')
+                .update({ sessions: session - 1 })
+                .eq('id', currentId);
+        };
+
+        updateSession();
+    }, [session]);
+
+    const resetClock = async () => {
         setCounting(false);
         setStatus(0);
         setSec(1500);
         setSession(1);
+
+        if (user) {
+            const { data } = await supabase
+                .from('study_sessions')
+                .insert([{
+                    user_id: user.id,
+                    sessions: 0
+                }])
+                .select()
+                .single();
+
+            if (data) {
+                localStorage.setItem(activeSessionIdKey, data.id);
+            }
+        }
     };
 
     const message = !counting ? dict.messages.start : (counting && status === 0 ? dict.messages.work : dict.messages.rest);
@@ -95,7 +155,7 @@ export default function Clock({ dict, isPixel }) {
 
     const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.choices[choice]} onClick={setTime} status={choice} key={choice} color={color} />);
     return (
-        <div className={`select-none flex flex-col flex-grow max-w-lg`}>
+        <div className={`select-none flex flex-col flex-grow max-w-lg mt-4`}>
             <section className="bg-red-300 rounded-xl p-6">
                 <a href="https://exzachly.notion.site" target="_blank" rel="noreferrer">
                     <div className="flex flex-col items-center">
