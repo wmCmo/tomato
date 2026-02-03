@@ -47,9 +47,9 @@ export default function App() {
     localStorage.setItem('isPixel', JSON.stringify(isPixel));
   }, [isPixel]);
 
-  const navAnimate = 'transition-all ease-in-out duration-200 cursor-pointer';
+  const navAnimate = 'transition-all ease-in-out duration-200';
   return (
-    <div className={`relative min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-zenMaru'} bg-background ${navAnimate} cursor-default`}>
+    <div className={`relative min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-zenMaru'} bg-background ${navAnimate}`}>
       <div className="fixed top-6 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr]">
         <div className={`flex gap-4 justify-self-start items-center cursor-pointer text-accent`}>
           <div className="p-2 rounded-md bg-foreground">
@@ -73,7 +73,7 @@ export default function App() {
             </NavLink>
           </IconContext.Provider>
         </nav>
-        <div className={`justify-self-end rounded-full flex items-center gap-4 p-2 bg-foreground`}>
+        <div className={`justify-self-end rounded-full flex items-center gap-4 p-2 bg-foreground cursor-pointer`}>
           <IconContext.Provider value={{
             size: 20,
             weight: 'fill'
@@ -86,7 +86,7 @@ export default function App() {
       </div>
       <Outlet context={{ dict, timerOn, isPixel }} />
       <a className={`select-none fixed bottom-16 right-4 ${showInfo ? 'opacity-100 translate-y-0' : 'pointer-events-none opacity-0 translate-y-10'} ${navAnimate}`} href="https://www.producthunt.com/products/zach-s-tomato?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-zach-s-tomato" target="_blank" rel="noopener noreferrer"><img alt="Zach's Tomato - Minimal + Responsive Pomodoro Timer | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1071002&amp;theme=neutral&amp;t=1770089203158" /></a>
-      <InfoIcon weight="fill" className={`bg-white rounded-full fixed text-muted hover:text-accent bottom-4 right-4 ${navAnimate} ${showInfo ? 'rotate-180' : 'rotate-0'}`} size={30} onClick={() => setShowInfo(prev => !prev)} />
+      <InfoIcon weight="fill" className={`bg-background rounded-full fixed text-muted hover:text-accent bottom-4 right-4 ${navAnimate} cursor-pointer ${showInfo ? 'rotate-180' : 'rotate-0'}`} size={30} onClick={() => setShowInfo(prev => !prev)} />
     </div>
   );
 }
