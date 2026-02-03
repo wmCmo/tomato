@@ -22,6 +22,7 @@
 - [x] Use `localStorage` to locally save current session number and state
 - [ ] Ability to customize the in-app title (From `Zach's Tomato`)
 - [ ] Signin to save information and sync to your Notion Page.
+- [ ] Add study session to Google Calendar??
 
 ---
 
