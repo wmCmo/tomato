@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router";
-import { IconContext, Sun, Moon, Desktop, Translate, House, Timer, UserCircle, SquaresFour } from "@phosphor-icons/react";
+import { IconContext, SunIcon, MoonIcon, DesktopIcon, TranslateIcon, HouseIcon, TimerIcon, UserCircleIcon, SquaresFourIcon } from "@phosphor-icons/react";
 import en from "./dictionary/en";
 import ja from "./dictionary/ja";
 import { useTheme } from "./hooks/use-theme";
@@ -52,10 +52,10 @@ export default function App() {
       <div className="fixed top-6 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr]">
         <div className={`flex gap-4 justify-self-start items-center cursor-pointer text-accent`}>
           <div className="p-2 rounded-md bg-foreground">
-            <Translate onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} weight={'bold'} />
+            <TranslateIcon onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} weight={'bold'} />
           </div>
           <div className="p-2 rounded-md bg-foreground">
-            <SquaresFour onClick={() => setIsPixel(prev => !prev)} weight="fill" />
+            <SquaresFourIcon onClick={() => setIsPixel(prev => !prev)} weight="fill" />
           </div>
         </div>
         <nav className={`py-2 px-6 flex items-center justify-center gap-4 rounded-lg bg-foreground`}>
@@ -64,11 +64,11 @@ export default function App() {
             weight: "fill",
           }}>
             <NavLink to={'/'} className={({ isActive }) => navFunc(isActive)}>
-              <House className={navAnimate} />
+              <HouseIcon className={navAnimate} />
             </NavLink>
-            <Timer className={`${timerOn ? 'text-accent' : 'text-muted hover:text-muted-foreground'} ${navAnimate}`} onClick={() => setTimerOn(prev => !prev)} />
+            <TimerIcon className={`${timerOn ? 'text-accent' : 'text-muted hover:text-muted-foreground'} ${navAnimate}`} onClick={() => setTimerOn(prev => !prev)} />
             <NavLink to={'/signin'} className={({ isActive }) => navFunc(isActive)}>
-              <UserCircle className={navAnimate} />
+              <UserCircleIcon className={navAnimate} />
             </NavLink>
           </IconContext.Provider>
         </nav>
@@ -77,9 +77,9 @@ export default function App() {
             size: 20,
             weight: 'fill'
           }}>
-            <Sun className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-700 hover:fill-neutral-600' : 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600'}`} onClick={() => { setTheme('light'); }} />
-            <Moon className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'dark' ? 'fill-neutral-400' : theme === 'system' ? 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600' : 'fill-neutral-400 hover:fill-neutral-500'}`} onClick={() => { setTheme('dark'); }} />
-            <Desktop className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'system' ? 'fill-neutral-700 dark:fill-neutral-400' : theme === 'light' ? 'fill-neutral-400 hover:fill-neutral-500' : 'fill-neutral-700 hover:fill-neutral-600'}`} onClick={() => { setTheme('system'); }} />
+            <SunIcon className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'light' ? 'fill-neutral-700' : theme === 'dark' ? 'fill-neutral-700 hover:fill-neutral-600' : 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600'}`} onClick={() => { setTheme('light'); }} />
+            <MoonIcon className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'dark' ? 'fill-neutral-400' : theme === 'system' ? 'fill-neutral-400 dark:fill-neutral-700 hover:fill-neutral-500 dark:hover:fill-neutral-600' : 'fill-neutral-400 hover:fill-neutral-500'}`} onClick={() => { setTheme('dark'); }} />
+            <DesktopIcon className={`hover:cursor-pointer transition-all ease-in-out duration-200 ${theme === 'system' ? 'fill-neutral-700 dark:fill-neutral-400' : theme === 'light' ? 'fill-neutral-400 hover:fill-neutral-500' : 'fill-neutral-700 hover:fill-neutral-600'}`} onClick={() => { setTheme('system'); }} />
           </IconContext.Provider>
         </div>
       </div>
