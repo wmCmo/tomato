@@ -95,7 +95,7 @@ export default function Clock({ dict, isPixel }) {
 
     const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.choices[choice]} onClick={setTime} status={choice} key={choice} color={color} />);
     return (
-        <div className={`flex flex-col flex-grow max-w-lg`}>
+        <div className={`select-none flex flex-col flex-grow max-w-lg`}>
             <section className="bg-red-300 rounded-xl p-6">
                 <a href="https://exzachly.notion.site" target="_blank" rel="noreferrer">
                     <div className="flex flex-col items-center">

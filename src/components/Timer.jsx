@@ -113,7 +113,7 @@ export default function Timer() {
                     </h1>
                 </div>
                 <div className="flex sm:flex-col justify-between mt-6 gap-8">
-                    <div className="flex flex-col flex-grow sm:px-0 gap-4 sm:flex-row sm:justify-between font-display">
+                    <div className="select-none flex flex-col flex-grow sm:px-0 gap-4 sm:flex-row sm:justify-between font-display">
                         {defaults.map((def, index) => {
                             return <TimerDefault hour={def[0]} min={def[1]} sec={def[2]} key={index} isActive={index === activeClock} setActiveClock={() => setActiveClock(index)} />;
                         })}
