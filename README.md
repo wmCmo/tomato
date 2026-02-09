@@ -23,6 +23,7 @@
 - [ ] Ability to customize the in-app title (From `Zach's Tomato`)
 - [ ] Signin to save information and sync to your Notion Page.
 - [ ] Add study session to Google Calendar??
+- [ ] Add cute 効果音 for each button
 
 ---
 
