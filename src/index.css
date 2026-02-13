@@ -6,8 +6,13 @@
     .card {
         @apply bg-extreme border border-border rounded-lg;
     }
+
     .icon {
         @apply text-muted hover:text-muted-foreground transition-all ease-in duration-100 cursor-pointer
+    }
+
+    .inline-code {
+        @apply text-[0.95em] rounded px-1.5 py-0.5 bg-foreground text-accent
     }
 }
 

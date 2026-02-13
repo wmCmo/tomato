@@ -23,11 +23,11 @@ export default {
         "accent": "var(--accent)",
         "extreme": "var(--extreme)",
       },
-    },
-    fontFamily: {
-      display: "Montserrat, Arial, sans-serif",
-      zenMaru: "Zen Maru Gothic, sans-serif",
-      pixel: "Pixelify Sans, sans-serif",
+      fontFamily: {
+        display: ["Montserrat", "Arial", "sans-serif"],
+        zenMaru: ["Zen Maru Gothic", "sans-serif"],
+        pixel: ["Pixelify Sans", "sans-serif"],
+      },
     },
   },
   plugins: [],

@@ -50,10 +50,9 @@ export default function App() {
     localStorage.setItem('isPixel', JSON.stringify(isPixel));
   }, [isPixel]);
 
-  const navAnimate = 'transition-all ease-in-out duration-200';
   return (
     <div className={`relative min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-zenMaru'} bg-background`}>
-      <div className="fixed top-6 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr]">
+      <div className="fixed top-0 pt-6 pb-6 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr] bg-background">
         <div className={`flex gap-4 justify-self-start items-center cursor-pointer text-accent`}>
           <div className="p-2 rounded-md bg-foreground">
             <TranslateIcon className="" onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} weight={'bold'} />

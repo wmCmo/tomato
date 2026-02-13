@@ -155,7 +155,7 @@ export default function Clock({ dict, isPixel }) {
 
     const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.choices[choice]} onClick={setTime} status={choice} key={choice} color={color} />);
     return (
-        <div className={`select-none flex flex-col flex-grow max-w-lg mt-4`}>
+        <div className={`select-none flex flex-col flex-grow max-w-lg sm:mt-2 mt-6`}>
             <section className="bg-red-300 rounded-xl p-6">
                 <a href="https://exzachly.notion.site" target="_blank" rel="noreferrer">
                     <div className="flex flex-col items-center">
@@ -181,7 +181,7 @@ export default function Clock({ dict, isPixel }) {
                         </div>
                     </div>
                 </div>
-                <div className="mt-4 sm:mt-8 bg-neutral-300 px-8 py-4 rounded-lg text-[#33270d] drop-shadow-md">
+                <div className="mt-4 sm:mt-6 bg-neutral-300 px-8 py-4 rounded-lg text-[#33270d] drop-shadow-md">
                     <b>{dict.session} {session}</b>: {message}
                 </div>
             </main>

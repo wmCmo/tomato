@@ -14,6 +14,8 @@ import LoginPage from './pages/LoginPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import SettingPage from './pages/SettingPage.jsx';
 import RecordPage from './pages/RecordPage.jsx';
+import TermsOfUse from './pages/TermsOfUse.jsx';
+import PolicyPage from './pages/PolicyPage.jsx';
 
 registerSW({
   immediate: true
@@ -23,7 +25,7 @@ registerSW({
 // const devDetectedBase = import.meta.env.DEV && window.location.pathname.startsWith('/tomato')
 //   ? '/tomato'
 //   : null;
-const basename = import.meta.env.BASE_URL
+const basename = import.meta.env.BASE_URL;
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,8 @@ const router = createBrowserRouter([
       { path: 'profile/:userId', element: <ProfilePage /> },
       { path: 'setting', element: <SettingPage /> },
       { path: 'record', element: <RecordPage /> },
+      { path: 'terms', element: <TermsOfUse /> },
+      { path: 'policy', element: <PolicyPage /> },
       { path: "*", element: <NotFoundPage /> }
     ],
   },
