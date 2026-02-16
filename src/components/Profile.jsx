@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import useAuth from "../hooks/use-auth";
+import useAuth from "../hooks/useAuth";
 import { useParams } from "react-router";
 import { supabase } from "../lib/supabase";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
@@ -96,6 +96,8 @@ const Profile = () => {
 
     const isOwner = user.id === userId;
 
+    console.log(profile.study_sessions);
+
     return (
         <div className='text-accent w-full px-2 mt-12'>
             <div className="sm:flex justify-between gap-8">
@@ -138,7 +140,7 @@ const Profile = () => {
                         <h3 className="">High Score</h3>
                     </div>
                     <div className="card space-y-4 px-10 py-8">
-                        {profile.study_sessions ? [...profile.study_sessions].sort((a, b) => b.sessions - a.sessions).slice(0, 3).map((session, index) => {
+                        {profile.study_sessions.length > 0 ? [...profile.study_sessions].sort((a, b) => b.sessions - a.sessions).slice(0, 3).map((session, index) => {
                             return (
                                 <div key={index} className="flex justify-between items-center">
                                     <div className="flex gap-2 items-center">

@@ -1,5 +1,5 @@
 import { Navigate } from "react-router";
-import useAuth from "../hooks/use-auth";
+import useAuth from "../hooks/useAuth";
 import ProfileSkeleton from "../components/ui/ProfileSkeleton";
 import { useEffect, useRef, useState } from "react";
 import useProfile from "../hooks/useProfile";

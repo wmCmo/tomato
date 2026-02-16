@@ -4,7 +4,7 @@ import { IconContext, SunIcon, MoonIcon, DesktopIcon, TranslateIcon, HouseIcon, 
 import en from "./dictionary/en";
 import ja from "./dictionary/ja";
 import { useTheme } from "./hooks/use-theme";
-import useAuth from "./hooks/use-auth";
+import useAuth from "./hooks/useAuth";
 
 const dictionary = {
   en, ja
@@ -51,8 +51,8 @@ export default function App() {
   }, [isPixel]);
 
   return (
-    <div className={`relative min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-zenMaru'} bg-background`}>
-      <div className="fixed top-0 pt-6 pb-6 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr] bg-background">
+    <div className={`relative pt-12 min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-zenMaru'} bg-background`}>
+      <div className="fixed top-0 pt-6 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr] bg-background">
         <div className={`flex gap-4 justify-self-start items-center cursor-pointer text-accent`}>
           <div className="p-2 rounded-md bg-foreground">
             <TranslateIcon className="" onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} weight={'bold'} />

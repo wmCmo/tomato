@@ -1,6 +1,6 @@
 import { Navigate } from "react-router";
 import LoginComponent from "../components/Login";
-import useAuth from "../hooks/use-auth";
+import useAuth from "../hooks/useAuth";
 
 export default function LoginPage() {
     const { user } = useAuth();

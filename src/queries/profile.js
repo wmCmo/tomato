@@ -8,7 +8,7 @@ export default async function fetchProfile(userId) {
             avatar_url,
             bio,
             emoji,
-            study_sessions(created_at, sessions, last_edited)
+            study_sessions(id, created_at, sessions, last_edited)
         `)
         .eq('id', userId)
         .order('last_edited', { referencedTable: 'study_sessions', ascending: false })
