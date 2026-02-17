@@ -6,6 +6,7 @@ import useProfile from "../hooks/useProfile";
 import { ArrowCircleRightIcon, PlusIcon } from "@phosphor-icons/react";
 import { supabase } from "../lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
+import Error from "../components/Error";
 
 
 const SettingPage = () => {
@@ -41,7 +42,7 @@ const SettingPage = () => {
 
     if (error) {
         console.error(error);
-        return <div>We had trouble getting your profile</div>;
+        return <Error item={'information'} />;
     }
 
     const fileName = `${user?.id}/avatar.webp`;
@@ -153,7 +154,6 @@ const SettingPage = () => {
                 ...prev,
                 avatar_url: previewUrl
             }));
-            console.log(formData);
         } catch (error) {
 
         }

@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import formatDateEn from '../utils/formatDateEn';
 import { Link } from "react-router";
 import useProfile from "../hooks/useProfile";
+import Error from "./Error";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -69,7 +70,7 @@ const Profile = () => {
     }, [profile?.study_sessions]);
 
     if (isLoading) return <ProfileSkeleton />;
-    if (error) return <div>Error loading profile!</div>;
+    if (error) return <Error item={'profile'} />;
 
     const todayIndex = weekDays.indexOf(new Date().toLocaleString('en-US', { weekday: "short" })) + 1;
     const sortedWeekDay = weekDays.slice(todayIndex).concat(weekDays.slice(0, todayIndex));
@@ -96,7 +97,6 @@ const Profile = () => {
 
     const isOwner = user.id === userId;
 
-    console.log(profile.study_sessions);
 
     return (
         <div className='text-accent w-full px-2 mt-12'>
@@ -120,7 +120,7 @@ const Profile = () => {
                         </div>}
                         <h2 className="text-3xl font-bold mt-1">{profile.nickname ?? user.user_metadata.full_name}</h2>
                     </div>
-                    <div className={`text-sm absolute right-0 bottom-0 transition-all duration-200 ease-in-out bg-foreground px-4 py-2 rounded-lg text-white font-bold ${showCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>Profile URL Copied</div>
+                    <div className={`text-sm absolute right-0 bottom-0 transition-all duration-200 ease-in-out bg-foreground px-4 py-2 rounded-lg text-accent font-bold ${showCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>Profile URL Copied</div>
                 </section>
                 <section className="mt-8 px-4 py-4 card border-none flex items-center flex-grow">
                     {

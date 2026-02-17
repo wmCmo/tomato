@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import BackToHome from "../components/BackToHome";
 
 export default function NotFoundPage() {
     return (
@@ -7,7 +8,7 @@ export default function NotFoundPage() {
             <p className="text-center">👀 Maybe I'm not what you're looking for?</p>
             <div className="flex items-center justify-center gap-4">
                 <p className="text-xs text-center">Try navigating back to</p>
-                <Link to={'/'} className="text-center bg-foreground px-4 py-2 rounded-md font-bold">🍅 Tomato</Link>
+                <BackToHome />
             </div>
         </div>
     );

@@ -9,6 +9,8 @@ import RecordCard from "../components/RecordCard";
 import useConfirm from "../hooks/useConfirm";
 import { supabase } from "../lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
+import BackToHome from "../components/BackToHome";
+import Error from "../components/Error";
 
 
 
@@ -50,7 +52,7 @@ const RecordPage = () => {
 
     if (isLoading) return <ProfileSkeleton />;
 
-    if (error) return <div>There was a problem retriving your study session</div>;
+    if (error) return <Error item={'Pomodoro sessions'} />;
 
     async function handleDelete(sessionId) {
         const ok = await confirm("Deleting a record, are you sure?");
@@ -97,8 +99,9 @@ const RecordPage = () => {
                             );
                         })
                     ) :
-                    <div>
-                        <h2 className="leading-10 text-center">You sessions are currently empty. Go back to <Link to={'/'} className="mx-4 bg-foreground px-4 py-2 rounded-md hover:underline underline-offset-4 text-muted-foreground">🍅 Tomato</Link> and lock in!~</h2>
+                    <div className="grid place-items-center space-y-4">
+                        <h2 className="leading-7 text-center">You sessions are currently <strong>empty</strong>. Let's go back to homepage and lock in!~</h2>
+                        <BackToHome />
                     </div>
             }
             {modal}

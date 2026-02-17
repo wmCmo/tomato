@@ -5,6 +5,7 @@ import en from "./dictionary/en";
 import ja from "./dictionary/ja";
 import { useTheme } from "./hooks/use-theme";
 import useAuth from "./hooks/useAuth";
+import useProfile from "./hooks/useProfile";
 
 const dictionary = {
   en, ja
@@ -50,6 +51,12 @@ export default function App() {
     localStorage.setItem('isPixel', JSON.stringify(isPixel));
   }, [isPixel]);
 
+  const { data: profile } = useProfile(user?.id, {
+    select: p => ({ avatar_url: p.avatar_url })
+  });
+
+  console.log(profile);
+
   return (
     <div className={`relative pt-12 min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-zenMaru'} bg-background`}>
       <div className="fixed top-0 pt-6 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr] bg-background">
@@ -71,7 +78,7 @@ export default function App() {
             </NavLink>
             <TimerIcon className={`cursor-pointer ${timerOn ? 'text-accent' : 'text-muted hover:text-muted-foreground'} icon`} onClick={() => setTimerOn(prev => !prev)} />
             <NavLink to={user?.id ? `/profile/${user?.id || ''}` : "/login"} className={({ isActive }) => navFunc(isActive)}>
-              {user ? <img src={user?.user_metadata?.avatar_url} alt="user avatar" className="h-6 w-auto rounded-full" /> : <UserCircleIcon className='icon' />}
+              {user ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-6 w-auto rounded-full" /> : <UserCircleIcon className='icon' />}
             </NavLink>
           </IconContext.Provider>
         </nav>

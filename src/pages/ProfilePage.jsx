@@ -1,7 +1,7 @@
 import LoginComponent from "../components/Login";
 import Profile from "../components/Profile";
 import ProfileSkeleton from "../components/ui/ProfileSkeleton";
-import useAuth from "../hooks/use-auth";
+import useAuth from "../hooks/useAuth";
 
 const ProfilePage = () => {
     const { user, loading } = useAuth();
