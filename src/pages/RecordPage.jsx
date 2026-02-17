@@ -37,13 +37,14 @@ const RecordPage = () => {
             const lastEdit = new Date(session.last_edited);
             const editedYear = String(lastEdit.getFullYear());
             const editedMonth = lastEdit.toLocaleString('default', { month: 'long' });
-            if (!Object.keys(map).includes(editedYear)) {
-                map[editedYear] = new Map();
+            if (!map.has(editedYear)) {
+                map.set(editedYear, new Map());
             }
-            if (!Object.keys(map[editedYear]).includes(editedMonth)) {
-                map[editedYear][editedMonth] = [];
+            const years = map.get(editedYear);
+            if (!years.has(editedMonth)) {
+                years.set(editedMonth, []);
             }
-            map[editedYear][editedMonth].push({ id: session.id, sessions: session.sessions, lastEdit: formatDateEnNoYear(lastEdit) });
+            years.get(editedMonth).push({ id: session.id, sessions: session.sessions, lastEdit: formatDateEnNoYear(lastEdit) });
         }
         return map;
     }, [sessions]);
@@ -60,6 +61,10 @@ const RecordPage = () => {
         const { error } = await supabase.from('study_sessions').delete().eq("id", sessionId);
         if (error) throw error;
 
+        const localSessionId = Number(localStorage.getItem('active_session_id'));
+        if (localSessionId === sessionId) {
+            localStorage.removeItem('active_session_id');
+        }
         queryClient.setQueryData(['profile', user.id], old => {
             if (!old) return old;
             return {
@@ -68,6 +73,8 @@ const RecordPage = () => {
             };
         });
     }
+
+    console.log(mappedSessions.size, Object.entries(mappedSessions));
 
     return (
         <div className="relative text-accent w-full px-4">
@@ -87,12 +94,11 @@ const RecordPage = () => {
             {
                 mappedSessions.size > 0 ?
                     (
-
-                        Object.entries(mappedSessions).map(([year, months]) => {
+                        [...mappedSessions.entries()].map(([year, months]) => {
                             return (
                                 <section key={year} className="">
                                     <h2 className="font-bold text-2xl text-muted">{year}</h2>
-                                    {Object.entries(months).map(([month, entries]) => {
+                                    {[...months.entries()].map(([month, entries]) => {
                                         return <RecordCard key={month} month={month} entries={entries} handleDelete={handleDelete} />;
                                     })}
                                 </section>

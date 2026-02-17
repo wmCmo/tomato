@@ -55,7 +55,6 @@ export default function App() {
     select: p => ({ avatar_url: p.avatar_url })
   });
 
-  console.log(profile);
 
   return (
     <div className={`relative pt-12 min-h-screen flex justify-center items-center p-4 sm:p-8 ${lang === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-zenMaru'} bg-background`}>

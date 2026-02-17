@@ -27,7 +27,7 @@ const RecordCard = ({ month, entries, handleDelete }) => {
             <div className="flex justify-between items-center">
                 <div className="flex gap-2 items-center">
                     <img className="w-6 h-auto" src={`${fluentRepo}${encodeURIComponent(fuuButsuShi)}/Color/${fuuButsuShi.toLowerCase().replace(' ', '_')}_color.svg`} alt={`Fluent ${fuuButsuShi} emoji`} />
-                    <h3 className="font-semibold">{month}</h3>
+                    <h3 className="font-semibold text-muted-foreground">{month}</h3>
                 </div>
                 <button onClick={() => setIsEditing(prev => !prev)} className="text-muted icon">
                     {
