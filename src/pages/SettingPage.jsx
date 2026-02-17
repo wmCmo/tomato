@@ -21,17 +21,24 @@ const SettingPage = () => {
         })
     });
 
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({
+        nickname: "",
+        avatar_url: ""
+    });
     const [showDangerZone, setShowDangerZone] = useState(false);
 
     const fileInputRef = useRef(null);
 
     useEffect(() => {
-        setFormData(prev => ({
-            ...prev,
-            nickname: profile?.nickname ?? user?.user_metadata?.full_name ?? '',
-            avatar_url: profile?.avatar_url ?? `${import.meta.env.BASE_URL}profile-skeleton.svg`
-        }));
+        setFormData(prev => {
+            const nextNickname = profile?.nickname ?? user?.user_metadata?.full_name ?? "";
+            const nextAvatarUrl = profile?.avatar_url ?? `${import.meta.env.BASE_URL}profile-skeleton.svg`;
+            return {
+                ...prev,
+                nickname: nextNickname,
+                avatar_url: nextAvatarUrl
+            };
+        });
     }, [profile, user?.user_metadata?.full_name]);
 
     if (authLoading) return <ProfileSkeleton />;
@@ -233,7 +240,10 @@ const SettingPage = () => {
     };
 
     const handleCancleForm = () => {
-        setFormData(profile);
+        setFormData({
+            nickname: profile?.nickname ?? "",
+            avatar_url: profile?.avatar_url ?? `${import.meta.env.BASE_URL}profile-skeleton.svg`
+        });
     };
 
     return (
@@ -247,7 +257,7 @@ const SettingPage = () => {
                 </button>
                 <div className="space-y-2">
                     <h1 className="text-xl">What should we call you?</h1>
-                    <input className="px-4 py-2 outline-none card" type="text" name="nickname" id="nickname" value={formData?.nickname} onChange={(e) => handleUpdateFormData(e)} />
+                    <input className="px-4 py-2 outline-none card" type="text" name="nickname" id="nickname" value={formData?.nickname ?? ""} onChange={(e) => handleUpdateFormData(e)} />
                 </div>
             </section>
             <div className={`gap-6 justify-end flex mt-8 transition-all duration-500 ease-in-out ${(formData?.nickname === profile?.nickname) && (formData.avatar_url === profile.avatar_url) ? 'opacity-0 translate-y-2 pointer-events-none' : 'opacity-100 translate-y-0'} font-bold`}>
@@ -262,7 +272,7 @@ const SettingPage = () => {
                 {showDangerZone && <div className="flex flex-col gap-6 mt-8">
                     <DangerButton handleClick={handleDeleteAccount} content={'Delete Account'} isRed={true} />
                     <DangerButton handleClick={handleClearRecords} content={'Clear All Records'} isRed={true} />
-                    <DangerButton handleClick={handleLogout} content={'Logout'} isRedF={false} />
+                    <DangerButton handleClick={handleLogout} content={'Logout'} isRed={false} />
                 </div>}
             </section>
 
