@@ -15,7 +15,6 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'));
 const SettingPage = lazy(() => import('./pages/SettingPage.jsx'));
 const RecordPage = lazy(() => import('./pages/RecordPage.jsx'));
 const TermsOfUse = lazy(() => import('./pages/TermsOfUse.jsx'));
-const PolicyPage = lazy(() => import('./pages/PolicyPage.jsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'));
 
 registerSW({
@@ -39,7 +38,6 @@ const router = createBrowserRouter([
       { path: 'setting', element: <SettingPage /> },
       { path: 'record', element: <RecordPage /> },
       { path: 'terms', element: <TermsOfUse /> },
-      { path: 'policy', element: <PolicyPage /> },
       { path: "*", element: <NotFoundPage /> }
     ],
   },

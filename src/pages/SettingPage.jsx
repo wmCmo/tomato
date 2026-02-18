@@ -1,4 +1,4 @@
-import { Navigate } from "react-router";
+import { Navigate, useOutletContext } from "react-router";
 import useAuth from "../hooks/useAuth";
 import ProfileSkeleton from "../components/ui/ProfileSkeleton";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +7,7 @@ import { ArrowCircleRightIcon, PlusIcon } from "@phosphor-icons/react";
 import { supabase } from "../lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
 import Error from "../components/Error";
+import useConfirm from "../hooks/useConfirm";
 
 
 const SettingPage = () => {
@@ -41,6 +42,9 @@ const SettingPage = () => {
         });
     }, [profile, user?.user_metadata?.full_name]);
 
+    const { dict } = useOutletContext();
+    const { confirm, modal } = useConfirm();
+
     if (authLoading) return <ProfileSkeleton />;
 
     if (!user) return <Navigate to={'/login'} replace />;
@@ -49,7 +53,7 @@ const SettingPage = () => {
 
     if (error) {
         console.error(error);
-        return <Error item={'information'} />;
+        return <Error item={dict.setting.errorItem} />;
     }
 
     const fileName = `${user?.id}/avatar.webp`;
@@ -74,6 +78,8 @@ const SettingPage = () => {
     };
 
     const handleClearRecords = async () => {
+        const ok = await confirm(dict.setting.clear.warning);
+        if (!ok) return;
         await supabase
             .from('study_sessions')
             .delete()
@@ -83,6 +89,8 @@ const SettingPage = () => {
     };
 
     const handleDeleteAccount = async () => {
+        const ok = await confirm(dict.setting.delete.warning);
+        if (!ok) return;
         const { data, error } = await supabase.functions.invoke('delete-user', {
             body: { userId: user.id },
             headers: {
@@ -247,35 +255,35 @@ const SettingPage = () => {
     };
 
     return (
-        <div className="text-accent" >
+        <div className="text-accent relative" >
             <section className="flex gap-8 items-end">
                 <button className="relative" onClick={handleTriggerUpload}>
                     <img src={formData?.avatar_url ?? profile.avatar_url} className="h-20 w-auto rounded-lg" alt="User's profile picture" />
-                    <div className="absolute top-0 grid place-items-center h-20 w-20 opacity-0 hover:opacity-100">
+                    <div className="absolute top-0 grid place-items-center h-20 w-20 opacity-0 bg-accent rounded-lg hover:opacity-50">
                         <PlusIcon size={30} weight="bold" className="text-white z-10" />
                     </div>
                 </button>
                 <div className="space-y-2">
-                    <h1 className="text-xl">What should we call you?</h1>
+                    <h1 className="text-xl">{dict.setting.question}</h1>
                     <input className="px-4 py-2 outline-none card" type="text" name="nickname" id="nickname" value={formData?.nickname ?? ""} onChange={(e) => handleUpdateFormData(e)} />
                 </div>
             </section>
             <div className={`gap-6 justify-end flex mt-8 transition-all duration-500 ease-in-out ${(formData?.nickname === profile?.nickname) && (formData.avatar_url === profile.avatar_url) ? 'opacity-0 translate-y-2 pointer-events-none' : 'opacity-100 translate-y-0'} font-bold`}>
-                <button onClick={handleCancleForm} className="bg-foreground px-3 py-1 rounded-xl">Cancel</button>
-                <button onClick={sendForm} className={`px-4 py-1 bg-blue-600 border-4 border-blue-500 text-white rounded-xl`}>Save</button>
+                <button onClick={handleCancleForm} className="bg-foreground px-3 py-1 rounded-xl">{dict.ui.cancel}</button>
+                <button onClick={sendForm} className={`px-4 py-1 bg-blue-600 border-4 border-blue-500 text-white rounded-xl`}>{dict.ui.save}</button>
             </div>
             <section className="mt-28" >
                 <button className="flex gap-4 items-center" onClick={() => setShowDangerZone(prev => !prev)}>
-                    <h2 className="font-semibold text-rose-500">Danger Zone</h2>
+                    <h2 className="font-semibold text-rose-500">{dict.setting.danger}</h2>
                     <ArrowCircleRightIcon weight="fill" size={24} className={`icon text-rose-500 ${showDangerZone ? 'rotate-90' : 'rotate-0'}`} />
                 </button>
                 {showDangerZone && <div className="flex flex-col gap-6 mt-8">
-                    <DangerButton handleClick={handleDeleteAccount} content={'Delete Account'} isRed={true} />
-                    <DangerButton handleClick={handleClearRecords} content={'Clear All Records'} isRed={true} />
-                    <DangerButton handleClick={handleLogout} content={'Logout'} isRed={false} />
+                    <DangerButton handleClick={handleDeleteAccount} content={dict.setting.delete.button} isRed={true} />
+                    <DangerButton handleClick={handleClearRecords} content={dict.setting.clear.button} isRed={true} />
+                    <DangerButton handleClick={handleLogout} content={dict.setting.logout} isRed={false} />
                 </div>}
             </section>
-
+            {modal}
             <input type="file" name="avatar" id="avatar" ref={fileInputRef} onChange={refreshPreviewAfterUpload} accept="image/*" style={{ display: 'none' }} />
         </div>
     );

@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import { Link, Navigate } from "react-router";
+import { Link, Navigate, useOutletContext } from "react-router";
 import useAuth from "../hooks/useAuth";
 import ProfileSkeleton from "../components/ui/ProfileSkeleton";
 import useProfile from "../hooks/useProfile";
@@ -30,13 +30,15 @@ const RecordPage = () => {
         select: p => p?.study_sessions ?? []
     });
 
+    const { dict } = useOutletContext();
+
     const mappedSessions = useMemo(() => {
         if (!sessions) return {};
         const map = new Map();
         for (const session of sessions) {
             const lastEdit = new Date(session.last_edited);
             const editedYear = String(lastEdit.getFullYear());
-            const editedMonth = lastEdit.toLocaleString('default', { month: 'long' });
+            const editedMonth = lastEdit.getMonth();
             if (!map.has(editedYear)) {
                 map.set(editedYear, new Map());
             }
@@ -44,10 +46,10 @@ const RecordPage = () => {
             if (!years.has(editedMonth)) {
                 years.set(editedMonth, []);
             }
-            years.get(editedMonth).push({ id: session.id, sessions: session.sessions, lastEdit: formatDateEnNoYear(lastEdit) });
+            years.get(editedMonth).push({ id: session.id, sessions: session.sessions, lastEdit: dict.record.formatDate(lastEdit) });
         }
         return map;
-    }, [sessions]);
+    }, [sessions, dict]);
 
     const { confirm, modal } = useConfirm();
 
@@ -56,7 +58,7 @@ const RecordPage = () => {
     if (error) return <Error item={'Pomodoro sessions'} />;
 
     async function handleDelete(sessionId) {
-        const ok = await confirm("Deleting a record, are you sure?");
+        const ok = await confirm(dict.record.warning);
         if (!ok) return;
         const { error } = await supabase.from('study_sessions').delete().eq("id", sessionId);
         if (error) throw error;
@@ -74,19 +76,17 @@ const RecordPage = () => {
         });
     }
 
-    console.log(mappedSessions.size, Object.entries(mappedSessions));
-
     return (
         <div className="relative text-accent w-full px-4">
             <section className="sticky top-20 pt-10 bg-background w-full">
                 <div className="flex justify-between">
                     <div className="flex gap-1 items-center">
                         <img src={`${fluentRepo}Potted%20plant/Color/potted_plant_color.svg`} alt="Fluent Potted Plant emoji" />
-                        <h1 className="font-bold text-xl">Your Record</h1>
+                        <h1 className="font-bold text-xl">{dict.record.header}</h1>
                     </div>
                     <Link to={`/profile/${user.id}`} className="flex gap-2 items-center bg-foreground rounded px-2 py-1 icon">
                         <ArrowLeftIcon />
-                        <span className="text-sm font-semibold">Back to Profile</span>
+                        <span className="text-sm font-semibold">{dict.record.return}</span>
                     </Link>
                 </div>
                 <hr className="border-border my-8" />
