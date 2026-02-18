@@ -1,39 +1,43 @@
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey =
-    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
     import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
     const missing = [
         !supabaseUrl ? "VITE_SUPABASE_URL" : null,
-        !supabaseKey ? "VITE_SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_ANON_KEY)" : null,
+        !supabaseKey
+            ? "VITE_SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_ANON_KEY)"
+            : null,
     ].filter(Boolean);
 
     throw new Error(
         `Supabase env missing: ${missing.join(", ")}. ` +
-        `For Vite, these must be provided at build-time (and prefixed with VITE_).`
+            `For Vite, these must be provided at build-time (and prefixed with VITE_).`,
     );
 }
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const signInWithGoogle = async () => {
+    const redirectTo = new URL(import.meta.env.BASE_URL, window.location.origin)
+        .toString();
+
     const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
-            redirectTo: window.location.origin,
+            redirectTo,
             queryParams: {
-                access_type: 'offline',
-                prompt: 'select_account'
-            }
-        }
+                access_type: "offline",
+                prompt: "select_account",
+            },
+        },
     });
-    if (error) console.error('Error loggin in: ', error.message);
+    if (error) console.error("Error loggin in: ", error.message);
 };
 
 export const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) console.error('Error logging out:', error.message);
+    if (error) console.error("Error logging out:", error.message);
 };
