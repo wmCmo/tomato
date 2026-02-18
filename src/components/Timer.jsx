@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { ThemeProviderContext } from "../providers/theme-providers";
 import TimerDefault from "./timerDefault";
 import DisplayInput from "./DisplayInput";
-import { IconContext, ArrowCounterClockwise, Pause, Play, TrashSimple } from "@phosphor-icons/react";
+import { IconContext, ArrowCounterClockwiseIcon, TrashSimpleIcon, PlayIcon, PauseIcon } from "@phosphor-icons/react";
 import { clearInterval, setInterval } from "worker-timers";
 const ticksUrl = new URL(`${import.meta.env.BASE_URL}beat.mp3`, window.location.origin).toString();
 const audio = new Audio(ticksUrl);
@@ -124,11 +124,11 @@ export default function Timer() {
                                 size: 25,
                                 weight: "fill"
                             }}>
-                                <ControlButtons icon={playing ? <TrashSimple /> : <ArrowCounterClockwise />} handleClick={() => {
+                                <ControlButtons icon={playing ? <TrashSimpleIcon /> : <ArrowCounterClockwiseIcon />} handleClick={() => {
                                     setSecs(() => toSeconds(currentTime));
                                     clear();
                                 }} />
-                                <ControlButtons icon={playing ? <Pause /> : <Play />} handleClick={() => setPlaying(prev => !prev)} />
+                                <ControlButtons icon={playing ? <PauseIcon /> : <PlayIcon />} handleClick={() => setPlaying(prev => !prev)} />
                             </IconContext.Provider>
                         </div>
                         {playing && <div className={`bg-rose-400/40 px-2 py-2 rounded-lg border-4 border-rose-400 border-solid ${theme === 'light' ? 'text-rose-500' : 'text-white'} font-bold`}>🔔 {(new Date(new Date(startTime).getTime() + (toSeconds(currentTime) * 1000))).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })}</div>}

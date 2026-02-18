@@ -1,15 +1,100 @@
+import formatDateEn from "../utils/formatDateEn";
+import formatDateEnNoYear from "../utils/formatDateEnNoYear";
+
 const en = {
-    nav: {
-        header: "Zach's Tomato",
-        desc: "Your minimal Pomodoro timer"
+    components: {
+        return2Home: "Home",
     },
-    choices: ['Pomodoro', 'Short Break', 'Long Break'],
-    messages: {
-        start: "Click Start and let's get things done!",
-        work: "Time to Work!",
-        rest: "Time to Rest!"
+    ui: {
+        delete: "Delete",
+        cancel: "Cancel",
+        save: "Save",
+        warnDelete: ["This action ", "cannot", " be undone."],
     },
-    session: "Session"
+    home: {
+        nav: {
+            header: "Zach's Tomato",
+            desc: "Your minimal Pomodoro timer",
+        },
+        choices: ["Pomodoro", "Short Break", "Long Break"],
+        messages: {
+            start: "Click Start and let's get things done!",
+            work: "Time to Work!",
+            rest: "Time to Rest!",
+        },
+        session: "Session",
+    },
+    profile: {
+        welcome: "Welcome back,",
+        status: "I want to tell everyone that...",
+        highScore: "High Score",
+        emptySession: "Empty session",
+        thisWeek: "This week",
+        viewMore: "View More",
+        days: [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+        ],
+        copied: "Profile URL Copied",
+        formatDate: formatDateEn,
+        errorItem: "profile",
+    },
+    record: {
+        header: "Your Record",
+        return: "Back to Profile",
+        empty: [
+            "Your sessions are currently ",
+            "empty.",
+            " Let's go back to homepage and lock in!~",
+        ],
+        months: [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ],
+        warning: "Deleting a record, are you sure?",
+        formatDate: formatDateEnNoYear,
+    },
+    setting: {
+        question: "What should we call you?",
+        danger: "Danger Zone",
+        delete: {
+            button: "Delete Account",
+            warning: "Deleting your account, are you sure?",
+        },
+        clear: {
+            button: "Clear All Records",
+            warning: "Deleting all records, are you sure?",
+        },
+        logout: "Logout",
+        errorItem: "information",
+    },
+    notFound: {
+        desc: "Maybe I'm not what you're looking for?",
+        suggest: "Try navigating back to",
+    },
+    login: {
+        header: "Let's sign you in!",
+        google: "Login with Google",
+    },
+    error: {
+        header: "There was a trouble getting your ",
+        desc: "Maybe go back to homepage again?",
+    },
 };
 
 export default en;
