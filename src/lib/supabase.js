@@ -1,6 +1,23 @@
 import { createClient } from "@supabase/supabase-js";
 
-export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey =
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+    import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+    const missing = [
+        !supabaseUrl ? "VITE_SUPABASE_URL" : null,
+        !supabaseKey ? "VITE_SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_ANON_KEY)" : null,
+    ].filter(Boolean);
+
+    throw new Error(
+        `Supabase env missing: ${missing.join(", ")}. ` +
+        `For Vite, these must be provided at build-time (and prefixed with VITE_).`
+    );
+}
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
