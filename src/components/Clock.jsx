@@ -122,7 +122,7 @@ export default function Clock({ dict, isPixel }) {
         };
 
         updateSession();
-    }, [session]);
+    }, [session, user]);
 
     const resetClock = async () => {
         setCounting(false);
