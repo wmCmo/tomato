@@ -21,11 +21,7 @@ registerSW({
   immediate: true
 });
 
-// const configuredBase = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
-// const devDetectedBase = import.meta.env.DEV && window.location.pathname.startsWith('/tomato')
-//   ? '/tomato'
-//   : null;
-const basename = import.meta.env.BASE_URL;
+const basename = (import.meta.env.BASE_URL && import.meta.env.BASE_URL.replace(/\/$/, '')) || '/';
 
 const router = createBrowserRouter([
   {
