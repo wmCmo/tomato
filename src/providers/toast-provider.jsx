@@ -13,7 +13,7 @@ const Toast = ({ title, desc, variant, onDismiss }) => (
                 {
                     variant === 'errorDb' ? <CloudXIcon /> :
                         variant === 'errorAuth' ? <ShieldWarningIcon /> :
-                            variant === 'errorToken' ? <FileXIcon /> : <WarningDiamondIcon />
+                            variant === 'errorFile' ? <FileXIcon /> : <WarningDiamondIcon />
                 }
             </div>
         </IconContext.Provider >

@@ -1,16 +1,15 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import { Link, Navigate, useOutletContext } from "react-router";
-import useAuth from "../hooks/useAuth";
-import ProfileSkeleton from "../components/ui/ProfileSkeleton";
-import useProfile from "../hooks/useProfile";
-import formatDateEnNoYear from "../utils/formatDateEnNoYear";
-import { useMemo } from "react";
-import RecordCard from "../components/RecordCard";
-import useConfirm from "../hooks/useConfirm";
-import { supabase } from "../lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { Link, Navigate, useOutletContext } from "react-router";
 import BackToHome from "../components/BackToHome";
 import Error from "../components/Error";
+import RecordCard from "../components/RecordCard";
+import ProfileSkeleton from "../components/ui/ProfileSkeleton";
+import useAuth from "../hooks/useAuth";
+import useConfirm from "../hooks/useConfirm";
+import useProfile from "../hooks/useProfile";
+import { supabase } from "../lib/supabase";
 
 
 

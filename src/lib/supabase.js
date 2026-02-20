@@ -14,7 +14,7 @@ if (!supabaseUrl || !supabaseKey) {
 
     throw new Error(
         `Supabase env missing: ${missing.join(", ")}. ` +
-            `For Vite, these must be provided at build-time (and prefixed with VITE_).`,
+        `For Vite, these must be provided at build-time (and prefixed with VITE_).`,
     );
 }
 
@@ -35,9 +35,4 @@ export const signInWithGoogle = async () => {
         },
     });
     if (error) console.error("Error loggin in: ", error.message);
-};
-
-export const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error("Error logging out:", error.message);
 };

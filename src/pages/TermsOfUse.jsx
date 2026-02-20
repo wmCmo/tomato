@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Navigate, useLocation, useNavigate, useOutletContext } from "react-router";
+import { useLocation, useNavigate, useOutletContext } from "react-router";
 
 const dict = {
     ja: {

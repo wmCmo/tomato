@@ -1,13 +1,13 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import useAuth from "../hooks/useAuth";
-import { useOutletContext, useParams } from "react-router";
-import { supabase } from "../lib/supabase";
-import ProfileSkeleton from "./ui/ProfileSkeleton";
 import { GearIcon, IconContext, LogIcon, ShareNetworkIcon } from "@phosphor-icons/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router";
+import { Link, useOutletContext, useParams } from "react-router";
+import useAuth from "../hooks/useAuth";
 import useProfile from "../hooks/useProfile";
+import { useToast } from "../hooks/useToast";
+import { supabase } from "../lib/supabase";
 import Error from "./Error";
+import ProfileSkeleton from "./ui/ProfileSkeleton";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -15,6 +15,7 @@ const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/r
 const Profile = () => {
     const { user } = useAuth();
     const { userId } = useParams();
+    const { toast } = useToast();
 
     const queryClient = useQueryClient();
 
@@ -85,8 +86,8 @@ const Profile = () => {
             .eq('id', userId);
 
         if (error) {
-            console.error('Failed to save bio', error);
-            return;
+            toast(undefined, 'There was a problem updating your profile.', 'errorDb');
+            throw error;
         }
 
         queryClient.setQueryData(['profile', userId], (old) => {

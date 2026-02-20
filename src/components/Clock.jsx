@@ -58,7 +58,7 @@ export default function Clock({ dict, isPixel }) {
             }
         };
         syncSession();
-    }, [user]);
+    }, [user, session]);
 
     useEffect(() => {
         if (counting) {
@@ -140,7 +140,6 @@ export default function Clock({ dict, isPixel }) {
                     }
                     return;
                 }
-
                 const isRetriable =
                     status == null ||
                     status === 0 ||
