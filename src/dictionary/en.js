@@ -95,6 +95,16 @@ const en = {
     error: {
         header: "There was a trouble getting your ",
         desc: "Maybe go back to homepage again?",
+        updateDb: "There was a problem updating your database.",
+        signIn: "Failed to sign in with Google",
+        delete: "There was a problem deleting your record",
+        logOut: "We had a trouble logging you out.",
+        clear: "We had trouble clearing your records",
+        processFile: "There was a problem processing your file",
+        upload: "Failed to upload image.",
+        getUrl: "There was a problem getting your avatar URL.",
+        updateProfile: "There was a problem updating your profile.",
+        terminate: "Failed to delete your account.",
     },
 };
 

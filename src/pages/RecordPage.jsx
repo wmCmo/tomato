@@ -61,7 +61,7 @@ const RecordPage = () => {
         if (!ok) return;
         const { error } = await supabase.from('study_sessions').delete().eq("id", sessionId);
         if (error) {
-            toast(undefined, 'There was a problem deleting your record', 'errorDb');
+            toast(undefined, dict.error.delete, 'errorDb');
             console.error(error.code, error.message);
             return;
         }
@@ -111,7 +111,7 @@ const RecordPage = () => {
                         })
                     ) :
                     <div className="grid place-items-center space-y-4">
-                        <h2 className="leading-7 text-center">You sessions are currently <strong>empty</strong>. Let's go back to homepage and lock in!~</h2>
+                        <h2 className="leading-7 text-center">{dict.record.empty[0]}<strong>{dict.record.empty[1]}</strong>{dict.record.empty[2]}</h2>
                         <BackToHome />
                     </div>
             }

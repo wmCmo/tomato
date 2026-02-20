@@ -76,7 +76,7 @@ const SettingPage = () => {
         // Always clear local auth state; this helps recover from corrupted/stale sessions.
         const { error } = await supabase.auth.signOut({ scope: 'local' });
         if (error) {
-            toast(undefined, "Error logging out.", "errorAuth");
+            toast(undefined, dict.error.logOut, "errorAuth");
             console.error("Supabase SignOut Error:", error.code, error.message);
             return;
         }
@@ -93,8 +93,8 @@ const SettingPage = () => {
             .delete()
             .eq('user_id', user.id);
         if (error) {
-            toast(undefined, "Error logging out.", "errorAuth");
-            console.error("Supabase SignOut Error:", error.code, error.message);
+            toast(undefined, dict.error.clear, "errorFile");
+            console.error(error.code, error.message);
             return;
         }
         await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
@@ -111,7 +111,7 @@ const SettingPage = () => {
             }
         });
         if (error) {
-            toast(undefined, 'Failed to delete your account:', 'errorFile');
+            toast(undefined, dict.error.terminate, 'errorFile');
             console.error("Failed to delete user:", error);
             return;
         }
@@ -184,7 +184,7 @@ const SettingPage = () => {
                 avatar_url: previewUrl
             }));
         } catch (error) {
-            toast(undefined, 'There was a problem processing your file', 'errorFile');
+            toast(undefined, dict.error.processFile, 'errorFile');
             console.error(error);
         }
     };
@@ -209,7 +209,7 @@ const SettingPage = () => {
 
             console.log("Upload complete!", previewUrl);
         } catch (error) {
-            toast(undefined, 'Failed to upload image.', 'errorFile');
+            toast(undefined, dict.error.upload, 'errorFile');
             console.error(error);
             return;
         }
@@ -231,7 +231,7 @@ const SettingPage = () => {
                 .getPublicUrl(fileName);
             updateItem = { ...updateItem, avatar_url: publicUrl };
             if (error) {
-                toast(undefined, "There was a problem getting your avatar URL.", "errorDb");
+                toast(undefined, dict.error.getUrl, "errorDb");
                 console.error(error.code, error.message);
                 return;
             }
@@ -250,7 +250,7 @@ const SettingPage = () => {
             .update(updateItem)
             .eq('id', user.id);
         if (error) {
-            toast(undefined, "There was a problem updating your profile.", "errorDb");
+            toast(undefined, dict.error.updateProfile, "errorDb");
             console.error(error.code, error.message);
             return;
         }

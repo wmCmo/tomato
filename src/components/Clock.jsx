@@ -147,7 +147,7 @@ export default function Clock({ dict, isPixel }) {
                     status >= 500;
 
                 if (!isRetriable || attempt === maxAttempts - 1) {
-                    toast(undefined, 'There was a problem updating your database.', 'errorDb');
+                    toast(undefined, dict.error.updateDb, 'errorDb');
                     return;
                 }
 
