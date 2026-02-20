@@ -102,7 +102,7 @@ export default function App() {
       </div>
       <Outlet context={{ lang, dict, timerOn, isPixel }} />
       <div className={`flex flex-col gap-4 fixed bottom-16 right-4 select-none ${showInfo ? 'opacity-100 translate-y-0' : 'pointer-events-none opacity-0 translate-y-10'} icon`}>
-        <Link onClick={() => setShowInfo(false)} to={'/terms'} className="inline-block px-4 py-2 text-accent text-sm ml-auto card">🔏 Privacy and Policy</Link>
+        <Link onClick={() => setShowInfo(false)} to={'/terms'} className="inline-block px-4 py-2 text-accent text-sm ml-auto card">🔏 {dict.policy.header}</Link>
         <a className={``} href="https://www.producthunt.com/products/zach-s-tomato?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-zach-s-tomato" target="_blank" rel="noopener noreferrer"><img alt="Zach's Tomato - Minimal + Responsive Pomodoro Timer | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1071002&amp;theme=neutral&amp;t=1770089203158" /></a>
       </div>
       <InfoIcon weight="fill" className={`bg-background cursor-pointer rounded-full fixed text-muted hover:text-accent bottom-4 right-4 icon ${showInfo ? 'rotate-180' : 'rotate-0'}`} size={30} onClick={() => setShowInfo(prev => !prev)} />

@@ -12,6 +12,9 @@ const ja = {
         save: "保存",
         warnDelete: ["この操作は元に ", "戻せません", "。"],
     },
+    policy: {
+        header: "プライバシーポリシー",
+    },
     home: {
         nav: {
             header: "ザカのトマト",

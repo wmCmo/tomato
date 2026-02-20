@@ -12,6 +12,9 @@ const en = {
         save: "Save",
         warnDelete: ["This action ", "cannot", " be undone."],
     },
+    policy: {
+        header: "Privacy Policy",
+    },
     home: {
         nav: {
             header: "Zach's Tomato",

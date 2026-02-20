@@ -233,15 +233,15 @@ const TermsOfUse = () => {
 
 
     return (
-        <div className="text-accent mt-20 leading-6 max-w-xl">
-            <div className="sticky top-20 bg-background px-4 pt-8">
+        <div className="text-accent mt-20 leading-6 max-w-xl px-4">
+            <div className="sticky top-20 bg-background pt-8">
                 <button onClick={() => handleScroll("policy")}>
-                    <h1 className="text-3xl font-bold flex gap-2"><img src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Locked%20with%20pen/Color/locked_with_pen_color.svg" alt="Fluent Scroll emoji" /> {locale.policy.title}</h1>
+                    <h1 className="text-3xl font-bold flex gap-2 text-left"><img src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Locked%20with%20pen/Color/locked_with_pen_color.svg" alt="Fluent Scroll emoji" /> {locale.policy.title}</h1>
                 </button>
                 <p className="text-muted mt-4 font-mono"><b>{locale.policy.lastUpdated}:</b> {locale.policy.updatedDate}</p>
                 <hr className="my-8 border-border" />
             </div>
-            <ol id="policy" className="scroll-mt-64 list-decimal list-inside marker:font-bold space-y-8 mt-8 px-4 mb-20">
+            <ol id="policy" className="scroll-mt-64 list-decimal list-inside marker:font-bold space-y-8 mt-8 mb-20">
                 <li className="space-y-2">
                     <strong>{locale.policy.introduction.title}</strong>
                     <p className="ml-4"><b>{locale.policy.appName}</b>{locale.policy.introduction.desc}</p>
@@ -318,7 +318,7 @@ const TermsOfUse = () => {
                     </ul>
                 </li>
             </ol>
-            <div className="sticky top-20 bg-background px-4 pt-8">
+            <div className="sticky top-20 bg-background px-4 pt-8 min-h-48">
                 <button onClick={() => handleScroll('terms')}>
                     <h1 className="text-3xl font-bold flex gap-2"><img src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Scroll/Color/scroll_color.svg" alt="Fluent Scroll emoji" /> {locale.terms.title}</h1>
                 </button>
