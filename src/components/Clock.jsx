@@ -1,10 +1,12 @@
-import { setInterval, clearInterval } from 'worker-timers';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import TimeButton from "./TimeButton";
-import ControlButton from "./ControlButton";
-import colorVariants from "../utils/colorVariants";
+import { clearInterval, setInterval } from 'worker-timers';
 import useAuth from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 import { supabase } from '../lib/supabase';
+import colorVariants from "../utils/colorVariants";
+import ControlButton from "./ControlButton";
+import TimeButton from "./TimeButton";
 const ticksUrl = new URL(`${import.meta.env.BASE_URL}ticks.ogg`, window.location.origin).toString();
 const audio = new Audio(ticksUrl);
 audio.preload = 'auto';
@@ -17,10 +19,12 @@ export default function Clock({ dict, isPixel }) {
     const [counting, setCounting] = useState(false);
     const [sec, setSec] = useState(1500);
     const [session, setSession] = useState(JSON.parse(localStorage.getItem('session')) || 1);
+    const { toast } = useToast();
 
     const work = useRef(null);
 
     const { user } = useAuth();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         if (window !== undefined) {
@@ -114,15 +118,51 @@ export default function Clock({ dict, isPixel }) {
         const currentId = localStorage.getItem(activeSessionIdKey);
         if (!currentId) return;
 
+        let cancelled = false;
+
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
         const updateSession = async () => {
-            await supabase
-                .from('study_sessions')
-                .update({ sessions: session - 1 })
-                .eq('id', currentId);
+            const targetSessions = session - 1;
+            const maxAttempts = 3;
+
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+
+                const { error, status } = await supabase
+                    .from('study_sessions')
+                    .update({ sessions: targetSessions })
+                    .eq('id', currentId);
+
+                if (!error) {
+                    if (!cancelled) {
+                        await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
+                    }
+                    return;
+                }
+
+                const isRetriable =
+                    status == null ||
+                    status === 0 ||
+                    status === 429 ||
+                    status >= 500;
+
+                if (!isRetriable || attempt === maxAttempts - 1) {
+                    toast(undefined, 'There was a problem updating your database.', 'errorDb');
+                    return;
+                }
+
+                await sleep(500 * (2 ** attempt));
+                if (cancelled) return;
+            }
         };
 
         updateSession();
-    }, [session, user]);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [queryClient, session, toast, user]);
 
     const resetClock = async () => {
         setCounting(false);

@@ -1,10 +1,5 @@
-import { createContext, useEffect, useState } from "react";
-
-const initialState = {
-    theme: "system",
-    setThem: () => null,
-};
-export const ThemeProviderContext = createContext(initialState);
+import { useEffect, useState } from "react";
+import { ThemeProviderContext } from "./theme-context";
 
 export function ThemeProvider({
     children,
@@ -20,7 +15,7 @@ export function ThemeProvider({
         root.classList.remove("light", "dark");
 
         if (theme === "system") {
-            const systemTheme = window.matchMedia("(prefers-color-scheme: dark").matches ? "dark" : "light";
+            const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
             root.classList.add(systemTheme);
             return;
         }
