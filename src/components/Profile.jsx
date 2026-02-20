@@ -74,7 +74,7 @@ const Profile = () => {
     if (isLoading) return <ProfileSkeleton />;
     if (error) return <Error item={'profile'} />;
 
-    const todayIndex = weekDays.indexOf(new Date().toLocaleString('en-US', { weekday: "short" })) + 1;
+    const todayIndex = weekDays.indexOf(new Date().toLocaleString(dict.langTag, { weekday: "short" })) + 1;
     const sortedWeekDay = weekDays.slice(todayIndex).concat(weekDays.slice(0, todayIndex));
     const weekMaxTomato = Math.max(1, ...oneWeekSession);
 

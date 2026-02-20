@@ -2,6 +2,7 @@ import formatDateJa from "../utils/formatDateJa";
 import formatDateJaNoYear from "../utils/formatDateJaNoYear";
 
 const ja = {
+    langTag: "ja-JP",
     components: {
         return2Home: "ホームページ",
     },

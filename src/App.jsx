@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { DesktopIcon, HouseIcon, IconContext, InfoIcon, MoonIcon, SquaresFourIcon, SunIcon, TimerIcon, TranslateIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router";
-import { IconContext, SunIcon, MoonIcon, DesktopIcon, TranslateIcon, HouseIcon, TimerIcon, UserCircleIcon, SquaresFourIcon, InfoIcon } from "@phosphor-icons/react";
 import en from "./dictionary/en";
 import ja from "./dictionary/ja";
 import { useTheme } from "./hooks/use-theme";
@@ -19,6 +19,14 @@ export default function App() {
   const [showInfo, setShowInfo] = useState(false);
   const { user } = useAuth();
 
+  const changeLocale = useCallback(() => {
+    setLang(prev => {
+      const newLocale = prev === 'en' ? 'ja' : 'en';
+      localStorage.setItem('locale', newLocale);
+      return newLocale;
+    });
+  }, []);
+
   useEffect(() => {
     const handleKeys = e => {
       if (!e.altKey) return;
@@ -28,11 +36,7 @@ export default function App() {
           toggleTheme();
           break;
         case 'KeyL':
-          setLang(prev => {
-            const newLocale = prev === 'en' ? 'ja' : 'en';
-            localStorage.setItem('locale', newLocale);
-            return newLocale;
-          });
+          changeLocale();
           break;
         case 'KeyP':
           setIsPixel(prev => !prev);
@@ -43,7 +47,7 @@ export default function App() {
     return () => {
       window.removeEventListener('keydown', handleKeys);
     };
-  }, []);
+  }, [changeLocale, toggleTheme]);
 
   const dict = dictionary[lang];
 
@@ -65,7 +69,7 @@ export default function App() {
       <div className="fixed top-0 pt-6 pb-4 w-full px-4 sm:px-8 items-center grid grid-cols-[1fr_auto_1fr] bg-background">
         <div className={`flex gap-4 justify-self-start items-center cursor-pointer text-accent`}>
           <div className="p-2 rounded-md bg-foreground">
-            <TranslateIcon className="" onClick={() => setLang(prev => prev === 'en' ? 'ja' : 'en')} weight={'bold'} />
+            <TranslateIcon className="" onClick={changeLocale} weight={'bold'} />
           </div>
           <div className="p-2 rounded-md bg-foreground">
             <SquaresFourIcon className={`icon ${isPixel && 'text-accent'}`} onClick={() => setIsPixel(prev => !prev)} weight="fill" />
@@ -104,4 +108,5 @@ export default function App() {
       <InfoIcon weight="fill" className={`bg-background cursor-pointer rounded-full fixed text-muted hover:text-accent bottom-4 right-4 icon ${showInfo ? 'rotate-180' : 'rotate-0'}`} size={30} onClick={() => setShowInfo(prev => !prev)} />
     </div>
   );
+
 }

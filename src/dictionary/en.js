@@ -2,6 +2,7 @@ import formatDateEn from "../utils/formatDateEn";
 import formatDateEnNoYear from "../utils/formatDateEnNoYear";
 
 const en = {
+    langTag: "en-US",
     components: {
         return2Home: "Home",
     },
