@@ -12,15 +12,15 @@ if (!supabaseUrl || !supabaseKey) {
             : null,
     ].filter(Boolean);
 
-    throw new Error(
+    console.error(
         `Supabase env missing: ${missing.join(", ")}. ` +
-        `For Vite, these must be provided at build-time (and prefixed with VITE_).`,
+            `For Vite, these must be provided at build-time (and prefixed with VITE_).`,
     );
 }
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-export const signInWithGoogle = async () => {
+export const signInWithGoogle = async (toast) => {
     const redirectTo = new URL(import.meta.env.BASE_URL, window.location.origin)
         .toString();
 
@@ -34,5 +34,13 @@ export const signInWithGoogle = async () => {
             },
         },
     });
-    if (error) console.error("Error loggin in: ", error.message);
+    if (error) {
+        toast(undefined, "Failed to sign in with Google", "errorAuth");
+        console.error(
+            "Failed to sign in with Google:",
+            error.code,
+            error.message,
+        );
+        return;
+    }
 };

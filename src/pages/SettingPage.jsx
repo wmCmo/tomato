@@ -78,11 +78,11 @@ const SettingPage = () => {
         if (error) {
             toast(undefined, "Error logging out.", "errorAuth");
             console.error("Supabase SignOut Error:", error.code, error.message);
-            return { success: false, error: error.message };
+            return;
         }
         queryClient.clear();
         clearLocalStorage();
-        return { success: true, error: null };
+        return;
     };
 
     const handleClearRecords = async () => {
@@ -95,7 +95,7 @@ const SettingPage = () => {
         if (error) {
             toast(undefined, "Error logging out.", "errorAuth");
             console.error("Supabase SignOut Error:", error.code, error.message);
-            return { success: false, error: error.message };
+            return;
         }
         await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
         clearLocalStorage();
@@ -111,6 +111,7 @@ const SettingPage = () => {
             }
         });
         if (error) {
+            toast(undefined, 'Failed to delete your account:', 'errorFile');
             console.error("Failed to delete user:", error);
             return;
         }
@@ -184,7 +185,7 @@ const SettingPage = () => {
             }));
         } catch (error) {
             toast(undefined, 'There was a problem processing your file', 'errorFile');
-            throw error;
+            console.error(error);
         }
     };
 
@@ -209,7 +210,8 @@ const SettingPage = () => {
             console.log("Upload complete!", previewUrl);
         } catch (error) {
             toast(undefined, 'Failed to upload image.', 'errorFile');
-            throw error;
+            console.error(error);
+            return;
         }
     };
 
@@ -230,7 +232,8 @@ const SettingPage = () => {
             updateItem = { ...updateItem, avatar_url: publicUrl };
             if (error) {
                 toast(undefined, "There was a problem getting your avatar URL.", "errorDb");
-                throw error;
+                console.error(error.code, error.message);
+                return;
             }
             setFormData(prev => ({
                 ...prev,
@@ -248,7 +251,8 @@ const SettingPage = () => {
             .eq('id', user.id);
         if (error) {
             toast(undefined, "There was a problem updating your profile.", "errorDb");
-            throw error;
+            console.error(error.code, error.message);
+            return;
         }
 
         queryClient.setQueryData(['profile', user.id], (old) => {

@@ -87,14 +87,15 @@ const Profile = () => {
 
         if (error) {
             toast(undefined, 'There was a problem updating your profile.', 'errorDb');
-            throw error;
+            console.error(error);
+            return;
         }
 
         queryClient.setQueryData(['profile', userId], (old) => {
             if (!old) return old;
             return { ...old, bio: nextBio };
         });
-
+        return;
     };
 
     const isOwner = user.id === userId;
