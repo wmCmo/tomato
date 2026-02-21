@@ -191,7 +191,7 @@ const SettingPage = () => {
 
     const handleUploadFile = async () => {
         const file = fileInputRef.current.files?.[0];
-        if (!file) return;
+        if (!file) return { success: false, error: new Error("No file found") };
 
         try {
             const processedBlob = await processAvatar(file);
@@ -211,8 +211,9 @@ const SettingPage = () => {
         } catch (error) {
             toast(undefined, dict.error.upload, 'errorFile');
             console.error(error);
-            return;
+            return { success: false, error: error };
         }
+        return { success: true, error: null };
     };
 
     const handleUpdateFormData = e => {
@@ -225,7 +226,10 @@ const SettingPage = () => {
     const sendForm = async () => {
         let updateItem = { ...formData };
         if (formData.avatar_url !== profile.avatar_url) {
-            await handleUploadFile();
+            const { success } = await handleUploadFile();
+            if (!success) {
+                return;
+            }
             const { data: { publicUrl }, error } = supabase.storage
                 .from('avatars')
                 .getPublicUrl(fileName);

@@ -86,7 +86,7 @@ const Profile = () => {
             .eq('id', userId);
 
         if (error) {
-            toast(undefined, 'There was a problem updating your profile.', 'errorDb');
+            toast(undefined, dict.error.updateProfile, 'errorDb');
             console.error(error);
             return;
         }

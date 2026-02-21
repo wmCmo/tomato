@@ -16,6 +16,9 @@ export default async function fetchProfile(userId) {
             ascending: false,
         })
         .single();
-    if (error) console.error(error);
+    if (error) {
+        console.error(error);
+        throw error;
+    }
     return data;
 }

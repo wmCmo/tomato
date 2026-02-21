@@ -12,7 +12,7 @@ if (!supabaseUrl || !supabaseKey) {
             : null,
     ].filter(Boolean);
 
-    console.error(
+    throw new Error(
         `Supabase env missing: ${missing.join(", ")}. ` +
             `For Vite, these must be provided at build-time (and prefixed with VITE_).`,
     );

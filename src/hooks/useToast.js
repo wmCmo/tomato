@@ -4,8 +4,8 @@ import { ToastProviderContext } from "../providers/toast-context";
 export const useToast = () => {
     const context = useContext(ToastProviderContext);
 
-    if (!context) {
-        throw new Error("use Toast must be used within a ToastProvider.");
+    if (context === undefined) {
+        throw new Error("useToast must be used within a ToastProvider.");
     }
 
     return context;
