@@ -314,7 +314,7 @@ const TermsOfUse = () => {
                     <p>{locale.policy.contact.desc}:</p>
                     <ul className="space-y-2">
                         <li><b>Email:</b> <code className="inline-code"><button className="active:opacity-50" onClick={() => navigator.clipboard.writeText("titan.zp4@gmail.com")}>titan.zp4@gmail.com</button></code></li>
-                        <li><b>GitHub:</b> <a href="https://github.com/wmCmo/tomato" target="_blank" className="hover:underline text-rose-400">{locale.policy.contact.issue}</a></li>
+                        <li><b>GitHub:</b> <a href="https://github.com/wmCmo/tomato" target="_blank" rel="noopener noreferrer" className="hover:underline text-rose-400">{locale.policy.contact.issue}</a></li>
                     </ul>
                 </li>
             </ol>

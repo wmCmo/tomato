@@ -1,10 +1,10 @@
 import { CloudXIcon, FileXIcon, IconContext, ShieldWarningIcon, WarningDiamondIcon, XCircleIcon } from '@phosphor-icons/react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ToastProviderContext } from './toast-context';
 
 const Toast = ({ title, desc, variant, onDismiss }) => (
-    < div className='flex card items-center px-4 py-2 gap-4 backdrop-blur-3xl font-display text-accent max-w-xs'>
+    <div className='flex card items-center px-4 py-2 gap-4 backdrop-blur-3xl font-display text-accent max-w-xs'>
         <IconContext.Provider value={{
             weight: "fill",
             size: "1.5rem"
@@ -30,17 +30,33 @@ const Toast = ({ title, desc, variant, onDismiss }) => (
 const ToastProvider = ({ children, ...props }) => {
     const [toasts, setToasts] = useState([]);
     const nextToastIdRef = useRef(0);
+    const toastTimeoutsRef = useRef(new Map());
+
+    useEffect(() => {
+        return () => {
+            for (const timeoutId of toastTimeoutsRef.current.values()) {
+                clearTimeout(timeoutId);
+            }
+            toastTimeoutsRef.current.clear();
+        };
+    }, []);
 
     const handleShiftToasts = useCallback((id) => {
+        const timeoutId = toastTimeoutsRef.current.get(id);
+        if (timeoutId !== undefined) {
+            clearTimeout(timeoutId);
+            toastTimeoutsRef.current.delete(id);
+        }
         setToasts(prev => prev.filter(item => item.id !== id));
     }, []);
 
     const toast = useCallback((title = 'New Toasts', desc, variant, duration = 3) => {
         const id = nextToastIdRef.current++;
         setToasts(prev => [...prev, { title: variant.startsWith('error') ? 'Error' : title, desc, variant, id }]);
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
             handleShiftToasts(id);
         }, duration * 1000);
+        toastTimeoutsRef.current.set(id, timeoutId);
     }, [handleShiftToasts]);
 
     const value = useMemo(() => ({ toast }), [toast]);

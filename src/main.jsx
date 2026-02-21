@@ -5,9 +5,9 @@ import { RouterProvider } from 'react-router/dom';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App.jsx';
 import './index.css';
-import ClockPage from './pages/ClockPage.jsx';
 import AppProviders from './providers/app-providers.jsx';
 
+const ClockPage = lazy(() => import('./pages/ClockPage.jsx'));
 const LoginPage = lazy(() => import('./pages/LoginPage.jsx'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'));
 const SettingPage = lazy(() => import('./pages/SettingPage.jsx'));

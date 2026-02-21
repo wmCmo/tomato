@@ -1,3 +1,3 @@
 import { createContext } from "react";
 
-export const ToastProviderContext = createContext({ toast: () => null });
+export const ToastProviderContext = createContext(undefined);

@@ -161,7 +161,7 @@ export default function Clock({ dict, isPixel }) {
         return () => {
             cancelled = true;
         };
-    }, [queryClient, session, toast, user]);
+    }, [dict, queryClient, session, toast, user]);
 
     const resetClock = async () => {
         setCounting(false);
@@ -196,7 +196,7 @@ export default function Clock({ dict, isPixel }) {
     return (
         <div className={`select-none flex flex-col flex-grow max-w-lg`}>
             <section className="bg-red-300 rounded-xl p-6">
-                <a href="https://exzachly.notion.site" target="_blank" rel="noreferrer">
+                <a href="https://exzachly.notion.site" target="_blank" rel="noopener noreferrer">
                     <div className="flex flex-col items-center">
                         <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{dict.home.nav.header}<img src={isPixel ? `${import.meta.env.BASE_URL}tomato.webp` : fluentTomato} className="w-8 h-auto" /></h1>
                         <p className="text-center text-red-400 bg-red-200 px-4 py-1 mt-2 rounded-lg font-medium">{dict.home.nav.desc}</p>
