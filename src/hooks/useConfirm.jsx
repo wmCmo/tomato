@@ -31,7 +31,7 @@ function useConfirm() {
                 <p className="text-muted-foreground text-sm">{dict.ui.warnDelete[0]}<i>{dict.ui.warnDelete[1]}</i>{dict.ui.warnDelete[2]}</p>
                 <div className="space-x-6 font-semibold">
                     <button className={`min-w-28 bg-muted px-4 py-2 rounded-lg text-accent ${buttonAnimation}`} onClick={() => onClose(false)}>{dict.ui.cancel}</button>
-                    <button className={`min-w-28 bg-rose-500 px-8 py-2 rounded-lg text-white ${buttonAnimation}`} onMouseUp={() => onClose(true)}>{dict.ui.delete}</button>
+                    <button className={`min-w-28 bg-rose-500 px-8 py-2 rounded-lg text-white ${buttonAnimation}`} onClick={() => onClose(true)}>{dict.ui.delete}</button>
                 </div>
             </div>
         </div>

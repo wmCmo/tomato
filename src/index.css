@@ -14,6 +14,30 @@
     .inline-code {
         @apply text-[0.95em] rounded px-1.5 py-0.5 bg-foreground text-accent
     }
+
+    .scrollbar-muted {
+        scrollbar-width: thin;
+        scrollbar-color: var(--muted) var(--foreground);
+    }
+
+    .scrollbar-muted::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .scrollbar-muted::-webkit-scrollbar-track {
+        background: var(--foreground);
+        border-radius: 9999px;
+    }
+
+    .scrollbar-muted::-webkit-scrollbar-thumb {
+        background: var(--muted);
+        border-radius: 9999px;
+        border: 2px solid var(--foreground);
+    }
+
+    .scrollbar-muted::-webkit-scrollbar-thumb:hover {
+        background: var(--muted-foreground);
+    }
 }
 
 @tailwind utilities;

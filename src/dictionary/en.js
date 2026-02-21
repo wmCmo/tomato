@@ -28,6 +28,22 @@ const en = {
         },
         session: "Session",
     },
+    stopwatch: {
+        select: {
+            stopwatch: "Stopwatch",
+            timer: "Timer",
+        },
+        start: "Start",
+        pause: "Pause",
+        resume: "Resume",
+        reset: "Reset",
+        lap: "Lap",
+        table: {
+            lapNo: "Lap",
+            lapTime: "Lap Time",
+            split: "Split",
+        },
+    },
     profile: {
         welcome: "Welcome back,",
         status: "I want to tell everyone that...",
