@@ -24,12 +24,13 @@
 - [ ] Signin to save information and sync to your Notion Page.
 - [ ] Add study session to Google Calendar??
 - [ ] Add cute 効果音 for each button
-- [ ] Privacy & Policy + Terms of Use Page
+- [x] Privacy & Policy + Terms of Use Page
 - [ ] Stopwatch feature
-- [ ] Public profile page
+- [x] Public profile page (`v2.0.0`)
   - [ ] Emoji picker for status
-  - [ ] Setting page
-- [ ] Private record page
+  - [x] Setting page
+- [x] Private record page
+- [ ] Stopwatch component
 
 ---
 
