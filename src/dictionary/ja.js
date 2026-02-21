@@ -38,6 +38,11 @@ const ja = {
         resume: "再開",
         reset: "リセット",
         lap: "ラップ",
+        table: {
+            lapNo: "ラップ",
+            lapTime: "ラップタイム",
+            split: "スプリット",
+        },
     },
     profile: {
         welcome: "お帰りなさい！",

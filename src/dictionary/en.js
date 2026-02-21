@@ -38,6 +38,11 @@ const en = {
         resume: "Resume",
         reset: "Reset",
         lap: "Lap",
+        table: {
+            lapNo: "Lap",
+            lapTime: "Lap Time",
+            split: "Split",
+        },
     },
     profile: {
         welcome: "Welcome back,",
