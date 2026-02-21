@@ -1,13 +1,14 @@
-import { Navigate, useOutletContext } from "react-router";
-import useAuth from "../hooks/useAuth";
-import ProfileSkeleton from "../components/ui/ProfileSkeleton";
-import { useEffect, useRef, useState } from "react";
-import useProfile from "../hooks/useProfile";
 import { ArrowCircleRightIcon, PlusIcon } from "@phosphor-icons/react";
-import { supabase } from "../lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import { Navigate, useOutletContext } from "react-router";
 import Error from "../components/Error";
+import ProfileSkeleton from "../components/ui/ProfileSkeleton";
+import useAuth from "../hooks/useAuth";
 import useConfirm from "../hooks/useConfirm";
+import useProfile from "../hooks/useProfile";
+import { useToast } from "../hooks/useToast";
+import { supabase } from "../lib/supabase";
 
 
 const SettingPage = () => {
@@ -44,6 +45,7 @@ const SettingPage = () => {
 
     const { dict } = useOutletContext();
     const { confirm, modal } = useConfirm();
+    const { toast } = useToast();
 
     if (authLoading) return <ProfileSkeleton />;
 
@@ -72,18 +74,29 @@ const SettingPage = () => {
 
     const handleLogout = async () => {
         // Always clear local auth state; this helps recover from corrupted/stale sessions.
-        await supabase.auth.signOut({ scope: 'local' });
+        const { error } = await supabase.auth.signOut({ scope: 'local' });
+        if (error) {
+            toast(undefined, dict.error.logOut, "errorAuth");
+            console.error("Supabase SignOut Error:", error.code, error.message);
+            return;
+        }
         queryClient.clear();
         clearLocalStorage();
+        return;
     };
 
     const handleClearRecords = async () => {
         const ok = await confirm(dict.setting.clear.warning);
         if (!ok) return;
-        await supabase
+        const { error } = await supabase
             .from('study_sessions')
             .delete()
             .eq('user_id', user.id);
+        if (error) {
+            toast(undefined, dict.error.clear, "errorFile");
+            console.error(error.code, error.message);
+            return;
+        }
         await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
         clearLocalStorage();
     };
@@ -98,6 +111,7 @@ const SettingPage = () => {
             }
         });
         if (error) {
+            toast(undefined, dict.error.terminate, 'errorFile');
             console.error("Failed to delete user:", error);
             return;
         }
@@ -170,19 +184,20 @@ const SettingPage = () => {
                 avatar_url: previewUrl
             }));
         } catch (error) {
-
+            toast(undefined, dict.error.processFile, 'errorFile');
+            console.error(error);
         }
     };
 
     const handleUploadFile = async () => {
         const file = fileInputRef.current.files?.[0];
-        if (!file) return;
+        if (!file) return { success: false, error: new Error("No file found") };
 
         try {
             const processedBlob = await processAvatar(file);
 
             const previewUrl = URL.createObjectURL(processedBlob);
-            setFormData({ ...formData, avatar_url: previewUrl });
+            setFormData(prev => ({ ...prev, avatar_url: previewUrl }));
             const { error: uploadError } = await supabase.storage
                 .from('avatars')
                 .upload(fileName, processedBlob, {
@@ -194,9 +209,11 @@ const SettingPage = () => {
 
             console.log("Upload complete!", previewUrl);
         } catch (error) {
-            console.error("Error uploading avatar:", error);
-            alert("Failed to upload image");
+            toast(undefined, dict.error.upload, 'errorFile');
+            console.error(error);
+            return { success: false, error: error };
         }
+        return { success: true, error: null };
     };
 
     const handleUpdateFormData = e => {
@@ -209,15 +226,17 @@ const SettingPage = () => {
     const sendForm = async () => {
         let updateItem = { ...formData };
         if (formData.avatar_url !== profile.avatar_url) {
-            try {
-                await handleUploadFile();
-                const { data: { publicUrl } } = supabase.storage
-                    .from('avatars')
-                    .getPublicUrl(fileName);
-                updateItem = { ...updateItem, avatar_url: publicUrl };
-
-            } catch (error) {
-                console.error("There was a problem getting your profile URL:", error);
+            const { success } = await handleUploadFile();
+            if (!success) {
+                return;
+            }
+            const { data: { publicUrl }, error } = supabase.storage
+                .from('avatars')
+                .getPublicUrl(fileName);
+            updateItem = { ...updateItem, avatar_url: publicUrl };
+            if (error) {
+                toast(undefined, dict.error.getUrl, "errorDb");
+                console.error(error.code, error.message);
                 return;
             }
             setFormData(prev => ({
@@ -230,14 +249,13 @@ const SettingPage = () => {
             updateItem = { ...updateItem, nickname: formData.nickname };
         }
 
-        try {
-            const { updateProfileURLError } = await supabase
-                .from('profiles')
-                .update(updateItem)
-                .eq('id', user.id);
-            if (updateProfileURLError) throw updateProfileURLError;
-        } catch (error) {
-            console.error("There was a problem updating your profile data", error);
+        const { error } = await supabase
+            .from('profiles')
+            .update(updateItem)
+            .eq('id', user.id);
+        if (error) {
+            toast(undefined, dict.error.updateProfile, "errorDb");
+            console.error(error.code, error.message);
             return;
         }
 

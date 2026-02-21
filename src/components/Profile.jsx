@@ -1,13 +1,13 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import useAuth from "../hooks/useAuth";
-import { useOutletContext, useParams } from "react-router";
-import { supabase } from "../lib/supabase";
-import ProfileSkeleton from "./ui/ProfileSkeleton";
 import { GearIcon, IconContext, LogIcon, ShareNetworkIcon } from "@phosphor-icons/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router";
+import { Link, useOutletContext, useParams } from "react-router";
+import useAuth from "../hooks/useAuth";
 import useProfile from "../hooks/useProfile";
+import { useToast } from "../hooks/useToast";
+import { supabase } from "../lib/supabase";
 import Error from "./Error";
+import ProfileSkeleton from "./ui/ProfileSkeleton";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -15,6 +15,7 @@ const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/r
 const Profile = () => {
     const { user } = useAuth();
     const { userId } = useParams();
+    const { toast } = useToast();
 
     const queryClient = useQueryClient();
 
@@ -73,7 +74,7 @@ const Profile = () => {
     if (isLoading) return <ProfileSkeleton />;
     if (error) return <Error item={'profile'} />;
 
-    const todayIndex = weekDays.indexOf(new Date().toLocaleString('en-US', { weekday: "short" })) + 1;
+    const todayIndex = weekDays.indexOf(new Date().toLocaleString(dict.langTag, { weekday: "short" })) + 1;
     const sortedWeekDay = weekDays.slice(todayIndex).concat(weekDays.slice(0, todayIndex));
     const weekMaxTomato = Math.max(1, ...oneWeekSession);
 
@@ -85,7 +86,8 @@ const Profile = () => {
             .eq('id', userId);
 
         if (error) {
-            console.error('Failed to save bio', error);
+            toast(undefined, dict.error.updateProfile, 'errorDb');
+            console.error(error);
             return;
         }
 
@@ -93,7 +95,7 @@ const Profile = () => {
             if (!old) return old;
             return { ...old, bio: nextBio };
         });
-
+        return;
     };
 
     const isOwner = user.id === userId;

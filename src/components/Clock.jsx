@@ -1,10 +1,12 @@
-import { setInterval, clearInterval } from 'worker-timers';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import TimeButton from "./TimeButton";
-import ControlButton from "./ControlButton";
-import colorVariants from "../utils/colorVariants";
+import { clearInterval, setInterval } from 'worker-timers';
 import useAuth from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 import { supabase } from '../lib/supabase';
+import colorVariants from "../utils/colorVariants";
+import ControlButton from "./ControlButton";
+import TimeButton from "./TimeButton";
 const ticksUrl = new URL(`${import.meta.env.BASE_URL}ticks.ogg`, window.location.origin).toString();
 const audio = new Audio(ticksUrl);
 audio.preload = 'auto';
@@ -17,10 +19,12 @@ export default function Clock({ dict, isPixel }) {
     const [counting, setCounting] = useState(false);
     const [sec, setSec] = useState(1500);
     const [session, setSession] = useState(JSON.parse(localStorage.getItem('session')) || 1);
+    const { toast } = useToast();
 
     const work = useRef(null);
 
     const { user } = useAuth();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         if (window !== undefined) {
@@ -54,7 +58,7 @@ export default function Clock({ dict, isPixel }) {
             }
         };
         syncSession();
-    }, [user]);
+    }, [user, session]);
 
     useEffect(() => {
         if (counting) {
@@ -114,15 +118,50 @@ export default function Clock({ dict, isPixel }) {
         const currentId = localStorage.getItem(activeSessionIdKey);
         if (!currentId) return;
 
+        let cancelled = false;
+
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
         const updateSession = async () => {
-            await supabase
-                .from('study_sessions')
-                .update({ sessions: session - 1 })
-                .eq('id', currentId);
+            const targetSessions = session - 1;
+            const maxAttempts = 3;
+
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+
+                const { error, status } = await supabase
+                    .from('study_sessions')
+                    .update({ sessions: targetSessions })
+                    .eq('id', currentId);
+
+                if (!error) {
+                    if (!cancelled) {
+                        await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
+                    }
+                    return;
+                }
+                const isRetriable =
+                    status == null ||
+                    status === 0 ||
+                    status === 429 ||
+                    status >= 500;
+
+                if (!isRetriable || attempt === maxAttempts - 1) {
+                    toast(undefined, dict.error.updateDb, 'errorDb');
+                    return;
+                }
+
+                await sleep(500 * (2 ** attempt));
+                if (cancelled) return;
+            }
         };
 
         updateSession();
-    }, [session]);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [dict, queryClient, session, toast, user]);
 
     const resetClock = async () => {
         setCounting(false);
@@ -157,7 +196,7 @@ export default function Clock({ dict, isPixel }) {
     return (
         <div className={`select-none flex flex-col flex-grow max-w-lg`}>
             <section className="bg-red-300 rounded-xl p-6">
-                <a href="https://exzachly.notion.site" target="_blank" rel="noreferrer">
+                <a href="https://exzachly.notion.site" target="_blank" rel="noopener noreferrer">
                     <div className="flex flex-col items-center">
                         <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{dict.home.nav.header}<img src={isPixel ? `${import.meta.env.BASE_URL}tomato.webp` : fluentTomato} className="w-8 h-auto" /></h1>
                         <p className="text-center text-red-400 bg-red-200 px-4 py-1 mt-2 rounded-lg font-medium">{dict.home.nav.desc}</p>

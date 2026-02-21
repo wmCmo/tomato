@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Navigate, useLocation, useNavigate, useOutletContext } from "react-router";
+import { useLocation, useNavigate, useOutletContext } from "react-router";
 
 const dict = {
     ja: {
@@ -12,7 +12,7 @@ const dict = {
                 title: "規約への同意",
                 content: [
                     "",
-                    "（以下「本サービス」）にアクセスただきありがとうございます。本サービスを利用することで、この規約に同意したものとみなされます。もし同意いただけない場合は、残念ですが利用をお控えください。"
+                    "（以下「本サービス」）にアクセスいただきありがとうございます。本サービスを利用することで、この規約に同意したものとみなされます。もし同意いただけない場合は、残念ですが利用をお控えください。"
                 ]
             },
             usage: {
@@ -53,7 +53,7 @@ const dict = {
                 title: "収集する情報",
                 desc: "サービスを動かすために、以下の情報をお預かりします。",
                 google: ["Googleアカウント情報", "サインイン時に、メールアドレス、名前、プロフィール画像を受け取ります。これはアカウントを作ってプロフィールを表示するためだけに使います。"],
-                public: ["公開設定について", "あなたのプロフィールページは、固有のURL（例：", "を知っている人ならだれでも見ることができます。URLは推測しにくいものですが、リンクを知っている人は名前や加増を見れる点だけ注意してください。"],
+                public: ["公開設定について", "あなたのプロフィールページは、固有のURL（例：", "を知っている人ならだれでも見ることができます。URLは推測しにくいものですが、リンクを知っている人は名前や画像を見れる点だけ注意してください。"],
                 pomodoro: ["ポモドーロのアクティビティ：", "タイマーの記録や時間を保存します。"],
                 notion: ["Notion連携", "Notionを接続する場合、", "暗号化されたアクセストークン", "と、あなたが許可したデータベースIDだけを保存します。あなたのNotionワークスペース全体を勝手に見たりはできません。"],
                 technical: ["技術データ：", "アプリを良くするために、匿名化された分析データ（Google Analyticsなど）を使って、どの機能が人気か（ボタンクリックなど）を見ています。"]
@@ -61,7 +61,7 @@ const dict = {
             thirdParty: {
                 title: "利用している第三者サービス",
                 desc: "信頼できる以下のインフラを使わせてもらっています。",
-                supabase: "データベースのログイン昨日を安全に管理しています。",
+                supabase: "データベースのログイン機能を安全に管理しています。",
                 notion: "完了したセッションをあなたのNotionに同期します。",
                 google: "匿名の利用統計を見ています。"
             },
@@ -77,7 +77,7 @@ const dict = {
                     list1: ["UI", "ダークモードやフォントの設定。"],
                     list2: ["セッション状態", "まだデータベースに保存されていない、途中のタイマーの状態など。"]
                 },
-                block: "これらはブラウザの設定でブロックできますが、そうするととログインできなくなったり設定が消えたりするかもしれません。"
+                block: "これらはブラウザの設定でブロックできますが、そうするとログインできなくなったり設定が消えたりするかもしれません。"
             },
             dataControl: {
                 title: "データの管理と削除",
@@ -122,19 +122,19 @@ const dict = {
                 title: "Usage & Conduct",
                 desc: "This app is a productivity tool designed to help you focus.",
                 content: {
-                    list1: ["Fare use", "You agree not to misuse the Service. this includes, but is not limited to, spamming the Notion API, attempting to bypass authentication, or overburdening our servers."],
+                    list1: ["Fair use", "You agree not to misuse the Service. this includes, but is not limited to, spamming the Notion API, attempting to bypass authentication, or overburdening our servers."],
                     list2: ["Termination", "We reserve the right to suspend or terminate your access to the Service immediately, without prior notice, if you violate these Terms (e.g., abusing API limits)."]
                 }
             },
             disclaimer: {
                 title: "Disclaimer of Warranties (\"As-Is\")",
-                desc1: ["The Service is provided on as ", '"AS IS"', " and ", '"AS AVAILABLE"', " basis."],
+                desc1: ["The Service is provided on an", '"AS IS"', " and ", '"AS AVAILABLE"', " basis."],
                 desc2: ["I am a solo developer", " offering this tool to help the community. While I strive for stability:"],
                 list: ["I make no warranties regarding the reliability or accuracy of the service.", "I do not guarantee that the service will meet your requirements or be uninterrupted."]
             },
             limitation: {
                 title: "Limitation of Liability",
-                desc1: ["To the maximum extend permitted by law, ", " and its developer shall not be liable for any indirect, incidental, or consequential damages, including ", "loss of data", ", loss of profits, or service interruptions, resulting from your use of the Service."],
+                desc1: ["To the maximum extent permitted by law, ", " and its developer shall not be liable for any indirect, incidental, or consequential damages, including ", "loss of data", ", loss of profits, or service interruptions, resulting from your use of the Service."],
                 desc2: "(Translation: If you miss a deadline or lose a Notion entry because of a bug, I am not legally responsible.)"
             },
             changes: {
@@ -199,7 +199,7 @@ const dict = {
             },
             changes: {
                 title: "Changes to this Policy",
-                desc: "We may update this policy as the app evolves. Significant changes will be reflected by the “Last Updated” data at the top of this page."
+                desc: "We may update this policy as the app evolves. Significant changes will be reflected by the “Last Updated” date at the top of this page."
             },
             contact: {
                 title: "Contact",
@@ -233,15 +233,15 @@ const TermsOfUse = () => {
 
 
     return (
-        <div className="text-accent mt-20 leading-6 max-w-xl">
-            <div className="sticky top-20 bg-background px-4 pt-8">
+        <div className="text-accent mt-20 leading-6 max-w-xl px-4">
+            <div className="sticky top-20 bg-background pt-8">
                 <button onClick={() => handleScroll("policy")}>
-                    <h1 className="text-3xl font-bold flex gap-2"><img src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Locked%20with%20pen/Color/locked_with_pen_color.svg" alt="Fluent Scroll emoji" /> {locale.policy.title}</h1>
+                    <h1 className="text-3xl font-bold flex gap-2 text-left"><img src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Locked%20with%20pen/Color/locked_with_pen_color.svg" alt="Fluent Scroll emoji" /> {locale.policy.title}</h1>
                 </button>
                 <p className="text-muted mt-4 font-mono"><b>{locale.policy.lastUpdated}:</b> {locale.policy.updatedDate}</p>
                 <hr className="my-8 border-border" />
             </div>
-            <ol id="policy" className="scroll-mt-64 list-decimal list-inside marker:font-bold space-y-8 mt-8 px-4 mb-20">
+            <ol id="policy" className="scroll-mt-64 list-decimal list-inside marker:font-bold space-y-8 mt-8 mb-20">
                 <li className="space-y-2">
                     <strong>{locale.policy.introduction.title}</strong>
                     <p className="ml-4"><b>{locale.policy.appName}</b>{locale.policy.introduction.desc}</p>
@@ -314,11 +314,11 @@ const TermsOfUse = () => {
                     <p>{locale.policy.contact.desc}:</p>
                     <ul className="space-y-2">
                         <li><b>Email:</b> <code className="inline-code"><button className="active:opacity-50" onClick={() => navigator.clipboard.writeText("titan.zp4@gmail.com")}>titan.zp4@gmail.com</button></code></li>
-                        <li><b>Github:</b> <a href="https://github.com/wmCmo/tomato" target="_blank" className="hover:underline text-rose-400">{locale.policy.contact.issue}</a></li>
+                        <li><b>GitHub:</b> <a href="https://github.com/wmCmo/tomato" target="_blank" rel="noopener noreferrer" className="hover:underline text-rose-400">{locale.policy.contact.issue}</a></li>
                     </ul>
                 </li>
             </ol>
-            <div className="sticky top-20 bg-background px-4 pt-8">
+            <div className="sticky top-20 bg-background px-4 pt-8 min-h-48">
                 <button onClick={() => handleScroll('terms')}>
                     <h1 className="text-3xl font-bold flex gap-2"><img src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Scroll/Color/scroll_color.svg" alt="Fluent Scroll emoji" /> {locale.terms.title}</h1>
                 </button>

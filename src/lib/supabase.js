@@ -20,7 +20,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-export const signInWithGoogle = async () => {
+export const signInWithGoogle = async (toast, dict) => {
     const redirectTo = new URL(import.meta.env.BASE_URL, window.location.origin)
         .toString();
 
@@ -34,10 +34,13 @@ export const signInWithGoogle = async () => {
             },
         },
     });
-    if (error) console.error("Error loggin in: ", error.message);
-};
-
-export const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error("Error logging out:", error.message);
+    if (error) {
+        toast(undefined, dict, "errorAuth");
+        console.error(
+            "Failed to sign in with Google:",
+            error.code,
+            error.message,
+        );
+        return;
+    }
 };

@@ -11,11 +11,11 @@ export default defineConfig(({ mode }) => {
   const enablePwaDev = env.VITE_PWA_DEV === 'true';
 
   return {
-  server: {
-    allowedHosts: [
-      '6526bcde958c.ngrok-free.app'
-    ]
-  },
+  // server: {
+  //   allowedHosts: [
+  //     '6526bcde958c.ngrok-free.app'
+  //   ]
+  // },
   plugins: [react(), VitePWA({
     registerType: 'autoUpdate', includeAssets: [
       'favicon.ico',

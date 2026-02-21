@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { ThemeProviderContext } from "../providers/theme-providers";
 import TimerDefault from "./timerDefault";
 import DisplayInput from "./DisplayInput";
 import { IconContext, ArrowCounterClockwiseIcon, TrashSimpleIcon, PlayIcon, PauseIcon } from "@phosphor-icons/react";
 import { clearInterval, setInterval } from "worker-timers";
+import { ThemeProviderContext } from "../providers/theme-context";
 const ticksUrl = new URL(`${import.meta.env.BASE_URL}beat.mp3`, window.location.origin).toString();
 const audio = new Audio(ticksUrl);
 audio.preload = 'auto';

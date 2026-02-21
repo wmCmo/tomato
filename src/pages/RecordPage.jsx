@@ -1,18 +1,16 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import { Link, Navigate, useOutletContext } from "react-router";
-import useAuth from "../hooks/useAuth";
-import ProfileSkeleton from "../components/ui/ProfileSkeleton";
-import useProfile from "../hooks/useProfile";
-import formatDateEnNoYear from "../utils/formatDateEnNoYear";
-import { useMemo } from "react";
-import RecordCard from "../components/RecordCard";
-import useConfirm from "../hooks/useConfirm";
-import { supabase } from "../lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { Link, Navigate, useOutletContext } from "react-router";
 import BackToHome from "../components/BackToHome";
 import Error from "../components/Error";
-
-
+import RecordCard from "../components/RecordCard";
+import ProfileSkeleton from "../components/ui/ProfileSkeleton";
+import useAuth from "../hooks/useAuth";
+import useConfirm from "../hooks/useConfirm";
+import useProfile from "../hooks/useProfile";
+import { useToast } from "../hooks/useToast";
+import { supabase } from "../lib/supabase";
 
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/";
 
@@ -52,6 +50,7 @@ const RecordPage = () => {
     }, [sessions, dict]);
 
     const { confirm, modal } = useConfirm();
+    const { toast } = useToast();
 
     if (isLoading) return <ProfileSkeleton />;
 
@@ -61,7 +60,11 @@ const RecordPage = () => {
         const ok = await confirm(dict.record.warning);
         if (!ok) return;
         const { error } = await supabase.from('study_sessions').delete().eq("id", sessionId);
-        if (error) throw error;
+        if (error) {
+            toast(undefined, dict.error.delete, 'errorDb');
+            console.error(error.code, error.message);
+            return;
+        }
 
         const localSessionId = Number(localStorage.getItem('active_session_id'));
         if (localSessionId === sessionId) {
@@ -74,6 +77,8 @@ const RecordPage = () => {
                 study_sessions: old.study_sessions.filter(s => s.id !== sessionId)
             };
         });
+
+        return;
     }
 
     return (
@@ -106,7 +111,7 @@ const RecordPage = () => {
                         })
                     ) :
                     <div className="grid place-items-center space-y-4">
-                        <h2 className="leading-7 text-center">You sessions are currently <strong>empty</strong>. Let's go back to homepage and lock in!~</h2>
+                        <h2 className="leading-7 text-center">{dict.record.empty[0]}<strong>{dict.record.empty[1]}</strong>{dict.record.empty[2]}</h2>
                         <BackToHome />
                     </div>
             }

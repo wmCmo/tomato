@@ -7,20 +7,14 @@ const AuthProvider = ({ children }) => {
     const [session, setSession] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const [isMaybeLoggedIn, setIsMaybeLoggedIn] = useState(
-        () => localStorage.getItem(import.meta.env.VITE_STORAGE_KEY) !== null
-    );
-
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
-            setIsMaybeLoggedIn(!!session);
             setLoading(false);
         });
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
-            setIsMaybeLoggedIn(!!session);
             setLoading(false);
         });
 
@@ -28,7 +22,7 @@ const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, isMaybeLoggedIn }}>
+        <AuthContext.Provider value={{ session, user: session?.user ?? null, loading }}>
             {children}
         </AuthContext.Provider>
     );

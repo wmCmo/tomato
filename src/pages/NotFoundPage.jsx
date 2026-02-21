@@ -1,4 +1,4 @@
-import { Link, useOutletContext } from "react-router";
+import { useOutletContext } from "react-router";
 import BackToHome from "../components/BackToHome";
 
 export default function NotFoundPage() {
