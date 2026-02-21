@@ -28,6 +28,23 @@ export default {
         zenMaru: ["Zen Maru Gothic", "sans-serif"],
         pixel: ["Pixelify Sans", "sans-serif"],
       },
+      keyframes: {
+        stretchRight: {
+          "0%": { left: "12px", width: "calc(50% + 12px)" },
+          "50%": { left: "12px", width: "calc(100% - 24px)" },
+          "100%": { left: "calc(50% + 12px)", width: "calc(50% - 24px)" },
+        },
+        stretchLeft: {
+          "0%": { left: "calc(50% + 12px)", width: "calc(50% - 24px)" },
+          "50%": { left: "12px", width: "calc(100% - 24px)" },
+          "100%": { left: "12px", width: "calc(50% + 12px)" },
+        },
+      },
+      animation: {
+        "stretch-right":
+          "stretchRight 1s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "stretch-left": "stretchLeft 1s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+      },
     },
   },
   plugins: [],

@@ -28,6 +28,17 @@ const ja = {
         },
         session: "回数",
     },
+    stopwatch: {
+        select: {
+            stopwatch: "ストップウォッチ",
+            timer: "タイマー",
+        },
+        start: "開始",
+        pause: "停止",
+        resume: "再開",
+        reset: "リセット",
+        lap: "ラップ",
+    },
     profile: {
         welcome: "お帰りなさい！",
         status: "今日はこれを達成する！",

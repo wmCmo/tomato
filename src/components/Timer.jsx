@@ -93,7 +93,7 @@ export default function Timer() {
     };
     const progressBarWidth = secs / toSeconds(currentTime) * 100;
     return (
-        <div className="font-display mt-12 flex flex-col flex-grow min-w-80 max-w-md justify-center transition-all duration-400 ease-in-out w-full">
+        <div className="font-display mt-8 flex flex-col flex-grow min-w-80 max-w-md justify-center transition-all duration-400 ease-in-out w-full">
             <div className={`py-8 px-6 shadow-md rounded-xl ${theme === 'light' ? 'bg-white' : 'bg-neutral-950'}`}>
                 <div className="w-full bg-foreground h-2 mb-8 rounded-full flex items-center">
                     <div style={{ width: `${progressBarWidth}%` }} className="h-4 bg-gradient-to-r from-rose-400 to-pink-400 rounded-full transition-all duration-400 ease-in-out"></div>

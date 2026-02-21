@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase';
 import colorVariants from "../utils/colorVariants";
 import ControlButton from "./ControlButton";
 import TimeButton from "./TimeButton";
+import { useOutletContext } from 'react-router';
 const ticksUrl = new URL(`${import.meta.env.BASE_URL}ticks.ogg`, window.location.origin).toString();
 const audio = new Audio(ticksUrl);
 audio.preload = 'auto';
@@ -14,7 +15,7 @@ audio.preload = 'auto';
 const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg";
 const activeSessionIdKey = 'active_session_id';
 
-export default function Clock({ dict, isPixel }) {
+export default function Clock() {
     const [status, setStatus] = useState(0);
     const [counting, setCounting] = useState(false);
     const [sec, setSec] = useState(1500);
@@ -25,6 +26,8 @@ export default function Clock({ dict, isPixel }) {
 
     const { user } = useAuth();
     const queryClient = useQueryClient();
+
+    const {dict, isPixel} = useOutletContext()
 
     useEffect(() => {
         if (window !== undefined) {
