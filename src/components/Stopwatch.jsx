@@ -2,6 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext } from "react-router";
 import { clearInterval, setInterval } from "worker-timers";
 import secToTime from "../utils/secToTime";
+const tickUrl = new URL(`${import.meta.env.BASE_URL}stopwatch.mp3`, window.location.origin).toString();
+const lowTickUrl = new URL(`${import.meta.env.BASE_URL}lap.mp3`, window.location.origin).toString();
+const tick = new Audio(tickUrl);
+const lowTick = new Audio(lowTickUrl);
+tick.preload = 'auto';
+lowTick.preload = 'auto';
 
 export default function Stopwatch() {
     const [laps, setLaps] = useState([]);
@@ -11,6 +17,11 @@ export default function Stopwatch() {
 
     const { h, m, s } = secToTime(sec);
     const { dict } = useOutletContext();
+
+    useEffect(() => {
+        tick.load();
+        lowTick.load();
+    }, []);
 
     useEffect(() => {
         if (counting) {
@@ -68,8 +79,8 @@ export default function Stopwatch() {
                 </h1>
             </div>
             <div className="select-none flex flex-grow gap-4 justify-center">
-                <button type="button" onClick={counting ? handleLaps : handleReset} disabled={sec === 0} className={`bg-background px-4 py-2 rounded-full min-w-24 ${sec === 0 ? 'opacity-50' : 'active:scale-90 active:opacity-80'}`}>{counting ? dict.stopwatch.lap : dict.stopwatch.reset}</button>
-                <button type="button" onClick={() => setCounting(prev => !prev)} className={`bg-background px-4 py-2 rounded-full min-w-24 active:scale-90 active:opacity-80 ${counting ? 'bg-rose-400' : 'bg-blue-500'} text-white`}>{counting ? dict.stopwatch.pause : sec === 0 ? dict.stopwatch.start : dict.stopwatch.resume}</button>
+                <button type="button" onMouseDown={() => lowTick.play()} onClick={counting ? handleLaps : handleReset} disabled={sec === 0} className={`bg-background px-4 py-2 rounded-full min-w-24 ${sec === 0 ? 'opacity-50' : 'active:scale-90 active:opacity-80'}`}>{counting ? dict.stopwatch.lap : dict.stopwatch.reset}</button>
+                <button type="button" onMouseDown={() => tick.play()} onClick={() => setCounting(prev => !prev)} className={`bg-background px-4 py-2 rounded-full min-w-24 active:scale-90 active:opacity-80 ${counting ? 'bg-rose-400' : 'bg-blue-500'} text-white`}>{counting ? dict.stopwatch.pause : sec === 0 ? dict.stopwatch.start : dict.stopwatch.resume}</button>
             </div>
             {
                 laps.length > 0 &&
