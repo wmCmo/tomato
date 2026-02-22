@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
+import { useOutletContext } from 'react-router';
 import { clearInterval, setInterval } from 'worker-timers';
 import useAuth from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
@@ -7,19 +8,36 @@ import { supabase } from '../lib/supabase';
 import colorVariants from "../utils/colorVariants";
 import ControlButton from "./ControlButton";
 import TimeButton from "./TimeButton";
-import { useOutletContext } from 'react-router';
 const ticksUrl = new URL(`${import.meta.env.BASE_URL}ticks.ogg`, window.location.origin).toString();
 const audio = new Audio(ticksUrl);
 audio.preload = 'auto';
 
 const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg";
 const activeSessionIdKey = 'active_session_id';
+const clockStateKey = 'clock_state_v1';
+
+const readClockState = () => {
+    try {
+        const raw = localStorage.getItem(clockStateKey);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (typeof parsed !== 'object' || parsed == null) return null;
+        const { sec, status, session } = parsed;
+        if (typeof sec !== 'number' || !Number.isFinite(sec) || sec < 0) return null;
+        if (typeof status !== 'number' || !Number.isFinite(status)) return null;
+        if (typeof session !== 'number' || !Number.isFinite(session) || session < 1) return null;
+        return { sec, status, session };
+    } catch {
+        return null;
+    }
+};
 
 export default function Clock() {
-    const [status, setStatus] = useState(0);
+    const initialClockState = readClockState();
+    const [status, setStatus] = useState(initialClockState?.status ?? 0);
     const [counting, setCounting] = useState(false);
-    const [sec, setSec] = useState(1500);
-    const [session, setSession] = useState(JSON.parse(localStorage.getItem('session')) || 1);
+    const [sec, setSec] = useState(initialClockState?.sec ?? 1500);
+    const [session, setSession] = useState(initialClockState?.session ?? 1);
     const { toast } = useToast();
 
     const work = useRef(null);
@@ -27,13 +45,24 @@ export default function Clock() {
     const { user } = useAuth();
     const queryClient = useQueryClient();
 
-    const {dict, isPixel} = useOutletContext()
+    const { dict, isPixel } = useOutletContext();
+
+    const latestStateRef = useRef({ sec, status, session, counting });
 
     useEffect(() => {
-        if (window !== undefined) {
-            localStorage.setItem('session', session);
-        }
-    }, [session]);
+        latestStateRef.current = { sec, status, session, counting };
+    }, [sec, status, session, counting]);
+
+    useEffect(() => {
+        return () => {
+            try {
+                const { sec, status, session } = latestStateRef.current;
+                localStorage.setItem(clockStateKey, JSON.stringify({ sec, status, session }));
+            } catch {
+                // ignore storage errors
+            }
+        };
+    }, []);
 
     useEffect(() => {
         audio.load();
@@ -171,6 +200,12 @@ export default function Clock() {
         setStatus(0);
         setSec(1500);
         setSession(1);
+
+        try {
+            localStorage.removeItem(clockStateKey);
+        } catch {
+            // ignore storage errors
+        }
 
         if (user) {
             const { data } = await supabase
