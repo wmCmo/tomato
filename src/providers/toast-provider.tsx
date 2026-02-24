@@ -1,20 +1,40 @@
-import { CloudXIcon, FileXIcon, IconContext, ShieldWarningIcon, WarningDiamondIcon, XCircleIcon } from '@phosphor-icons/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { CheckCircleIcon, CloudXIcon, FileXIcon, IconContext, ShieldWarningIcon, WarningDiamondIcon, XCircleIcon } from '@phosphor-icons/react';
+import { useCallback, useEffect, useMemo, useRef, useState, createContext } from 'react';
 import { createPortal } from 'react-dom';
-import { ToastProviderContext } from './toast-context';
 
-const Toast = ({ title, desc, variant, onDismiss }) => (
+interface ToastProps {
+    title: string | undefined; desc: string; variant: keyof typeof toastIcons; onDismiss?: () => void; id: number;
+}
+
+type ToastOptions = Omit<ToastProps, 'id' | 'onDismiss'> & {
+    duration?: number;
+};
+
+interface ToastContextType {
+    toast: {
+        (options: ToastOptions): void;
+        (title: string | undefined, desc: string, variant: keyof typeof toastIcons, duration?: number): void;
+    };
+}
+
+export const ToastProviderContext = createContext<ToastContextType | undefined>(undefined);
+
+export const toastIcons = {
+    errorDb: <CloudXIcon />,
+    errorAuth: <ShieldWarningIcon />,
+    errorFile: <FileXIcon />,
+    success: <CheckCircleIcon />
+};
+
+
+const Toast = ({ title, desc, variant, onDismiss }: ToastProps) => (
     <div className='flex card items-center px-4 py-2 gap-4 backdrop-blur-3xl font-display text-accent max-w-xs'>
         <IconContext.Provider value={{
             weight: "fill",
             size: "1.5rem"
         }}>
-            <div className='text-rose-400'>
-                {
-                    variant === 'errorDb' ? <CloudXIcon /> :
-                        variant === 'errorAuth' ? <ShieldWarningIcon /> :
-                            variant === 'errorFile' ? <FileXIcon /> : <WarningDiamondIcon />
-                }
+            <div className={variant === 'success' ? 'text-blue-500' : 'text-rose-400'}>
+                {toastIcons[variant] ?? <WarningDiamondIcon />}
             </div>
         </IconContext.Provider >
         <div className='text-accent'>
@@ -27,8 +47,8 @@ const Toast = ({ title, desc, variant, onDismiss }) => (
     </div>
 );
 
-const ToastProvider = ({ children, ...props }) => {
-    const [toasts, setToasts] = useState([]);
+const ToastProvider = ({ children, ...props }: { children: React.ReactElement; }) => {
+    const [toasts, setToasts] = useState<ToastProps[]>([]);
     const nextToastIdRef = useRef(0);
     const toastTimeoutsRef = useRef(new Map());
 
@@ -41,7 +61,7 @@ const ToastProvider = ({ children, ...props }) => {
         };
     }, []);
 
-    const handleShiftToasts = useCallback((id) => {
+    const handleShiftToasts = useCallback((id: number) => {
         const timeoutId = toastTimeoutsRef.current.get(id);
         if (timeoutId !== undefined) {
             clearTimeout(timeoutId);
@@ -50,14 +70,25 @@ const ToastProvider = ({ children, ...props }) => {
         setToasts(prev => prev.filter(item => item.id !== id));
     }, []);
 
-    const toast = useCallback((title = 'New Toasts', desc, variant, duration = 3) => {
+    const toast = useCallback(((arg1: ToastOptions | string | undefined, arg2?: string, arg3?: keyof typeof toastIcons, arg4?: number) => {
+        const options: ToastOptions =
+            typeof arg1 === 'object' && arg1 !== null
+                ? arg1
+                : {
+                    title: arg1,
+                    desc: arg2 ?? '',
+                    variant: arg3 ?? 'errorFile',
+                    duration: arg4
+                };
+
+        const { title = 'New Toasts', desc, variant, duration = 3 } = options;
         const id = nextToastIdRef.current++;
         setToasts(prev => [...prev, { title: variant.startsWith('error') ? 'Error' : title, desc, variant, id }]);
         const timeoutId = setTimeout(() => {
             handleShiftToasts(id);
         }, duration * 1000);
         toastTimeoutsRef.current.set(id, timeoutId);
-    }, [handleShiftToasts]);
+    }) as ToastContextType['toast'], [handleShiftToasts]);
 
     const value = useMemo(() => ({ toast }), [toast]);
 

@@ -1,6 +1,6 @@
 import { useOutletContext } from "react-router";
-import Clock from "../components/Clock.jsx";
 import SideClock from "../components/SideClock.jsx";
+import Clock from "../components/Clock";
 
 export default function ClockPage() {
   const { timerOn } = useOutletContext();

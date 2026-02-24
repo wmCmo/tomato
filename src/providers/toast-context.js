@@ -1,3 +1,3 @@
-import { createContext } from "react";
-
-export const ToastProviderContext = createContext(undefined);
+// Re-export the single source of truth for the Toast context.
+// This prevents accidental creation of multiple contexts that don't match.
+export { ToastProviderContext } from "./toast-provider";
