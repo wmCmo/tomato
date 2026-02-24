@@ -8,7 +8,7 @@ const ProfilePage = () => {
 
     if (loading) return <ProfileSkeleton />;
 
-    return user ? <Profile /> : <LoginComponent />;
+    return <Profile />
 };
 
 export default ProfilePage;

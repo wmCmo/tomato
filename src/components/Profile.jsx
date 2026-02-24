@@ -98,8 +98,7 @@ const Profile = () => {
         return;
     };
 
-    const isOwner = user.id === userId;
-
+    const isOwner = user?.id ? user.id === userId : false;
 
     return (
         <div className='text-accent w-full px-2 mt-12'>
