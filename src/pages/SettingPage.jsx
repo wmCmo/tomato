@@ -70,6 +70,7 @@ const SettingPage = () => {
         localStorage.removeItem('active_session_id');
         localStorage.removeItem('defaults');
         localStorage.removeItem('session');
+        localStorage.removeItem('clock_state_v1');
     };
 
     const handleLogout = async () => {
@@ -99,6 +100,8 @@ const SettingPage = () => {
         }
         await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
         clearLocalStorage();
+        setShowDangerZone(false);
+        toast('Done', 'Successfully cleared your records', 'success');
     };
 
     const handleDeleteAccount = async () => {
