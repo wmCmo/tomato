@@ -10,6 +10,7 @@ import AppProviders from './providers/app-providers.jsx';
 const ClockPage = lazy(() => import('./pages/ClockPage.jsx'));
 const LoginPage = lazy(() => import('./pages/LoginPage.jsx'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'));
+const ConnectionPage = lazy(() => import('./pages/ConnectionPage.jsx'));
 const SettingPage = lazy(() => import('./pages/SettingPage.jsx'));
 const RecordPage = lazy(() => import('./pages/RecordPage.jsx'));
 const TermsOfUse = lazy(() => import('./pages/TermsOfUse.jsx'));
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       { index: true, element: <ClockPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'profile/:userId', element: <ProfilePage /> },
+      { path: 'profile/:userId/connection', element: <ConnectionPage /> },
       { path: 'setting', element: <SettingPage /> },
       { path: 'record', element: <RecordPage /> },
       { path: 'terms', element: <TermsOfUse /> },

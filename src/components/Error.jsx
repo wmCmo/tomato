@@ -6,7 +6,7 @@ const Error = ({ item }) => {
     return (
         <div className='text-center space-y-4 text-accent'>
             <h1 className='font-bold text-2xl'>{lang === 'ja' && item}{dict.error.header} {lang === 'en' && item}</h1>
-            <p>{dict.error.desc}</p>
+            <p className='text-lg'>{dict.error.desc}</p>
             <BackToHome/>
         </div>
     );

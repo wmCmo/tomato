@@ -1,13 +1,17 @@
 import { GearIcon, IconContext, LogIcon, ShareNetworkIcon } from "@phosphor-icons/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useOutletContext, useParams } from "react-router";
+import { Link, useNavigate, useOutletContext, useParams } from "react-router";
 import useAuth from "../hooks/useAuth";
 import useProfile from "../hooks/useProfile";
 import { useToast } from "../hooks/useToast";
 import { supabase } from "../lib/supabase";
 import Error from "./Error";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
+import fetchFollowers from "../queries/follower";
+import fetchFollowing from "../queries/following";
+import checkIsFollowing from "../queries/checkIsFollowing";
+import countProfile from "../queries/countProfile";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -18,11 +22,34 @@ const Profile = () => {
     const { toast } = useToast();
 
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     const { data: profile, isLoading, error } = useProfile(userId);
 
     const [bio, setBio] = useState('');
+    const [hoverFollowButton, setHoverFollowButton] = useState(false);
     const [showCopied, setShowCopied] = useState(false);
+
+    const { data: profileCount, isLoading: profileCountLoading } = useQuery({
+        queryKey: ["profileCount", userId],
+        queryFn: () => countProfile(userId),
+        enabled: !!userId,
+        staleTime: 60 * 1000
+    });
+
+    useEffect(() => {
+        if (userId) {
+            queryClient.prefetchQuery({
+                queryKey: ["followers", userId],
+                queryFn: () => fetchFollowers(userId)
+            });
+
+            queryClient.prefetchQuery({
+                queryKey: ["following", userId],
+                queryFn: () => fetchFollowing(userId)
+            });
+        }
+    }, [userId, queryClient]);
 
     useEffect(() => {
         setBio(profile?.bio ?? '');
@@ -34,6 +61,13 @@ const Profile = () => {
             setShowCopied(false);
         }, 1200);
     }, [showCopied]);
+
+    const { data: isFollowing, isLoading: isFollowingLoading } = useQuery({
+        queryKey: ["isFollowing", user?.id, userId],
+        queryFn: () => checkIsFollowing(user?.id, userId),
+        enabled: !!user?.id && !!userId,
+        staleTime: Infinity
+    });
 
     const oneWeekSession = useMemo(() => {
         const studySessions = profile?.study_sessions ?? [];
@@ -72,7 +106,7 @@ const Profile = () => {
     const weekDays = dict.profile.days;
 
     if (isLoading) return <ProfileSkeleton />;
-    if (error) return <Error item={'profile'} />;
+    if (error) return <Error item={'Profile'} />;
 
     const todayIndex = weekDays.indexOf(new Date().toLocaleString(dict.langTag, { weekday: "short" })) + 1;
     const sortedWeekDay = weekDays.slice(todayIndex).concat(weekDays.slice(0, todayIndex));
@@ -98,33 +132,80 @@ const Profile = () => {
         return;
     };
 
-    const isOwner = user?.id ? user.id === userId : false;
+    async function handleFollow() {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        const { error } = await supabase
+            .from('follows')
+            .insert({ follower_id: user?.id, following_id: userId });
+        if (error) {
+            console.error("Failed to follow a user:", error);
+            toast(undefined, dict.error.updateProfile, 'errorDb');
+            return;
+        }
+        queryClient.setQueryData(['isFollowing', user?.id, userId], true);
+        queryClient.invalidateQueries({ queryKey: ['profileCount', userId] });
+    }
+
+    async function handleUnfollow() {
+        const { error } = await supabase
+            .from('follows')
+            .delete()
+            .eq('follower_id', user?.id)
+            .eq('following_id', userId);
+        if (error) {
+            console.error("Failed to unfollow a user:", error);
+            toast(undefined, dict.error.updateProfile, 'errorDb');
+            return;
+        }
+        queryClient.setQueryData(['isFollowing', user?.id, userId], false);
+        queryClient.invalidateQueries({ queryKey: ['profileCount', userId] });
+    }
+
+    const isOwner = user?.id === userId;
 
     return (
         <div className='text-accent w-full px-2 mt-12'>
             <div className="sm:flex justify-between gap-8">
                 <section className="flex gap-6 items-center relative">
-                    <img src={`${profile.avatar_url}`} alt="User's Google or custom avatar" className="h-20 w-auto rounded-full" />
-                    <div className="w-full">
-                        {isOwner && <div className="flex items-center justify-between sm:gap-8">
-                            <h1>{dict.profile.welcome}</h1>
-                            <div className="flex items-center gap-4">
-                                <IconContext.Provider value={{
-                                    weight: 'fill',
-                                    size: '1.5rem',
-                                }}>
-                                    <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://wmcmo.github.io/tomato/profile/${userId}`); setShowCopied(true); }} className="icon" />
-                                    <Link to={'/setting'}>
-                                        <GearIcon className="icon" />
-                                    </Link>
-                                </IconContext.Provider>
+                    <img src={`${profile.avatar_url}`} alt="User's Google or custom avatar" className="h-20 w-20 rounded-full" />
+                    <div>
+                        <div className="w-full flex flex-col space-y-2 justify-center h-full">
+                            {isOwner && <div className="flex items-center justify-between sm:gap-8">
+                                <h1>{dict.profile.welcome}</h1>
+                                <div className="flex items-center gap-4">
+                                    <IconContext.Provider value={{
+                                        weight: 'fill',
+                                        size: '1.5rem',
+                                    }}>
+                                        <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://wmcmo.github.io/tomato/profile/${userId}`); setShowCopied(true); }} className="icon" />
+                                        <Link to={'/setting'}>
+                                            <GearIcon className="icon" />
+                                        </Link>
+                                    </IconContext.Provider>
+                                </div>
+                            </div>}
+                            <h2 className="text-3xl font-bold">{profile.nickname ?? user.user_metadata.full_name}</h2>
+                        </div>
+                        <div className="text-sm flex gap-4 sm:items-center mt-4 flex-col sm:flex-row">
+                            {!isOwner && <button onClick={isFollowing ? handleUnfollow : handleFollow} onMouseEnter={() => setHoverFollowButton(true)} onMouseLeave={() => setHoverFollowButton(false)} className={`${isFollowing ? hoverFollowButton ? "text-rose-500 bg-rose-400/20 border border-rose-400" : 'bg-foreground border border-muted opacity-60' : 'bg-foreground'} px-6 py-2 text-xs rounded-full font-bold text-accent max-w-sm inline-block transition-all duration-100 ease-out`}>{isFollowing ? hoverFollowButton ? "フォロー解除" : "フォロー中" : "フォロー"}</button>}
+                            <div className="flex gap-4">
+                                {
+                                    profileCountLoading
+                                        ? <div>Loading...</div>
+                                        : <>
+                                            <Link className="hover:underline underline-offset-4" to={'./connection?view=following'}><b>{profileCount.following}</b>フォロー中</Link>
+                                            <Link className="hover:underline underline-offset-4" to={'./connection?view=followers'}><b>{profileCount.followers}</b>フォロワー</Link>
+                                        </>
+                                }
                             </div>
-                        </div>}
-                        <h2 className="text-3xl font-bold mt-1">{profile.nickname ?? user.user_metadata.full_name}</h2>
+                        </div>
                     </div>
-                    <div className={`text-sm absolute right-0 bottom-0 transition-all duration-200 ease-in-out bg-foreground px-4 py-2 rounded-lg text-accent font-bold ${showCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>{dict.profile.copied}</div>
+                    <div className={`text-sm absolute right-0 bottom-0 pointer-events-none transition-all duration-200 ease-in-out bg-foreground px-4 py-2 rounded-lg text-accent font-bold ${showCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>{dict.profile.copied}</div>
                 </section>
-                <section className="mt-8 px-4 py-4 card border-none flex items-center flex-grow">
+                <section className="mt-8 px-4 py-4 card border-none flex items-center flex-grow max-h-14">
                     {
                         isOwner ?
                             (<>

@@ -5,6 +5,7 @@ export default async function fetchProfile(userId) {
         .from("profiles")
         .select(`
             nickname,
+            handle,
             avatar_url,
             bio,
             emoji,
