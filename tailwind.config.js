@@ -30,14 +30,32 @@ export default {
       },
       keyframes: {
         stretchRight: {
-          "0%": { left: "12px", width: "calc(50% + 12px)" },
-          "50%": { left: "12px", width: "calc(100% - 24px)" },
-          "100%": { left: "calc(50% + 12px)", width: "calc(50% - 24px)" },
+          "0%": {
+            left: "var(--anim-offset, 12px)",
+            width: "calc(50% + var(--anim-offset, 12px))",
+          },
+          "50%": {
+            left: "var(--anim-offset, 12px)",
+            width: "calc(100% - var(--anim-offset, 12px) * 2)",
+          },
+          "100%": {
+            left: "calc(50% + var(--anim-offset, 12px))",
+            width: "calc(50% - var(--anim-offset, 12px) * 2)",
+          },
         },
         stretchLeft: {
-          "0%": { left: "calc(50% + 12px)", width: "calc(50% - 24px)" },
-          "50%": { left: "12px", width: "calc(100% - 24px)" },
-          "100%": { left: "12px", width: "calc(50% + 12px)" },
+          "0%": {
+            left: "calc(50% + var(--anim-offset, 12px))",
+            width: "calc(50% - var(--anim-offset, 12px) * 2)",
+          },
+          "50%": {
+            left: "var(--anim-offset, 12px)",
+            width: "calc(100% - var(--anim-offset, 12px) * 2)",
+          },
+          "100%": {
+            left: "var(--anim-offset, 12px)",
+            width: "calc(50% + var(--anim-offset, 12px))",
+          },
         },
       },
       animation: {

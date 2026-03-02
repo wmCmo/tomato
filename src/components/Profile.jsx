@@ -12,6 +12,7 @@ import fetchFollowers from "../queries/follower";
 import fetchFollowing from "../queries/following";
 import checkIsFollowing from "../queries/checkIsFollowing";
 import countProfile from "../queries/countProfile";
+import FollowButton from "./FollowButton";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -22,12 +23,10 @@ const Profile = () => {
     const { toast } = useToast();
 
     const queryClient = useQueryClient();
-    const navigate = useNavigate();
 
     const { data: profile, isLoading, error } = useProfile(userId);
 
     const [bio, setBio] = useState('');
-    const [hoverFollowButton, setHoverFollowButton] = useState(false);
     const [showCopied, setShowCopied] = useState(false);
 
     const { data: profileCount, isLoading: profileCountLoading } = useQuery({
@@ -132,37 +131,6 @@ const Profile = () => {
         return;
     };
 
-    async function handleFollow() {
-        if (!user) {
-            navigate('/login');
-            return;
-        }
-        const { error } = await supabase
-            .from('follows')
-            .insert({ follower_id: user?.id, following_id: userId });
-        if (error) {
-            console.error("Failed to follow a user:", error);
-            toast(undefined, dict.error.updateProfile, 'errorDb');
-            return;
-        }
-        queryClient.setQueryData(['isFollowing', user?.id, userId], true);
-        queryClient.invalidateQueries({ queryKey: ['profileCount', userId] });
-    }
-
-    async function handleUnfollow() {
-        const { error } = await supabase
-            .from('follows')
-            .delete()
-            .eq('follower_id', user?.id)
-            .eq('following_id', userId);
-        if (error) {
-            console.error("Failed to unfollow a user:", error);
-            toast(undefined, dict.error.updateProfile, 'errorDb');
-            return;
-        }
-        queryClient.setQueryData(['isFollowing', user?.id, userId], false);
-        queryClient.invalidateQueries({ queryKey: ['profileCount', userId] });
-    }
 
     const isOwner = user?.id === userId;
 
@@ -170,7 +138,7 @@ const Profile = () => {
         <div className='text-accent w-full px-2 mt-12'>
             <div className="sm:flex justify-between gap-8">
                 <section className="flex gap-6 items-center relative">
-                    <img src={`${profile.avatar_url}`} alt="User's Google or custom avatar" className="h-20 w-20 rounded-full" />
+                    <img src={`${profile?.avatar_url}`} alt="User's Google or custom avatar" className="h-20 w-20 rounded-full" />
                     <div>
                         <div className="w-full flex flex-col space-y-2 justify-center h-full">
                             {isOwner && <div className="flex items-center justify-between sm:gap-8">
@@ -187,10 +155,10 @@ const Profile = () => {
                                     </IconContext.Provider>
                                 </div>
                             </div>}
-                            <h2 className="text-3xl font-bold">{profile.nickname ?? user.user_metadata.full_name}</h2>
+                            <h2 className="text-3xl font-bold">{profile?.nickname ?? user.user_metadata.full_name}</h2>
                         </div>
                         <div className="text-sm flex gap-4 sm:items-center mt-4 flex-col sm:flex-row">
-                            {!isOwner && <button onClick={isFollowing ? handleUnfollow : handleFollow} onMouseEnter={() => setHoverFollowButton(true)} onMouseLeave={() => setHoverFollowButton(false)} className={`${isFollowing ? hoverFollowButton ? "text-rose-500 bg-rose-400/20 border border-rose-400" : 'bg-foreground border border-muted opacity-60' : 'bg-foreground'} px-6 py-2 text-xs rounded-full font-bold text-accent max-w-sm inline-block transition-all duration-100 ease-out`}>{isFollowing ? hoverFollowButton ? "フォロー解除" : "フォロー中" : "フォロー"}</button>}
+                            {!isOwner && <FollowButton userId={userId} />}
                             <div className="flex gap-4">
                                 {
                                     profileCountLoading
@@ -223,7 +191,7 @@ const Profile = () => {
                         <h3 className="font-semibold">{dict.profile.highScore}</h3>
                     </div>
                     <div className="card space-y-4 px-10 py-8">
-                        {profile.study_sessions.length > 0 ? [...profile.study_sessions].sort((a, b) => b.sessions - a.sessions).slice(0, 3).map((session, index) => {
+                        {profile?.study_sessions.length > 0 ? [...profile?.study_sessions].sort((a, b) => b.sessions - a.sessions).slice(0, 3).map((session, index) => {
                             return (
                                 <div key={index} className="flex justify-between items-center">
                                     <div className="flex gap-2 items-center">
