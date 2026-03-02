@@ -54,7 +54,7 @@ export default function ConnectionPage() {
                     (view === 'following' ? following : followers).length > 0 ?
                         (view === 'following' ? following : followers).map((item, index) => (
                             <div key={index} className="mt-4">
-                                <Link className="flex items-center gap-4" to={`http://localhost:5173/profile/${item.id}`}>
+                                <Link className="flex items-center gap-4" to={`https://wmcmo.github.io/tomato/profile/${item.id}`}>
                                     <img className="h-8 w-8 rounded-full" src={item.avatar_url} alt={`${item.nickname}'s avartar`} />
                                     <span className="font-bold">{item.nickname}</span>
                                     {item.id !== user.id && <FollowButton style={{ 'marginLeft': 'auto' }} userId={item.id} />}
