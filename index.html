@@ -65,6 +65,18 @@
 </head>
 
 <body>
+  <!-- Restore the real URL after a 404.html redirect -->
+  <script>
+    (function () {
+      var q = window.location.search;
+      if (q.length > 1 && q[1] !== '=') {
+        var decoded = q.slice(1).split('&').map(function (s) { return s.replace(/~and~/g, '&'); }).join('?');
+        window.history.replaceState(null, null,
+          window.location.pathname + (decoded ? '/' + decoded : '') + window.location.hash
+        );
+      }
+    })();
+  </script>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
