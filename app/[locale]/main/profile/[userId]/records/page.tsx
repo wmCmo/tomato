@@ -3,6 +3,7 @@
 import BackToHome from "@/components/BackToHome";
 import Error from "@/components/Error";
 import RecordCard from "@/components/RecordCard";
+import TomatoCount from "@/components/TomatoCount";
 import RecordsSkeleton from "@/components/ui/RecordsSkeleton";
 import useAuth from "@/hooks/useAuth";
 import useConfirm from "@/hooks/useConfirm";
@@ -112,7 +113,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
                                 <section key={year} className="pt-10">
                                     <div className="flex items-center gap-4 text-accent">
                                         <h2 className="font-bold text-2xl">{year}</h2>
-                                        <div className="text-base px-2 py-1 bg-foreground rounded-lg font-bold flex items-center gap-1"><img className="w-4 h-4" src={`${fluentRepo}Tomato/Color/tomato_color.svg`} alt="Fluent tomato emoji" /><span>{[...months.values()].flat().reduce((sum, entry) => sum + entry.sessions, 0)} {dict.record.thisYear}</span></div>
+                                        <TomatoCount count={[...months.values()].flat().reduce((sum, entry) => sum + entry.sessions, 0)} label={dict.record.thisYear} />
                                     </div>
                                     {[...months.entries()].map(([month, entries]) => {
                                         return <RecordCard key={month} user={user} userId={userId} month={month} entries={entries} handleDelete={handleDelete} />;

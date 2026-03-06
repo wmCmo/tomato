@@ -12,6 +12,9 @@ const en = {
         cancel: "Cancel",
         save: "Save",
         warnDelete: ["This action ", "cannot", " be undone."],
+        follow: "Follow",
+        unfollow: "Unfollow",
+        loading: "Loading"
     },
     policy: {
         header: "Privacy Policy",
@@ -64,6 +67,8 @@ const en = {
         copied: "Profile URL Copied",
         formatDate: formatDateEn,
         errorItem: "profile",
+        following: " Following",
+        followers: " Followers",
     },
     record: {
         header: "Your Record",
@@ -135,6 +140,10 @@ const en = {
         about: "About",
         tagLine: "Your Minimal Timer App",
         terms: "Terms and Conditions",
+    },
+    connections: {
+        noFollowing: "is not following anyone.🤔",
+        noFollowers: "is not followed by anyone (just yet)."
     }
 };
 

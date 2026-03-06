@@ -17,6 +17,7 @@ import fetchFollowing from "../queries/following";
 import Error from "./Error";
 import FollowButton from "./FollowButton";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
+import TomatoCount from "@/components/TomatoCount";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -63,13 +64,6 @@ const Profile = ({ userId }: { userId: string; }) => {
             setShowCopied(false);
         }, 1200);
     }, [showCopied]);
-
-    const { data: isFollowing, isLoading: isFollowingLoading } = useQuery({
-        queryKey: ["isFollowing", user?.id, userId],
-        queryFn: () => checkIsFollowing(user?.id, userId),
-        enabled: !!user?.id && !!userId,
-        staleTime: Infinity
-    });
 
     const oneWeekSession = useMemo(() => {
         const studySessions = profile?.study_sessions ?? [];
@@ -140,44 +134,45 @@ const Profile = ({ userId }: { userId: string; }) => {
 
     return (
         <div className='text-accent w-full px-2 mt-12'>
-            <div className="sm:flex justify-between gap-8">
+            <div className="md:flex justify-between gap-8">
                 <section className="flex gap-6 items-center relative">
-                    <img src={`${profile?.avatar_url}`} alt="User's Google or custom avatar" className="h-20 w-20 rounded-full" />
-                    <div>
-                        <div className="w-full flex flex-col space-y-2 justify-center h-full">
-                            {isOwner && <div className="flex items-center justify-between sm:gap-8">
-                                <h1>{dict.profile.welcome}</h1>
-                                <div className="flex items-center gap-4">
-                                    <IconContext.Provider value={{
-                                        weight: 'fill',
-                                        size: '1.5rem',
-                                    }}>
-                                        <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/tomato/profile/${userId}`); setShowCopied(true); }} className="icon" />
-                                        <Link href={`/${dict.langSubTag}/main/settings`}>
-                                            <GearIcon className="icon" />
-                                        </Link>
-                                    </IconContext.Provider>
-                                </div>
-                            </div>}
-                            <h2 className="text-3xl font-bold">{profile?.nickname ?? user?.user_metadata.full_name}</h2>
-                        </div>
-                        <div className="text-sm flex gap-4 sm:items-center mt-4 flex-col sm:flex-row">
-                            {!isOwner && <FollowButton userId={userId} />}
-                            <div className="flex gap-4">
-                                {
-                                    profileCountLoading
-                                        ? <div>Loading...</div>
-                                        : <>
-                                            <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${userId}/connections?view=following`}><b>{profileCount.following}</b>フォロー中</Link>
-                                            <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${userId}/connections?view=followers`}><b>{profileCount.followers}</b>フォロワー</Link>
-                                        </>
-                                }
+                    <div className="flex flex-col items-center gap-2">
+                        <img src={`${profile?.avatar_url}`} alt="User's Google or custom avatar" className="h-32 w-32 rounded-full flex-1" />
+                    </div>
+                    <div className="w-full flex flex-col space-y-3 justify-center h-full">
+                        {isOwner && <div className="flex items-center justify-between gap-4 sm:gap-8">
+                            <h1>{dict.profile.welcome}</h1>
+                            <div className="flex items-center gap-2">
+                                <IconContext.Provider value={{
+                                    weight: 'fill',
+                                    size: '1.5rem',
+                                }}>
+                                    <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/tomato/profile/${userId}`); setShowCopied(true); }} className="icon" />
+                                    <Link href={`/${dict.langSubTag}/main/settings`}>
+                                        <GearIcon className="icon" />
+                                    </Link>
+                                </IconContext.Provider>
                             </div>
+                        </div>}
+                        <h2 className="text-3xl font-bold">{profile?.nickname ?? user?.user_metadata.full_name}</h2>
+                        <div className="text-sm flex gap-4 sm:items-center">
+                            {
+                                profileCountLoading
+                                    ? <div className="h-6 w-32 bg-foreground animate-pulse rounded-full"></div>
+                                    : <>
+                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${userId}/connections?view=following`}><b>{profileCount.following}</b>{dict.profile.following}</Link>
+                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${userId}/connections?view=followers`}><b>{profileCount.followers}</b>{dict.profile.followers}</Link>
+                                    </>
+                            }
+                        </div>
+                        <div className="flex gap-8">
+                            {!isOwner && <FollowButton userId={userId} />}
+                            <TomatoCount count={profile?.study_sessions.reduce((sum, session) => session.sessions + sum, 0) ?? 0} label="Total" />
                         </div>
                     </div>
                     <div className={`text-sm absolute right-0 bottom-0 pointer-events-none transition-all duration-200 ease-in-out bg-foreground px-4 py-2 rounded-lg text-accent font-bold ${showCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>{dict.profile.copied}</div>
                 </section>
-                <section className="mt-8 px-4 py-4 card border-none flex items-center grow max-h-14">
+                <section className="mt-8 px-4 py-4 card border-none flex items-center grow min-h-10 h-fit">
                     {
                         isOwner ?
                             (<>
@@ -219,16 +214,18 @@ const Profile = ({ userId }: { userId: string; }) => {
                 </section>
                 <section className="mt-8 space-y-2 flex-1">
                     <div className="flex justify-between items-center">
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 items-center">
                             <img src={`${fluentRepo}/Potted%20plant/Color/potted_plant_color.svg`} alt="Fluent Potted Plant emoji" className="w-6 h-auto" />
                             <h3 className="font-semibold">{dict.profile.thisWeek}</h3>
+                            <TomatoCount count={oneWeekSession.reduce((sum, day) => sum + day, 0)} />
+
                         </div>
-                        {isOwner && <Link href={`/${dict.langSubTag}/main/profile/${userId}/records`}>
+                        <Link href={`/${dict.langSubTag}/main/profile/${userId}/records`}>
                             <div className="flex gap-2 items-center cursor-pointer text-muted hover:underline underline-offset-4 hover:text-muted-foreground transition-all duration-100">
                                 <span className="text-sm">{dict.profile.viewMore}</span>
                                 <LogIcon />
                             </div>
-                        </Link>}
+                        </Link>
                     </div>
                     <div className="flex gap-1 justify-center md:justify-around px-4 md:px-16 py-8 card">
                         {sortedWeekDay.map((day, index) => {

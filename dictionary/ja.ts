@@ -12,6 +12,9 @@ const ja = {
         cancel: "キャンセル",
         save: "保存",
         warnDelete: ["この操作は元に ", "戻せません", "。"],
+        follow: "フォロー",
+        unfollow: "フォロー解除",
+        loading: "ロード中"
     },
     policy: {
         header: "プライバシーポリシー",
@@ -64,6 +67,8 @@ const ja = {
         copied: "プロフィールのURLをコピーしました",
         formatDate: formatDateJa,
         errorItem: "プロフィール",
+        following: "フォロー中",
+        followers: "フォロワー"
     },
     record: {
         header: "これまでの記録",
@@ -122,6 +127,10 @@ const ja = {
         about: "Tomatoについて",
         tagLine: "あなたのミニマルなタイマーアプリ",
         terms: "利用規約",
+    },
+    connections: {
+        noFollowing: "は誰もフォローをしてないみたいです。",
+        noFollowers: "は（まだ）誰にもフォローされてません。"
     }
 };
 

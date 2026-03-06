@@ -60,8 +60,8 @@ export default function ConnectionPage() {
             <nav className="bg-background sticky top-24 w-full flex flex-col items-center">
                 <div className="text-sm flex bg-foreground rounded-full p-2 relative gap-4 max-w-72">
                     <div style={{ "--anim-offset": "8px" } as React.CSSProperties} className={`absolute bg-muted h-9 rounded-full ${view === 'following' ? 'animate-stretch-left' : 'animate-stretch-right'}`}></div>
-                    <button type="button" onClick={() => setView('following')} className={`z-10 px-6 py-2 rounded-full ${view === 'followers' ? 'text-muted-foreground' : 'font-bold'}`}>フォロー中</button>
-                    <button type="button" onClick={() => setView('followers')} className={`z-10 px-6 py-2 rounded-full ${view === 'following' ? 'text-muted-foreground' : 'font-bold'}`}>フォロワー</button>
+                    <button type="button" onClick={() => setView('following')} className={`z-10 px-6 py-2 rounded-full ${view === 'followers' ? 'text-muted-foreground' : 'font-bold'}`}>{dict.profile.following}</button>
+                    <button type="button" onClick={() => setView('followers')} className={`z-10 px-6 py-2 rounded-full ${view === 'following' ? 'text-muted-foreground' : 'font-bold'}`}>{dict.profile.followers}</button>
                 </div>
             </nav>
             <section className="mt-8">
@@ -78,7 +78,7 @@ export default function ConnectionPage() {
                             </div>
                         ))
                         :
-                        <div className="text-center">{profile.nickname}は{view === 'following' ? '誰もフォローをしてないみたいです' : '（まだ）誰にもフォローされてません'}。</div>
+                        <div className="text-center">{profile.nickname}{view === 'following' ? dict.connections.noFollowing : dict.connections.noFollowers}</div>
                 }
             </section>
         </div>
