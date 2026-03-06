@@ -47,7 +47,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <section className="font-bold flex flex-col sm:gap-8 sm:flex-row-reverse items-center justify-center px-4 h-dvh -mt-8">
         <div className="">
           <div className="flex justify-center sm:justify-start">
-            <p className="font-mono bg-foreground font-bold px-4 py-1 rounded-full">v2.3.0</p>
+            <p className="font-mono bg-foreground font-bold px-4 py-1 rounded-full">v2.6.0</p>
           </div>
           <h1 className="text-6xl text-center font-black sm:text-left mt-4 text-rose-400">{dict.landing.title[0]}</h1>
           <h2 className="text-4xl text-center mt-2 sm:text-left">{dict.landing.title[1]}</h2>

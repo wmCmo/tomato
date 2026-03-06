@@ -8,7 +8,7 @@ import { useDict } from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
 import fetchFollowers from "@/queries/follower";
 import fetchFollowing from "@/queries/following";
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -30,13 +30,13 @@ export default function ConnectionPage() {
     const { data: profile, isLoading, error } = useProfile(userId);
 
     const { data: following, isLoading: followingLoading, error: followingError } = useQuery({
-        queryKey: ['following', userId],
-        queryFn: () => fetchFollowing(userId)
+        queryKey: ['following', profile?.id],
+        queryFn: profile?.id ? () => fetchFollowing(profile?.id) : skipToken
     });
 
     const { data: followers, isLoading: followersLoading, error: followersError } = useQuery({
-        queryKey: ['followers', userId],
-        queryFn: () => fetchFollowers(userId)
+        queryKey: ['followers', profile?.id],
+        queryFn: profile?.id ? () => fetchFollowers(userId) : skipToken
     });
 
     if (isLoading) return <ConnectionsSkeleton />;
@@ -69,7 +69,7 @@ export default function ConnectionPage() {
                     displayList && displayList.length > 0 ?
                         displayList.map((item, _) => (
                             <div key={item.id} className="mt-4">
-                                <Link className="flex items-center gap-4" href={`/${dict.langSubTag}/main/profile/${item.id}`}>
+                                <Link className="flex items-center gap-4" href={`/${dict.langSubTag}/main/profile/${item.handle ? `@${item.handle}` : item.id}`}>
                                     <img className="h-8 w-8 rounded-full" src={item?.avatar_url} alt={`${item.nickname}'s avatar`} />
                                     <span className="font-bold">{item.nickname}</span>
                                     {item.id !== user?.id && <FollowButton style={{ 'marginLeft': 'auto' }} userId={item.id} />}

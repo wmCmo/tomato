@@ -4,6 +4,9 @@ import { ProfileType } from "@/types/Profile";
 export default async function fetchProfile(
     userId: string | undefined,
 ): Promise<ProfileType> {
+    if (!userId) throw new Error("User ID is required");
+    const useHandle = userId?.startsWith('%40');
+    const identifier = useHandle ? userId?.substring(3) : userId;
     const { data, error } = await supabase
         .from("profiles")
         .select(`
@@ -15,14 +18,19 @@ export default async function fetchProfile(
             emoji,
             study_sessions(id, created_at, sessions, last_edited)
         `)
-        .eq("id", userId)
+        .eq(useHandle ? "handle" : "id", identifier)
         .order("last_edited", {
             referencedTable: "study_sessions",
             ascending: false,
         })
         .single();
     if (error) {
-        console.error(error);
+        console.error("Supabase Error:", {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+        });
         throw error;
     }
     return data;

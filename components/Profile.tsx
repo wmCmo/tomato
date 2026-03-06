@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/useToast";
 import { LocaleType } from "@/types/Locale";
 import { ProfileType } from "@/types/Profile";
 import { GearIcon, IconContext, LogIcon, ShareNetworkIcon } from "@phosphor-icons/react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
@@ -34,25 +34,24 @@ const Profile = ({ userId }: { userId: string; }) => {
     const [showCopied, setShowCopied] = useState(false);
 
     const { data: profileCount, isLoading: profileCountLoading } = useQuery({
-        queryKey: ["profileCount", userId],
-        queryFn: () => countProfile(userId),
-        enabled: !!userId,
+        queryKey: ["profileCount", profile?.id],
+        queryFn: profile?.id ? () => countProfile(profile.id) : skipToken,
         staleTime: 60 * 1000
     });
 
     useEffect(() => {
-        if (userId) {
+        if (profile?.id) {
             queryClient.prefetchQuery({
-                queryKey: ["followers", userId],
-                queryFn: () => fetchFollowers(userId)
+                queryKey: ["followers", profile.id],
+                queryFn: () => fetchFollowers(profile.id)
             });
 
             queryClient.prefetchQuery({
-                queryKey: ["following", userId],
-                queryFn: () => fetchFollowing(userId)
+                queryKey: ["following", profile.id],
+                queryFn: () => fetchFollowing(profile.id)
             });
         }
-    }, [userId, queryClient]);
+    }, [profile?.id, queryClient]);
 
     useEffect(() => {
         setBio(profile?.bio ?? '');
@@ -110,10 +109,11 @@ const Profile = ({ userId }: { userId: string; }) => {
 
     const handleSaveBio = async () => {
         const nextBio = bio;
+        if (!profile?.id) return;
         const { error } = await supabase
             .from('profiles')
             .update({ bio: nextBio })
-            .eq('id', userId);
+            .eq('id', profile?.id);
 
         if (error) {
             toast(undefined, dict.error.updateProfile, 'errorDb');
@@ -121,7 +121,7 @@ const Profile = ({ userId }: { userId: string; }) => {
             return;
         }
 
-        queryClient.setQueryData(['profile', userId], (old: ProfileType) => {
+        queryClient.setQueryData(['profile', profile.id], (old: ProfileType) => {
             if (!old) return old;
             return { ...old, bio: nextBio };
         });
@@ -129,8 +129,9 @@ const Profile = ({ userId }: { userId: string; }) => {
     };
 
 
-    const isOwner = user?.id === userId;
+    const isOwner = user?.id === profile?.id;
     const studySessions = profile?.study_sessions;
+    const identifier = profile?.handle ? `@${profile.handle}` : userId;
 
     return (
         <div className='text-accent w-full px-2 mt-12'>
@@ -147,7 +148,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                                     weight: 'fill',
                                     size: '1.5rem',
                                 }}>
-                                    <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/profile/${userId}`); setShowCopied(true); }} className="icon" />
+                                    <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/profile/${identifier}`); setShowCopied(true); }} className="icon" />
                                     <Link href={`/${dict.langSubTag}/main/settings`}>
                                         <GearIcon className="icon" />
                                     </Link>
@@ -160,13 +161,13 @@ const Profile = ({ userId }: { userId: string; }) => {
                                 profileCountLoading
                                     ? <div className="h-6 w-32 bg-foreground animate-pulse rounded-full"></div>
                                     : <>
-                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${userId}/connections?view=following`}><b>{profileCount.following}</b>{dict.profile.following}</Link>
-                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${userId}/connections?view=followers`}><b>{profileCount.followers}</b>{dict.profile.followers}</Link>
+                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${identifier}/connections?view=following`}><b>{profileCount.following}</b>{dict.profile.following}</Link>
+                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${identifier}/connections?view=followers`}><b>{profileCount.followers}</b>{dict.profile.followers}</Link>
                                     </>
                             }
                         </div>
                         <div className="flex gap-8">
-                            {!isOwner && <FollowButton userId={userId} />}
+                            {!isOwner && <FollowButton userId={profile?.id} />}
                             <TomatoCount count={profile?.study_sessions.reduce((sum, session) => session.sessions + sum, 0) ?? 0} label={dict.profile.total} locale={dict.langSubTag as LocaleType} />
                         </div>
                     </div>
@@ -220,7 +221,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                             <TomatoCount count={oneWeekSession.reduce((sum, day) => sum + day, 0)} locale={dict.langSubTag as LocaleType} />
 
                         </div>
-                        <Link href={`/${dict.langSubTag}/main/profile/${userId}/records`}>
+                        <Link href={`/${dict.langSubTag}/main/profile/${identifier}/records`}>
                             <div className="flex gap-2 items-center cursor-pointer text-muted hover:underline underline-offset-4 hover:text-muted-foreground transition-all duration-100">
                                 <span className="text-sm">{dict.profile.viewMore}</span>
                                 <LogIcon />

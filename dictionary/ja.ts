@@ -91,6 +91,8 @@ const ja = {
     setting: {
         title: "設定",
         question: "なんて呼べばいいですか？",
+        handle: "あなた専用のタグを登録しよう！",
+        handlePlaceHolder: "あなたのタグ",
         danger: "デンジャーゾーン",
         delete: {
             button: "アカウントを削除する",
@@ -122,6 +124,7 @@ const ja = {
         logOut: "ログアウト中に問題が発生しました。",
         clear: "記録の全削除（リセット）中に問題が発生しました。",
         processFile: "ファイルの処理中に問題が発生しました。",
+        duplicatedKey: "は既に存在します。",
         upload: "画像のアップロードに失敗しました。",
         getUrl: "アバターのURL取得中に問題が発生しました。",
         updateProfile: "プロフィールの更新中に問題が発生しました。",

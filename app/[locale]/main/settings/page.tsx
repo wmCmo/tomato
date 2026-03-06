@@ -9,11 +9,13 @@ import useProfile from "@/hooks/useProfile";
 import { useToast } from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
 import { ProfileType } from "@/types/Profile";
+import { shallowEqual } from "@/utils/shallowEqual";
 import { ArrowCircleRightIcon, PlusIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
+interface SettingFormType { avatar_url: string; nickname: string; handle: string; }
 
 const SettingPage = () => {
     const { session, user, loading: authLoading } = useAuth();
@@ -21,16 +23,18 @@ const SettingPage = () => {
 
     const queryClient = useQueryClient();
 
-    const { data: profile, isLoading, error } = useProfile(user?.id, {
+    const { data: profile, isLoading, error } = useProfile<SettingFormType>(user?.id, {
         select: (p: ProfileType) => ({
             avatar_url: p.avatar_url,
-            nickname: p.nickname
+            nickname: p.nickname,
+            handle: p.handle
         })
     });
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<SettingFormType>({
         nickname: "",
-        avatar_url: ""
+        avatar_url: "",
+        handle: ""
     });
     const [showDangerZone, setShowDangerZone] = useState(false);
 
@@ -40,10 +44,12 @@ const SettingPage = () => {
         setFormData(prev => {
             const nextNickname = profile?.nickname ?? user?.user_metadata?.full_name ?? "";
             const nextAvatarUrl = profile?.avatar_url ?? `/profile-skeleton.svg`;
+            const nextHandle = profile?.handle ?? '';
             return {
                 ...prev,
                 nickname: nextNickname,
-                avatar_url: nextAvatarUrl
+                avatar_url: nextAvatarUrl,
+                handle: nextHandle
             };
         });
     }, [profile, user?.user_metadata?.full_name]);
@@ -52,13 +58,13 @@ const SettingPage = () => {
     const { confirm, modal } = useConfirm();
     const { toast } = useToast();
 
-    if (authLoading) return <ProfileSkeleton />;
 
     useEffect(() => {
         if (!user) router.push(`/${dict.langSubTag}/main/signin`);
     }, [user, router]);
 
     if (isLoading) return <ProfileSkeleton />;
+    if (authLoading) return <ProfileSkeleton />;
 
     if (error) {
         console.error(error);
@@ -263,9 +269,15 @@ const SettingPage = () => {
             .update(updateItem)
             .eq('id', user?.id);
         if (error) {
-            toast(undefined, dict.error.updateProfile, "errorDb");
-            console.error(error.code, error.message);
-            return;
+            if (error.message.includes("duplicate key")) {
+                console.log('hello_world');
+                toast(undefined, `@${formData.handle}${dict.error.duplicatedKey}`, "errorDuplicatedKey");
+                return;
+            } else {
+                toast(undefined, dict.error.updateProfile, "errorDb");
+                console.error(error.code, error.message);
+                return;
+            }
         }
 
         queryClient.setQueryData(['profile', user?.id], (old: ProfileType) => {
@@ -277,13 +289,14 @@ const SettingPage = () => {
     const handleCancleForm = () => {
         setFormData({
             nickname: profile?.nickname ?? "",
-            avatar_url: profile?.avatar_url ?? `/profile-skeleton.svg`
+            avatar_url: profile?.avatar_url ?? `/profile-skeleton.svg`,
+            handle: profile?.handle ?? ''
         });
     };
 
     return (
         <div className="text-accent relative" >
-            <section className="flex gap-8 items-end">
+            <section className="flex gap-8 items-start">
                 <button type="button" className="relative" onClick={handleTriggerUpload}>
                     {!!user || !!profile ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-20 w-20 rounded-lg" /> : <UserCircleIcon className='icon h-20 w-20' weight="fill" />}
                     {/* <img src={formData?.avatar_url ?? profile?.avatar_url} className="h-20 w-auto rounded-lg" alt="User's profile picture" /> */}
@@ -291,12 +304,20 @@ const SettingPage = () => {
                         <PlusIcon size={30} weight="bold" className="text-white z-10" />
                     </div>
                 </button>
-                <div className="space-y-2">
-                    <h1 className="text-xl">{dict.setting.question}</h1>
-                    <input className="px-4 py-2 outline-none card" type="text" name="nickname" id="nickname" value={formData?.nickname ?? ""} onChange={(e) => handleUpdateFormData(e)} />
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <h1 className="text-xl">{dict.setting.question}</h1>
+                        <input className="px-4 py-2 outline-none card" type="text" name="nickname" id="nickname" value={formData.nickname} onChange={(e) => handleUpdateFormData(e)} />
+                    </div>
+                    <div className="space-y-2">
+                        <h3>{dict.setting.handle}</h3>
+                        <div className="card px-4 py-2 inline-block">
+                            <span className="text-muted-foreground ">@ </span><input type="text" name="handle" id="handle" className="outline-none" value={formData.handle} onChange={e => handleUpdateFormData(e)} placeholder={dict.setting.handlePlaceHolder} />
+                        </div>
+                    </div>
                 </div>
             </section>
-            <div className={`gap-6 justify-end flex mt-8 transition-all duration-500 ease-in-out ${(formData?.nickname === profile?.nickname) && (formData.avatar_url === profile.avatar_url) ? 'opacity-0 translate-y-2 pointer-events-none' : 'opacity-100 translate-y-0'} font-bold`}>
+            <div className={`gap-6 justify-end flex mt-8 transition-all duration-500 ease-in-out ${shallowEqual(profile, formData) ? 'opacity-0 translate-y-2 pointer-events-none' : 'opacity-100 translate-y-0'} font-bold`}>
                 <button type="button" onClick={handleCancleForm} className="bg-foreground px-3 py-1 rounded-xl">{dict.ui.cancel}</button>
                 <button type="button" onClick={sendForm} className={`px-4 py-1 bg-blue-600 border-4 border-blue-500 text-white rounded-xl`}>{dict.ui.save}</button>
             </div>

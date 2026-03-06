@@ -48,7 +48,7 @@ export default function App({ children }: { children: ReactNode; }) {
   }, [isPixel]);
 
   const { data: profile } = useProfile(user?.id, {
-    select: (p: { avatar_url: string; }) => ({ avatar_url: p.avatar_url })
+    select: (p: { avatar_url: string; handle: string; }) => ({ avatar_url: p.avatar_url, handle: p.handle })
   });
 
   const navContextValue = useMemo(() => ({ isPixel, timerOn }), [isPixel, timerOn]);
@@ -71,7 +71,7 @@ export default function App({ children }: { children: ReactNode; }) {
               <HouseIcon className='icon' />
             </Link>
             <TimerIcon className={`cursor-pointer ${timerOn ? 'text-accent' : 'text-muted hover:text-muted-foreground'} icon`} onClick={() => setTimerOn(prev => !prev)} />
-            <Link href={user?.id ? `/${dict.langSubTag}/main/profile/${user?.id || ''}` : `/${dict.langSubTag}/main/signin`} className={navFunc(pathName.includes('/profile/') || pathName.includes('/signin'))}>
+            <Link href={user?.id ? `/${dict.langSubTag}/main/profile/${profile?.handle ? `@${profile.handle}` : user.id}` : `/${dict.langSubTag}/main/signin`} className={navFunc(pathName.includes('/profile/') || pathName.includes('/signin'))}>
               {user ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-6 w-6 rounded-full" /> : <UserCircleIcon className='icon' />}
             </Link>
           </IconContext.Provider>

@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircleIcon, CloudXIcon, FileXIcon, IconContext, ShieldWarningIcon, WarningDiamondIcon, XCircleIcon } from '@phosphor-icons/react';
+import { AtIcon, CheckCircleIcon, CloudXIcon, FileXIcon, IconContext, ShieldWarningIcon, WarningDiamondIcon, XCircleIcon } from '@phosphor-icons/react';
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -25,7 +25,8 @@ export const toastIcons = {
     errorDb: <CloudXIcon />,
     errorAuth: <ShieldWarningIcon />,
     errorFile: <FileXIcon />,
-    success: <CheckCircleIcon />
+    errorDuplicatedKey: <AtIcon />,
+    success: <CheckCircleIcon />,
 };
 
 
@@ -35,7 +36,7 @@ const Toast = ({ title, desc, variant, onDismiss }: ToastProps) => (
             weight: "fill",
             size: "1.5rem"
         }}>
-            <div className={variant === 'success' ? 'text-blue-500' : 'text-rose-400'}>
+            <div className={variant === 'success' ? 'text-blue-500' : variant == "errorDuplicatedKey" ? "text-yellow-400" : 'text-rose-400'}>
                 {toastIcons[variant] ?? <WarningDiamondIcon />}
             </div>
         </IconContext.Provider >

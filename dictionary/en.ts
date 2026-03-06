@@ -104,6 +104,8 @@ const en = {
     setting: {
         title: "Settings",
         question: "What should we call you?",
+        handle: "Set your profile tag",
+        handlePlaceHolder: "Your unique tag",
         danger: "Danger Zone",
         delete: {
             button: "Delete Account",
@@ -135,6 +137,7 @@ const en = {
         logOut: "We had a trouble logging you out.",
         clear: "We had trouble clearing your records",
         processFile: "There was a problem processing your file",
+        duplicatedKey: " was already taken.",
         upload: "Failed to upload image.",
         getUrl: "There was a problem getting your avatar URL.",
         updateProfile: "There was a problem updating your profile.",
