@@ -1,0 +1,137 @@
+/* stylelint-disable-next-line import-notation */
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+    /* Static colors */
+    --color-pink-prim: #FF9393;
+    --color-pink-sec: #FFB3B3;
+    --color-yellow-prim: #FFC367;
+    --color-yellow-sec: #FFD28D;
+    --color-blue-prim: #88E0FF;
+    --color-blue-sec: #B1EBFF;
+
+    /* CSS-variable-backed colors (defined in @layer base below) */
+    --color-background: var(--background);
+    --color-faded: var(--faded);
+    --color-foreground: var(--foreground);
+    --color-border: var(--border);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-extreme: var(--extreme);
+    --color-absolute: var(--absolute);
+
+    /* Fonts */
+    --font-display: var(--font-montserrat);
+    --font-jp: var(--font-zen-maru-gothic);
+    --font-pixel: var(--font-pixelify-sans);
+
+    /* Animations */
+    --animate-stretch-right: stretch-right 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    --animate-stretch-left: stretch-left 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes stretch-right {
+    0% {
+        left: var(--anim-offset, 12px);
+        width: calc(50% + var(--anim-offset, 12px));
+    }
+
+    50% {
+        left: var(--anim-offset, 12px);
+        width: calc(100% - var(--anim-offset, 12px) * 2);
+    }
+
+    100% {
+        left: calc(50% + var(--anim-offset, 12px));
+        width: calc(50% - var(--anim-offset, 12px) * 2);
+    }
+}
+
+@keyframes stretch-left {
+    0% {
+        left: calc(50% + var(--anim-offset, 12px));
+        width: calc(50% - var(--anim-offset, 12px) * 2);
+    }
+
+    50% {
+        left: var(--anim-offset, 12px);
+        width: calc(100% - var(--anim-offset, 12px) * 2);
+    }
+
+    100% {
+        left: var(--anim-offset, 12px);
+        width: calc(50% + var(--anim-offset, 12px));
+    }
+}
+
+@layer components {
+    .card {
+        @apply bg-extreme border border-border rounded-lg;
+    }
+
+    .icon {
+        @apply text-muted hover:text-muted-foreground transition-all ease-in duration-100 cursor-pointer
+    }
+
+    .inline-code {
+        @apply text-[0.95em] rounded px-1.5 py-0.5 bg-foreground text-accent
+    }
+
+    .scrollbar-muted {
+        scrollbar-width: thin;
+        scrollbar-color: var(--muted) var(--foreground);
+    }
+
+    .scrollbar-muted::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .scrollbar-muted::-webkit-scrollbar-track {
+        background: var(--foreground);
+        border-radius: 9999px;
+    }
+
+    .scrollbar-muted::-webkit-scrollbar-thumb {
+        background: var(--muted);
+        border-radius: 9999px;
+        border: 2px solid var(--foreground);
+    }
+
+    .scrollbar-muted::-webkit-scrollbar-thumb:hover {
+        background: var(--muted-foreground);
+    }
+}
+
+button,
+[role='button'] {
+    cursor: pointer;
+}
+
+@layer base {
+    :root {
+        --extreme: oklch(100% 0 0deg);
+        --background: oklch(98.51% 0 0deg);
+        --faded: oklch(97.02% 0 0deg);
+        --border: var(--faded);
+        --foreground: oklch(92.19% 0 0deg);
+        --muted: oklch(71.55% 0 0deg);
+        --muted-foreground: oklch(55.55% 0 0deg);
+        --accent: oklch(37.15% 0 0deg);
+        --absolute: oklch(37.15% 0 0deg);
+    }
+
+    .dark {
+        --extreme: oklch(26.86% 0 0deg);
+        --background: oklch(20.46% 0 0deg);
+        --faded: oklch(26.86% 0 0deg);
+        --foreground: oklch(26.86% 0 0deg);
+        --muted: oklch(37.15% 0 0deg);
+        --border: var(--muted);
+        --muted-foreground: oklch(43.86% 0 0deg);
+        --accent: oklch(71.55% 0 0deg);
+        --absolute: oklch(100% 0 0deg);
+    }
+}
