@@ -1,9 +1,11 @@
+import { LocaleType } from "@/types/Locale";
 
-const TomatoCount = ({ count, label }: { count: number; label?: string; }) => {
+const TomatoCount = ({ count, label, locale = 'en' }: { count: number; label?: string; locale: LocaleType; }) => {
     return (
-        <div className="bg-foreground font-bold flex items-center px-2 py-1 rounded-lg gap-1 max-w-32">
+        <div className={`bg-foreground font-bold flex ${locale === 'ja' && 'flex-row-reverse'} items-center px-2 py-1 rounded-lg gap-1`}>
             <img className="h-4 w-4" src={`https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg`} alt="Fluent tomato emoji" />
-            <span>{count} {label}</span>
+            <span>{count}</span>
+            <span>{label}</span>
         </div>
     );
 };

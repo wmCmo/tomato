@@ -3,11 +3,11 @@
 import Profile from "@/components/Profile";
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import useAuth from "@/hooks/useAuth";
-import { use } from "react";
+import { useParams } from "next/navigation";
 
-const ProfilePage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
+const ProfilePage = () => {
     const { loading } = useAuth();
-    const { userId } = use(params);
+    const { userId } = useParams<{ userId: string; }>();
 
     if (loading) return <ProfileSkeleton />;
 

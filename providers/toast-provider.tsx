@@ -8,7 +8,7 @@ interface ToastProps {
     title: string | undefined; desc: string; variant: keyof typeof toastIcons; onDismiss?: () => void; id: number;
 }
 
-type ToastOptions = Omit<ToastProps, 'id' | 'onDismiss'> & {
+export type ToastOptions = Omit<ToastProps, 'id' | 'onDismiss'> & {
     duration?: number;
 };
 

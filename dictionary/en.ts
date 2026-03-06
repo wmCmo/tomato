@@ -69,6 +69,7 @@ const en = {
         errorItem: "profile",
         following: " Following",
         followers: " Followers",
+        total: "Total"
     },
     record: {
         header: "Your Record",

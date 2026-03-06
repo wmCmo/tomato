@@ -18,6 +18,7 @@ import Error from "./Error";
 import FollowButton from "./FollowButton";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
 import TomatoCount from "@/components/TomatoCount";
+import { LocaleType } from "@/types/Locale";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -167,7 +168,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                         </div>
                         <div className="flex gap-8">
                             {!isOwner && <FollowButton userId={userId} />}
-                            <TomatoCount count={profile?.study_sessions.reduce((sum, session) => session.sessions + sum, 0) ?? 0} label="Total" />
+                            <TomatoCount count={profile?.study_sessions.reduce((sum, session) => session.sessions + sum, 0) ?? 0} label={dict.profile.total} locale={dict.langSubTag as LocaleType} />
                         </div>
                     </div>
                     <div className={`text-sm absolute right-0 bottom-0 pointer-events-none transition-all duration-200 ease-in-out bg-foreground px-4 py-2 rounded-lg text-accent font-bold ${showCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>{dict.profile.copied}</div>
@@ -217,7 +218,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                         <div className="flex gap-2 items-center">
                             <img src={`${fluentRepo}/Potted%20plant/Color/potted_plant_color.svg`} alt="Fluent Potted Plant emoji" className="w-6 h-auto" />
                             <h3 className="font-semibold">{dict.profile.thisWeek}</h3>
-                            <TomatoCount count={oneWeekSession.reduce((sum, day) => sum + day, 0)} />
+                            <TomatoCount count={oneWeekSession.reduce((sum, day) => sum + day, 0)} locale={dict.langSubTag as LocaleType} />
 
                         </div>
                         <Link href={`/${dict.langSubTag}/main/profile/${userId}/records`}>

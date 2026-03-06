@@ -68,7 +68,8 @@ const ja = {
         formatDate: formatDateJa,
         errorItem: "プロフィール",
         following: "フォロー中",
-        followers: "フォロワー"
+        followers: "フォロワー",
+        total: "合計"
     },
     record: {
         header: "これまでの記録",
@@ -82,7 +83,7 @@ const ja = {
         warning: "記録を削除します。本当によろしいですか？",
         formatDate: formatDateJaNoYear,
         thisMonth: "今月",
-        thisYear: ""
+        thisYear: "今年"
     },
     setting: {
         question: "なんて呼べばいいですか？",

@@ -67,10 +67,10 @@ export default function ConnectionPage() {
             <section className="mt-8">
                 {
                     displayList && displayList.length > 0 ?
-                        displayList.map((item, index) => (
-                            <div key={index} className="mt-4">
+                        displayList.map((item, _) => (
+                            <div key={item.id} className="mt-4">
                                 <Link className="flex items-center gap-4" href={`/${dict.langSubTag}/main/profile/${item.id}`}>
-                                    <img className="h-8 w-8 rounded-full" src={item?.avatar_url} alt={`${item.nickname}'s avartar`} />
+                                    <img className="h-8 w-8 rounded-full" src={item?.avatar_url} alt={`${item.nickname}'s avatar`} />
                                     <span className="font-bold">{item.nickname}</span>
                                     {item.id !== user?.id && <FollowButton style={{ 'marginLeft': 'auto' }} userId={item.id} />}
                                 </Link>

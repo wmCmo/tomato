@@ -13,7 +13,7 @@ const ToggleLang = ({ locale, pathName }: { locale: LocaleType, pathName: string
         const location = pathName.substring(3);
         const newLocale = locale === "en" ? "ja" : "en";
         router.push(`/${newLocale}${location}`);
-    }, [locale, pathName]);
+    }, [locale, pathName, router]);
 
     const handleKeys = useCallback((e: KeyboardEvent) => {
         if (!e.altKey) return;

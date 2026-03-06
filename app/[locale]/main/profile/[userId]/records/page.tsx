@@ -11,6 +11,7 @@ import { useDict } from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
 import { useToast } from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
+import { LocaleType } from "@/types/Locale";
 import { ProfileType } from "@/types/Profile";
 import { StudySessionType } from "@/types/StudySession";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
@@ -28,12 +29,11 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
     const router = useRouter();
     const { dict } = useDict();
 
-    if (authLoading) return <RecordsSkeleton />;
-
     useEffect(() => {
         if (!user) router.push(`/${dict.langSubTag}/main/signin`);
     }, [user, router]);
 
+    if (authLoading) return <RecordsSkeleton />;
 
     const { data: sessions, isLoading, error } = useProfile<StudySessionType[]>(userId, {
         select: (p: ProfileType): StudySessionType[] => p?.study_sessions ?? []
@@ -113,7 +113,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
                                 <section key={year} className="pt-10">
                                     <div className="flex items-center gap-4 text-accent">
                                         <h2 className="font-bold text-2xl">{year}</h2>
-                                        <TomatoCount count={[...months.values()].flat().reduce((sum, entry) => sum + entry.sessions, 0)} label={dict.record.thisYear} />
+                                        <TomatoCount count={[...months.values()].flat().reduce((sum, entry) => sum + entry.sessions, 0)} label={dict.record.thisYear} locale={dict.langSubTag as LocaleType} />
                                     </div>
                                     {[...months.entries()].map(([month, entries]) => {
                                         return <RecordCard key={month} user={user} userId={userId} month={month} entries={entries} handleDelete={handleDelete} />;
