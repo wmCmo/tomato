@@ -21,7 +21,7 @@ function formatDateJaNoYear(
         hour12,
     }).format(date);
 
-    return `${day}日（${weekday}）ー${time}`;
+    return `${day}日（${weekday}）ー ${time}`;
 }
 
 export default formatDateJaNoYear;

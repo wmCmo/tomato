@@ -89,6 +89,8 @@ const en = {
         ],
         warning: "Deleting a record, are you sure?",
         formatDate: formatDateEnNoYear,
+        thisMonth: "This Month",
+        thisYear: "This Year"
     },
     setting: {
         question: "What should we call you?",
@@ -126,6 +128,14 @@ const en = {
         updateProfile: "There was a problem updating your profile.",
         terminate: "Failed to delete your account.",
     },
+    landing: {
+        title: ["Minimal", "Pomodoro Timer"],
+        start: "Click Start",
+        gtd: "And Get Things Done!",
+        about: "About",
+        tagLine: "Your Minimal Timer App",
+        terms: "Terms and Conditions",
+    }
 };
 
 export default en;

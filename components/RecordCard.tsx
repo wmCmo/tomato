@@ -29,7 +29,7 @@ const RecordCard = ({ month, entries, handleDelete, user, userId }: { month: num
     if (!entries) return <></>;
     const fuuButsuShi = fluentMonth[month];
     return (
-        <div className="mt-4">
+        <div className="mt-6">
             <div className="flex justify-between items-center">
                 <div className="flex gap-2 items-center">
                     <img className="w-6 h-auto" src={`${fluentRepo}${encodeURIComponent(fuuButsuShi)}/Color/${fuuButsuShi.toLowerCase().replaceAll(' ', '_')}_color.svg`} alt={`Fluent ${fuuButsuShi} emoji`} />
@@ -44,19 +44,27 @@ const RecordCard = ({ month, entries, handleDelete, user, userId }: { month: num
                     </button>
                 }
             </div>
-            <div className="card px-8 py-6 mt-2 space-y-4 text-sm">
+            <div className="card px-8 py-6 mt-2 space-y-6 text-sm">
                 {entries.map(entry => {
                     return (
                         <div key={entry.id} className="flex justify-between items-center">
                             <span>{entry.last_edited}</span>
                             <div className={`flex ${isEditing ? 'w-16' : 'w-12'} justify-between items-center`}>
-                                <img className="w-4 h-auto" src={`${fluentRepo}Tomato/Color/tomato_color.svg`} alt="Fluent tomato emoji" />
-                                <span className="">x{entry.sessions}</span>
+                                <img className="w-4 h-4" src={`${fluentRepo}Tomato/Color/tomato_color.svg`} alt="Fluent tomato emoji" />
+                                <span className=""><b>x{entry.sessions}</b></span>
                                 {isEditing && <button type="button" onClick={() => handleDelete(entry.id)} className="icon hover:text-rose-400"><TrashIcon /></button>}
                             </div>
                         </div>
                     );
                 })}
+                <hr className="border-border border"/>
+                <div className="flex justify-between items-end">
+                    <span className="font-bold">{dict.record.thisMonth}</span>
+                    <div className="flex gap-2">
+                        <img className="w-6 h-6" src={`${fluentRepo}Tomato/Color/tomato_color.svg`} alt="Fluent tomato emoji" />
+                        <span className="font-bold text-lg text-absolute">x{entries.reduce((sum, entry) => sum + entry.sessions, 0)}</span>
+                    </div>
+                </div>
             </div>
         </div >
 

@@ -3,7 +3,7 @@
 import BackToHome from "@/components/BackToHome";
 import Error from "@/components/Error";
 import RecordCard from "@/components/RecordCard";
-import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
+import RecordsSkeleton from "@/components/ui/RecordsSkeleton";
 import useAuth from "@/hooks/useAuth";
 import useConfirm from "@/hooks/useConfirm";
 import { useDict } from "@/hooks/useDict";
@@ -16,7 +16,7 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { use, useMemo } from "react";
+import { use, useEffect, useMemo } from "react";
 
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/";
 
@@ -27,11 +27,12 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
     const router = useRouter();
     const { dict } = useDict();
 
-    if (authLoading) {
-        return <ProfileSkeleton />;
-    }
+    if (authLoading) return <RecordsSkeleton />;
 
-    if (!user) router.push(`/${dict.langSubTag}/main/signin`);
+    useEffect(() => {
+        if (!user) router.push(`/${dict.langSubTag}/main/signin`);
+    }, [user, router]);
+
 
     const { data: sessions, isLoading, error } = useProfile<StudySessionType[]>(userId, {
         select: (p: ProfileType): StudySessionType[] => p?.study_sessions ?? []
@@ -59,7 +60,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
     const { confirm, modal } = useConfirm();
     const { toast } = useToast();
 
-    if (isLoading) return <ProfileSkeleton />;
+    if (isLoading) return <RecordsSkeleton />;
 
     if (error) return <Error item={'Pomodoro sessions'} />;
 
@@ -89,14 +90,14 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
     }
 
     return (
-        <div className="relative text-accent w-full px-4">
+        <div className="relative text-accent w-full px-4 max-w-lg">
             <section className="sticky top-20 pt-10 bg-background w-full">
-                <div className="flex justify-between">
+                <div className="flex justify-between flex-col sm:flex-row gap-4">
                     <div className="flex gap-1 items-center">
                         <img src={`${fluentRepo}Potted%20plant/Color/potted_plant_color.svg`} alt="Fluent Potted Plant emoji" />
                         <h1 className="font-bold text-xl">{dict.record.header}</h1>
                     </div>
-                    <Link href={`/${dict.langSubTag}/main/profile/${userId}`} className="flex gap-2 items-center bg-foreground rounded px-2 py-1 icon">
+                    <Link href={`/${dict.langSubTag}/main/profile/${userId}`} className="flex gap-2 items-center bg-foreground rounded px-2 py-1 icon max-w-xs">
                         <ArrowLeftIcon />
                         <span className="text-sm font-semibold">{dict.record.return}</span>
                     </Link>
@@ -108,8 +109,11 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
                     (
                         [...mappedSessions.entries()].map(([year, months]) => {
                             return (
-                                <section key={year} className="">
-                                    <h2 className="font-bold text-2xl text-muted">{year}</h2>
+                                <section key={year} className="pt-10">
+                                    <div className="flex items-center gap-4 text-accent">
+                                        <h2 className="font-bold text-2xl">{year}</h2>
+                                        <div className="text-base px-2 py-1 bg-foreground rounded-lg font-bold flex items-center gap-1"><img className="w-4 h-4" src={`${fluentRepo}Tomato/Color/tomato_color.svg`} alt="Fluent tomato emoji" /><span>{[...months.values()].flat().reduce((sum, entry) => sum + entry.sessions, 0)} {dict.record.thisYear}</span></div>
+                                    </div>
                                     {[...months.entries()].map(([month, entries]) => {
                                         return <RecordCard key={month} user={user} userId={userId} month={month} entries={entries} handleDelete={handleDelete} />;
                                     })}

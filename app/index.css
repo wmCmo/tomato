@@ -21,6 +21,7 @@
     --color-muted-foreground: var(--muted-foreground);
     --color-accent: var(--accent);
     --color-extreme: var(--extreme);
+    --color-absolute: var(--absolute);
 
     /* Fonts */
     --font-display: var(--font-montserrat);
@@ -119,6 +120,7 @@ button,
         --muted: oklch(71.55% 0 0deg);
         --muted-foreground: oklch(55.55% 0 0deg);
         --accent: oklch(37.15% 0 0deg);
+        --absolute: oklch(37.15% 0 0deg);
     }
 
     .dark {
@@ -130,5 +132,6 @@ button,
         --border: var(--muted);
         --muted-foreground: oklch(43.86% 0 0deg);
         --accent: oklch(71.55% 0 0deg);
+        --absolute: oklch(100% 0 0deg);
     }
 }

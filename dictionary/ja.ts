@@ -76,6 +76,8 @@ const ja = {
         months: Array.from({ length: 12 }, (_, i) => `${i + 1}月`),
         warning: "記録を削除します。本当によろしいですか？",
         formatDate: formatDateJaNoYear,
+        thisMonth: "今月",
+        thisYear: ""
     },
     setting: {
         question: "なんて呼べばいいですか？",
@@ -113,6 +115,14 @@ const ja = {
         updateProfile: "プロフィールの更新中に問題が発生しました。",
         terminate: "アカウントの削除に失敗しました。",
     },
+    landing: {
+        title: ["ミニマル", "なポモドーロタイマー"],
+        start: "スタートしよう！",
+        gtd: "集中モードに入る👀",
+        about: "Tomatoについて",
+        tagLine: "あなたのミニマルなタイマーアプリ",
+        terms: "利用規約",
+    }
 };
 
 export default ja;

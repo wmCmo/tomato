@@ -2,7 +2,7 @@
 
 import Error from "@/components/Error";
 import FollowButton from "@/components/FollowButton";
-import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
+import ConnectionsSkeleton from "@/components/ui/ConnectionsSkeleton";
 import useAuth from "@/hooks/useAuth";
 import { useDict } from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
@@ -39,17 +39,17 @@ export default function ConnectionPage() {
         queryFn: () => fetchFollowers(userId)
     });
 
-    if (isLoading) return <ProfileSkeleton />;
+    if (isLoading) return <ConnectionsSkeleton />;
 
     if (!profile || error) return <Error item={"User's connection"} />;
 
     if (view === 'following') {
-        if (followingLoading) return <ProfileSkeleton />;
+        if (followingLoading) return <ConnectionsSkeleton />;
         if (!following || followingError) return <Error item={"Following"} />;
     }
 
     if (view === 'followers') {
-        if (followersLoading) return <ProfileSkeleton />;
+        if (followersLoading) return <ConnectionsSkeleton />;
         if (!followers || followersError) return <Error item={"Followers"} />;
     }
 
