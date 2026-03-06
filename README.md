@@ -16,21 +16,21 @@
 ## Things I want to work on
 
 - [x] Togglable dark theme
-- [ ] Make it PWA friendly for mobile (iOS+Android)
+- [x] Make it PWA friendly for mobile (iOS+Android)
 - [x] Adjust white color
 - [x] Countdown timer component (`v1.6.0`)
 - [x] Use `localStorage` to locally save current session number and state
 - [ ] Ability to customize the in-app title (From `Zach's Tomato`)
 - [ ] Signin to save information and sync to your Notion Page.
 - [ ] Add study session to Google Calendar??
-- [ ] Add cute 効果音 for each button
+- [x] Add cute 効果音 for each button
 - [x] Privacy & Policy + Terms of Use Page
-- [ ] Stopwatch feature
+- [x] Stopwatch feature
 - [x] Public profile page (`v2.0.0`)
   - [ ] Emoji picker for status
   - [x] Setting page
 - [x] Private record page
-- [ ] Stopwatch component
+- [x] Stopwatch component
 
 ---
 
