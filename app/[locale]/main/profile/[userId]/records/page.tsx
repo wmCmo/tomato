@@ -17,8 +17,7 @@ import { StudySessionType } from "@/types/StudySession";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { use, useEffect, useMemo } from "react";
+import { use, useMemo } from "react";
 
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/";
 
@@ -26,14 +25,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
     const { user, loading: authLoading } = useAuth();
     const { userId } = use(params);
     const queryClient = useQueryClient();
-    const router = useRouter();
     const { dict } = useDict();
-
-    useEffect(() => {
-        if (!user) router.push(`/${dict.langSubTag}/main/signin`);
-    }, [user, router]);
-
-    if (authLoading) return <RecordsSkeleton />;
 
     const { data: sessions, isLoading, error } = useProfile<StudySessionType[]>(userId, {
         select: (p: ProfileType): StudySessionType[] => p?.study_sessions ?? []
@@ -61,6 +53,8 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
     const { confirm, modal } = useConfirm();
     const { toast } = useToast();
 
+    if (authLoading) return <RecordsSkeleton />;
+
     if (isLoading) return <RecordsSkeleton />;
 
     if (error) return <Error item={'Pomodoro sessions'} />;
@@ -79,7 +73,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
         if (localSessionId === sessionId) {
             if (typeof window !== "undefined") localStorage.removeItem('active_session_id');
         }
-        queryClient.setQueryData(['profile', user?.id], (old: ProfileType) => {
+        queryClient.setQueryData(['profile', userId], (old: ProfileType) => {
             if (!old) return old;
             return {
                 ...old,
