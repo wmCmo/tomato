@@ -1,24 +1,23 @@
 'use client';
 
+import TomatoCount from "@/components/TomatoCount";
 import useAuth from "@/hooks/useAuth";
 import { useDict } from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
 import { useToast } from "@/hooks/useToast";
+import { LocaleType } from "@/types/Locale";
 import { ProfileType } from "@/types/Profile";
 import { GearIcon, IconContext, LogIcon, ShareNetworkIcon } from "@phosphor-icons/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
-import checkIsFollowing from "../queries/checkIsFollowing";
 import countProfile from "../queries/countProfile";
 import fetchFollowers from "../queries/follower";
 import fetchFollowing from "../queries/following";
 import Error from "./Error";
 import FollowButton from "./FollowButton";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
-import TomatoCount from "@/components/TomatoCount";
-import { LocaleType } from "@/types/Locale";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -148,7 +147,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                                     weight: 'fill',
                                     size: '1.5rem',
                                 }}>
-                                    <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/tomato/profile/${userId}`); setShowCopied(true); }} className="icon" />
+                                    <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/profile/${userId}`); setShowCopied(true); }} className="icon" />
                                     <Link href={`/${dict.langSubTag}/main/settings`}>
                                         <GearIcon className="icon" />
                                     </Link>

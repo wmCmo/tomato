@@ -14,12 +14,13 @@ const en = {
         warnDelete: ["This action ", "cannot", " be undone."],
         follow: "Follow",
         unfollow: "Unfollow",
-        loading: "Loading"
+        loading: "Loading",
     },
     policy: {
         header: "Privacy Policy",
     },
     home: {
+        title: "Timers",
         nav: {
             header: "Zach's Tomato",
             desc: "Your minimal Pomodoro timer",
@@ -49,6 +50,7 @@ const en = {
         },
     },
     profile: {
+        title: "'s Profile",
         welcome: "Welcome back,",
         status: "I want to tell everyone that...",
         highScore: "High Score",
@@ -69,9 +71,10 @@ const en = {
         errorItem: "profile",
         following: " Following",
         followers: " Followers",
-        total: "Total"
+        total: "Total",
     },
     record: {
+        title: "'s Record",
         header: "Your Record",
         return: "Back to Profile",
         empty: [
@@ -95,10 +98,11 @@ const en = {
         ],
         warning: "Deleting a record, are you sure?",
         formatDate: formatDateEnNoYear,
-        thisMonth: "This Month",
-        thisYear: "This Year"
+        thisMonth: "Month Total",
+        thisYear: "",
     },
     setting: {
+        title: "Settings",
         question: "What should we call you?",
         danger: "Danger Zone",
         delete: {
@@ -113,10 +117,12 @@ const en = {
         errorItem: "information",
     },
     notFound: {
+        title: "404 Page Not Found",
         desc: "Maybe I'm not what you're looking for?",
         suggest: "Try navigating back to",
     },
     login: {
+        title: "Login",
         header: "Let's sign you in!",
         google: "Login with Google",
     },
@@ -143,9 +149,10 @@ const en = {
         terms: "Terms and Conditions",
     },
     connections: {
+        title: "'s Connections",
         noFollowing: "is not following anyone.🤔",
-        noFollowers: "is not followed by anyone (just yet)."
-    }
+        noFollowers: "is not followed by anyone (just yet).",
+    },
 };
 
 export default en;

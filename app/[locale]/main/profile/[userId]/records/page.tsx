@@ -27,14 +27,12 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
     const queryClient = useQueryClient();
     const { dict } = useDict();
 
-    const { data: sessions, isLoading, error } = useProfile<StudySessionType[]>(userId, {
-        select: (p: ProfileType): StudySessionType[] => p?.study_sessions ?? []
-    });
+    const { data: profile, isLoading, error } = useProfile(userId);
 
     const mappedSessions = useMemo(() => {
-        if (!sessions) return new Map();
+        if (!profile?.study_sessions) return new Map();
         const map = new Map<number, Map<number, Omit<StudySessionType, "created_at">[]>>();
-        for (const session of sessions) {
+        for (const session of profile.study_sessions) {
             const lastEdit = new Date(session.last_edited);
             const editedYear = lastEdit.getFullYear();
             const editedMonth = lastEdit.getMonth();
@@ -48,7 +46,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
             years.get(editedMonth)!.push({ id: session.id, sessions: session.sessions, last_edited: dict.record.formatDate(lastEdit) });
         }
         return map;
-    }, [sessions, dict]);
+    }, [profile?.study_sessions, dict]);
 
     const { confirm, modal } = useConfirm();
     const { toast } = useToast();
@@ -90,7 +88,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
                 <div className="flex justify-between flex-col sm:flex-row gap-4">
                     <div className="flex gap-1 items-center">
                         <img src={`${fluentRepo}Potted%20plant/Color/potted_plant_color.svg`} alt="Fluent Potted Plant emoji" />
-                        <h1 className="font-bold text-xl">{dict.record.header}</h1>
+                        <h1 className="font-bold text-xl">{profile?.nickname}{dict.record.title}</h1>
                     </div>
                     <Link href={`/${dict.langSubTag}/main/profile/${userId}`} className="flex gap-2 items-center bg-foreground rounded px-2 py-1 icon max-w-xs">
                         <ArrowLeftIcon />

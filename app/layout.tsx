@@ -19,11 +19,15 @@ const pixelifySans = Pixelify_Sans({
     subsets: ["latin"],
 });
 
+const APP_NAME = "Zach's Tomato";
+const DESCRIPTION = "Your Minimal Pomodoro Timer";
+const SITE_URL = "https://ztomato.vercel.app";
+
 export const metadata: Metadata = {
-    metadataBase: new URL("https://ztomato.vercel.app"),
-    title: "Zach's Tomato | Your Minimal Pomodoro Timer",
-    description: "A minimal Pomodoro timer for free, forever.",
-    applicationName: "Zach's Tomato",
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_VERCEL_URL ?? "http://loalhost:3000/"),
+    title: { default: APP_NAME, template: `%s | ${APP_NAME}` },
+    description: DESCRIPTION,
+    applicationName: APP_NAME,
     robots: "index,follow",
     manifest: "/manifest.webmanifest",
     icons: {
@@ -37,20 +41,20 @@ export const metadata: Metadata = {
     },
     openGraph: {
         type: "website",
-        siteName: "Zach's Tomato",
-        title: "Zach's Tomato | Your Minimal Pomodoro Timer",
-        description: "A minimal Pomodoro timer for free, forever.",
-        url: "http://ztomato.vercel.app/",
+        siteName: APP_NAME,
+        title: APP_NAME,
+        description: DESCRIPTION,
+        url: SITE_URL,
         images: [{ url: "/og.png" }],
     },
     twitter: {
         card: "summary",
-        title: "Zach's Tomato | Your Minimal Pomodoro Timer",
-        description: "A minimal Pomodoro timer for free, forever.",
+        title: APP_NAME,
+        description: DESCRIPTION,
         images: ["/og.png"],
     },
     alternates: {
-        canonical: "http://ztomato.vercel.app/",
+        canonical: SITE_URL,
     },
     verification: {
         google: [
@@ -60,12 +64,12 @@ export const metadata: Metadata = {
     },
     appleWebApp: {
         capable: true,
-        title: "Zach's Tomato",
+        title: APP_NAME,
         statusBarStyle: "default",
     },
     other: {
-        "itemprop:name": "Zach's Tomato",
-        "itemprop:description": "Your minimal Pomodoro timer",
+        "itemprop:name": APP_NAME,
+        "itemprop:description": DESCRIPTION,
         "itemprop:image": "https://github.com/user-attachments/assets/05d8c6a7-215b-4df5-9366-5e872de70a34",
     },
 };

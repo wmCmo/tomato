@@ -14,12 +14,13 @@ const ja = {
         warnDelete: ["この操作は元に ", "戻せません", "。"],
         follow: "フォロー",
         unfollow: "フォロー解除",
-        loading: "ロード中"
+        loading: "ロード中",
     },
     policy: {
         header: "プライバシーポリシー",
     },
     home: {
+        title: "タイマー",
         nav: {
             header: "ザカのトマト",
             desc: "あなたのミニマルなポモドーロタイマー",
@@ -49,6 +50,7 @@ const ja = {
         },
     },
     profile: {
+        title: "のプロフィール",
         welcome: "お帰りなさい！",
         status: "今日はこれを達成する！",
         highScore: "自己ベスト",
@@ -69,9 +71,10 @@ const ja = {
         errorItem: "プロフィール",
         following: "フォロー中",
         followers: "フォロワー",
-        total: "合計"
+        total: "収穫",
     },
     record: {
+        title: "の記録",
         header: "これまでの記録",
         return: "プロフィールに戻る",
         empty: [
@@ -82,10 +85,11 @@ const ja = {
         months: Array.from({ length: 12 }, (_, i) => `${i + 1}月`),
         warning: "記録を削除します。本当によろしいですか？",
         formatDate: formatDateJaNoYear,
-        thisMonth: "今月",
-        thisYear: "今年"
+        thisMonth: "月の収穫",
+        thisYear: "",
     },
     setting: {
+        title: "設定",
         question: "なんて呼べばいいですか？",
         danger: "デンジャーゾーン",
         delete: {
@@ -100,10 +104,12 @@ const ja = {
         errorItem: "プロフィール",
     },
     notFound: {
+        title: "404 ページが見つかりません",
         desc: "お探しのものは、ここにはないみたいです．．．",
         suggest: "ホームページに戻ってみませんか？",
     },
     login: {
+        title: "ログイン",
         header: "さっそく始めましょう！",
         google: "Googleでログインする",
     },
@@ -130,9 +136,10 @@ const ja = {
         terms: "利用規約",
     },
     connections: {
+        title: "のつながり",
         noFollowing: "は誰もフォローをしてないみたいです。",
-        noFollowers: "は（まだ）誰にもフォローされてません。"
-    }
+        noFollowers: "は（まだ）誰にもフォローされてません。",
+    },
 };
 
 export default ja;
