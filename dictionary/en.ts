@@ -73,6 +73,9 @@ const en = {
         followers: " Followers",
         total: "Total",
     },
+    rooms: {
+        title: "'s Shared Room",
+    },
     record: {
         title: "'s Record",
         header: "Your Record",

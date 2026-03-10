@@ -134,14 +134,14 @@ const Profile = ({ userId }: { userId: string; }) => {
     const identifier = profile?.handle ? `@${profile.handle}` : userId;
 
     return (
-        <div className='text-accent w-full px-2 mt-12'>
+        <div className='text-accent flex flex-col justify-center flex-1 px-6'>
             <div className="md:flex justify-between gap-8">
                 <section className="flex gap-6 items-center relative">
                     <div className="flex flex-col items-center gap-2">
                         <img src={`${profile?.avatar_url}`} alt="User's Google or custom avatar" className="h-32 w-32 rounded-full flex-1" />
                     </div>
                     <div className="w-full flex flex-col space-y-3 justify-center h-full">
-                        {isOwner && <div className="flex items-center justify-between gap-4 sm:gap-8">
+                        {isOwner && <div className="flex items-center gap-4 sm:gap-8">
                             <h1>{dict.profile.welcome}</h1>
                             <div className="flex items-center gap-2">
                                 <IconContext.Provider value={{
@@ -149,9 +149,6 @@ const Profile = ({ userId }: { userId: string; }) => {
                                     size: '1.5rem',
                                 }}>
                                     <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/profile/${identifier}`); setShowCopied(true); }} className="icon" />
-                                    <Link href={`/${dict.langSubTag}/main/settings`}>
-                                        <GearIcon className="icon" />
-                                    </Link>
                                 </IconContext.Provider>
                             </div>
                         </div>}

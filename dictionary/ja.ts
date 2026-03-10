@@ -73,6 +73,9 @@ const ja = {
         followers: "フォロワー",
         total: "収穫",
     },
+    rooms: {
+        title: "の共通セッション",
+    },
     record: {
         title: "の記録",
         header: "これまでの記録",
