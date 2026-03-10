@@ -7,6 +7,11 @@ const en = {
     components: {
         return2Home: "Home",
     },
+    nav: {
+        rooms: "Rooms",
+        records: "Records",
+        connections: "Connections",
+    },
     ui: {
         delete: "Delete",
         cancel: "Cancel",
@@ -72,6 +77,9 @@ const en = {
         following: " Following",
         followers: " Followers",
         total: "Total",
+    },
+    rooms: {
+        title: "'s Shared Room",
     },
     record: {
         title: "'s Record",

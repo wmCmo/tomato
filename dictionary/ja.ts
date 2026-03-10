@@ -7,6 +7,11 @@ const ja = {
     components: {
         return2Home: "ホームページ",
     },
+    nav: {
+        rooms: "ルーム",
+        records: "記録",
+        connections: "つながり",
+    },
     ui: {
         delete: "削除",
         cancel: "キャンセル",
@@ -72,6 +77,9 @@ const ja = {
         following: "フォロー中",
         followers: "フォロワー",
         total: "収穫",
+    },
+    rooms: {
+        title: "のルーム",
     },
     record: {
         title: "の記録",

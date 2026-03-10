@@ -25,7 +25,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
   function Call2Action() {
     return (
-      <div className="sm:flex-row flex flex-col items-center gap-4">
+      <div className="md:flex-row flex flex-col items-center gap-4">
         <Link href={`/${locale}/main`} className="bg-foreground px-8 py-2 rounded-xl text-xl text-absolute hover:translate-y-1 active:translate-y-2 border-border border">{dict.landing.start}</Link>
         <p className="">{dict.landing.gtd}</p>
       </div>
@@ -42,21 +42,20 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           <ToggleTheme />
           <ToggleLang locale={locale} pathName="/" />
         </div>
-        {/* <ListIcon weight="bold" className="" size={32} /> */}
       </nav>
-      <section className="font-bold flex flex-col sm:gap-8 sm:flex-row-reverse items-center justify-center px-4 h-dvh -mt-8">
+      <section className="font-bold flex flex-col md:gap-8 md:flex-row-reverse items-center justify-center px-4 min-h-screen -mt-8">
         <div className="">
-          <div className="flex justify-center sm:justify-start">
+          <div className="flex justify-center md:justify-start">
             <p className="font-mono bg-foreground font-bold px-4 py-1 rounded-full">v2.6.0</p>
           </div>
-          <h1 className="text-6xl text-center font-black sm:text-left mt-4 text-rose-400">{dict.landing.title[0]}</h1>
-          <h2 className="text-4xl text-center mt-2 sm:text-left">{dict.landing.title[1]}</h2>
-          <div className="hidden sm:block mt-12">
+          <h1 className="text-6xl text-center font-black md:text-left mt-4 text-rose-400">{dict.landing.title[0]}</h1>
+          <h2 className="text-4xl text-center mt-2 md:text-left">{dict.landing.title[1]}</h2>
+          <div className="hidden md:block mt-12">
             <Call2Action />
           </div>
         </div>
         <div className="mt-4 bg-rose-300 flex flex-col items-center py-8 max-w-sm w-full rounded-lg px-12">
-          <h3 className="text-center text-white bg-rose-200 py-4 text-5xl sm:text-6xl rounded-lg w-full font-display">25 : 00</h3>
+          <h3 className="text-center text-white bg-rose-200 py-4 text-5xl md:text-6xl rounded-lg w-full font-display">25 : 00</h3>
           <div className="flex mt-8 justify-between w-full gap-2">
             {Array.from({ length: 3 }).map((_, i) => <div key={i} className={"max-w-20 w-full h-8 bg-rose-200 rounded-lg"}></div>)}
           </div>
@@ -64,11 +63,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             {Array.from({ length: 4 }).map((_, i) => <div key={i} className={"w-8 h-8 bg-rose-200 rounded-full"}></div>)}
           </div>
         </div>
-        <div className="sm:hidden mt-12">
+        <div className="md:hidden mt-12">
           <Call2Action />
         </div>
+        <a className={`absolute bottom-4 right-4 hidden md:block`} href="https://www.producthunt.com/products/zach-s-tomato?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-zach-s-tomato" target="_blank" rel="noopener noreferrer"><img alt="Zach's Tomato - Minimal + Responsive Pomodoro Timer | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1071002&amp;theme=neutral&amp;t=1770089203158" /></a>
       </section>
-      <footer className="bg-foreground w-full px-8 py-8 mt-16 flex gap-12 sm:gap-24 flex-col sm:flex-row">
+      <footer className="bg-foreground w-full px-8 py-8 flex gap-12 md:gap-24 flex-col md:flex-row">
         <div>
           <div className="flex items-end gap-2">
             <img src={fluentTomato} alt="Fluent tomato emoji" />

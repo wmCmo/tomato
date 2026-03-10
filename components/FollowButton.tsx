@@ -69,6 +69,6 @@ export default function FollowButton({ userId, style }: { userId: string | undef
     }
 
     return (
-        <button type="button" style={style} onClick={isFollowing ? handleUnfollow : handleFollow} onMouseEnter={() => setHoverFollowButton(true)} onMouseLeave={() => setHoverFollowButton(false)} className={`${isFollowing ? hoverFollowButton ? "text-rose-500 bg-rose-400/20 border border-rose-400" : 'bg-foreground border border-muted opacity-60' : 'bg-foreground'} px-6 py-2 text-xs rounded-full font-bold text-accent max-w-sm inline-block transition-all duration-100 ease-out`}>{isFollowingLoading || isLoading ? dict.ui.loading : isFollowing ? hoverFollowButton ? dict.ui.unfollow : dict.profile.following : dict.ui.follow}</button>
+        <button type="button" style={style} onClick={isFollowing ? handleUnfollow : handleFollow} onMouseEnter={() => setHoverFollowButton(true)} onMouseLeave={() => setHoverFollowButton(false)} className={`${isFollowing ? hoverFollowButton ? "text-rose-500 bg-rose-400/20 border border-rose-400" : 'bg-foreground border border-muted opacity-60' : 'bg-foreground'} text-nowrap px-6 py-2 text-xs rounded-full font-bold text-accent max-w-sm inline-block transition-all duration-100 ease-out`}>{isFollowingLoading || isLoading ? dict.ui.loading : isFollowing ? hoverFollowButton ? dict.ui.unfollow : dict.profile.following : dict.ui.follow}</button>
     );
 }

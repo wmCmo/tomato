@@ -68,7 +68,6 @@ const Clock = ({ isPixel }: { isPixel: boolean; }) => {
     const workerRef = useRef<number | null>(null);
     const clockStateRef = useRef(clockState);
 
-
     useEffect(() => {
         clockStateRef.current = clockState;
     }, [clockState]);
@@ -187,7 +186,7 @@ const Clock = ({ isPixel }: { isPixel: boolean; }) => {
     const message = counting ? clockState.status === 0 ? dict.home.messages.work : dict.home.messages.rest : dict.home.messages.start;
 
     return (
-        <div className={`select-none flex flex-col grow max-w-lg`}>
+        <div className={`select-none flex flex-col justify-center`}>
             <section className="bg-red-300 rounded-xl p-6">
                 <a href="https://exzachly.notion.site" target="_blank" rel="noopener noreferrer">
                     <div className="flex flex-col items-center">

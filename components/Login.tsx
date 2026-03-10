@@ -18,9 +18,9 @@ const LoginComponent = () => {
         }
         signInWithGoogle(toast, dict);
     }
-    
+
     return (
-        <div className="flex justify-center">
+        <div className="flex justify-center grow items-center">
             <div className='text-accent bg-extreme p-8 rounded-xl flex flex-col gap-8 max-w-96 border border-border'>
                 <div className="flex flex-col items-center gap-2">
                     <img src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg" alt="Tomato logo" className="h-16 w-auto" />

@@ -83,8 +83,8 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
     }
 
     return (
-        <div className="relative text-accent w-full px-4 max-w-lg">
-            <section className="sticky top-20 pt-10 bg-background w-full">
+        <main className="relative text-accent px-4 grow flex flex-col items-center py-12">
+            <section className="sticky top-0 pt-12 bg-background max-w-lg w-full">
                 <div className="flex justify-between flex-col sm:flex-row gap-4">
                     <div className="flex gap-1 items-center">
                         <img src={`${fluentRepo}Potted%20plant/Color/potted_plant_color.svg`} alt="Fluent Potted Plant emoji" />
@@ -102,7 +102,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
                     (
                         [...mappedSessions.entries()].map(([year, months]) => {
                             return (
-                                <section key={year} className="pt-10">
+                                <section key={year} className="pt-10 max-w-lg w-full">
                                     <div className="flex items-center gap-4 text-accent">
                                         <h2 className="font-bold text-2xl">{year}</h2>
                                         <TomatoCount count={[...months.values()].flat().reduce((sum, entry) => sum + entry.sessions, 0)} label={dict.record.thisYear} locale={dict.langSubTag as LocaleType} />
@@ -120,7 +120,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
                     </div>
             }
             {modal}
-        </div>
+        </main>
     );
 };
 
