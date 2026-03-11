@@ -1,12 +1,15 @@
 // @ts-check
-import withPWA from "@ducanh2912/next-pwa";
+import withSerwistInit from "@serwist/next";
 
-const nextConfig = withPWA({
-    dest: "public",
-    disable: process.env.NODE_ENV === "development",
+const withSerwist = withSerwistInit({
+    swSrc: "app/sw.ts",
+    swDest: "public/sw.js",
     register: true,
-})({
-    turbopack: {},
+    disable: process.env.NODE_ENV === "development",
 });
 
-export default nextConfig;
+const nextConfig = {
+    turbopack: {},
+};
+
+export default withSerwist(nextConfig);
