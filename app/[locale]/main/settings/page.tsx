@@ -60,8 +60,9 @@ const SettingPage = () => {
 
 
     useEffect(() => {
+        if (authLoading) return;
         if (!user) router.push(`/${dict.langSubTag}/main/signin`);
-    }, [user, router]);
+    }, [user, router, authLoading]);
 
     if (isLoading) return <ProfileSkeleton />;
     if (authLoading) return <ProfileSkeleton />;

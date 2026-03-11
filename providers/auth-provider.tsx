@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
 import { supabase } from "@/lib/supabase";
 import AuthContextType from "@/types/AuthContext";
 import type { Session } from "@supabase/supabase-js";
 import React, { createContext, useEffect, useState } from "react";
 
-export const AuthContext = createContext<AuthContextType>({ session: null, user: null, loading: true });
+export const AuthContext = createContext<AuthContextType>({ session: null, user: undefined, loading: true });
 
 const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
     const [session, setSession] = useState<Session | null>(null);
@@ -26,7 +26,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ session, user: session?.user ?? null, loading }}>
+        <AuthContext.Provider value={{ session, user: session?.user ?? undefined, loading }}>
             {children}
         </AuthContext.Provider>
     );

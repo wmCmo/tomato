@@ -13,7 +13,7 @@ if (!supabaseUrl || !supabaseKey) {
 
     throw new Error(
         `Supabase env missing: ${missing.join(", ")}. ` +
-            `In Next.js, client-side env vars must be prefixed with NEXT_PUBLIC_.`,
+        `In Next.js, client-side env vars must be prefixed with NEXT_PUBLIC_.`,
     );
 }
 
@@ -26,7 +26,7 @@ function getURL() {
 
     let url = process.env.NEXT_PUBLIC_SITE_URL ??
         process.env.NEXT_PUBLIC_VERCEL_URL ??
-        "http://loalhost:3000";
+        "http://localhost:3000";
     url = url.includes("http") ? url : `https://${url}`;
 }
 
