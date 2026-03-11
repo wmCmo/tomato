@@ -56,22 +56,25 @@ export default function ConnectionPage() {
     const displayList = view === 'following' ? following : followers;
 
     return (
-        <div className="text-accent relative">
-            <nav className="bg-background sticky top-24 w-full flex flex-col items-center">
+        <div className="text-accent relative grow flex flex-col justify-center items-center px-4">
+            <nav className="bg-background sticky top-24 w-full flex flex-col items-center max-w-lg">
                 <div className="text-sm flex bg-foreground rounded-full p-2 relative gap-4 max-w-72">
                     <div style={{ "--anim-offset": "8px" } as React.CSSProperties} className={`absolute bg-muted h-9 rounded-full ${view === 'following' ? 'animate-stretch-left' : 'animate-stretch-right'}`}></div>
-                    <button type="button" onClick={() => setView('following')} className={`z-10 px-6 py-2 rounded-full ${view === 'followers' ? 'text-muted-foreground' : 'font-bold'}`}>{dict.profile.following}</button>
-                    <button type="button" onClick={() => setView('followers')} className={`z-10 px-6 py-2 rounded-full ${view === 'following' ? 'text-muted-foreground' : 'font-bold'}`}>{dict.profile.followers}</button>
+                    <button type="button" onClick={() => setView('following')} className={`z-10 px-6 py-2 rounded-full font-bold ${view === 'followers' ? 'text-muted-foreground' : ''}`}>{dict.profile.following}</button>
+                    <button type="button" onClick={() => setView('followers')} className={`z-10 px-6 py-2 rounded-full font-bold ${view === 'following' ? 'text-muted-foreground' : 'font-bold'}`}>{dict.profile.followers}</button>
                 </div>
             </nav>
-            <section className="mt-8">
+            <section className="mt-8 max-w-lg w-full">
                 {
                     displayList && displayList.length > 0 ?
                         displayList.map((item, _) => (
                             <div key={item.id} className="mt-4">
                                 <Link className="flex items-center gap-4" href={`/${dict.langSubTag}/main/profile/${item.handle ? `@${item.handle}` : item.id}`}>
                                     <img className="h-8 w-8 rounded-full" src={item?.avatar_url} alt={`${item.nickname}'s avatar`} />
-                                    <span className="font-bold">{item.nickname}</span>
+                                    <div className="font-bold flex gap-1.5 sm:gap-4 justify-center items-start sm:items-center flex-col sm:flex-row">
+                                        <p className="">{item.nickname}</p>
+                                        {item.handle && <p className="text-xs text-muted-foreground bg-foreground px-2 py-1 rounded-lg">@ {item.handle}</p>}
+                                    </div>
                                     {item.id !== user?.id && <FollowButton style={{ 'marginLeft': 'auto' }} userId={item.id} />}
                                 </Link>
                                 <hr className="mt-4 border-border" />

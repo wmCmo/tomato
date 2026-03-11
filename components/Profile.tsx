@@ -7,7 +7,7 @@ import useProfile from "@/hooks/useProfile";
 import { useToast } from "@/hooks/useToast";
 import { LocaleType } from "@/types/Locale";
 import { ProfileType } from "@/types/Profile";
-import { GearIcon, IconContext, LogIcon, ShareNetworkIcon } from "@phosphor-icons/react";
+import { LogIcon, ShareNetworkIcon } from "@phosphor-icons/react";
 import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -128,31 +128,20 @@ const Profile = ({ userId }: { userId: string; }) => {
         return;
     };
 
-
     const isOwner = user?.id === profile?.id;
     const studySessions = profile?.study_sessions;
     const identifier = profile?.handle ? `@${profile.handle}` : userId;
 
     return (
-        <div className='text-accent flex flex-col justify-center flex-1 px-6'>
-            <div className="md:flex justify-between gap-8">
-                <section className="flex gap-6 items-center relative">
+        <div className='text-accent flex flex-col justify-center px-6 grow items-center py-12'>
+            <div className="md:flex justify-between max-w-4xl w-full">
+                <section className="flex gap-6 items-center relative min-w-sm">
                     <div className="flex flex-col items-center gap-2">
-                        <img src={`${profile?.avatar_url}`} alt="User's Google or custom avatar" className="h-32 w-32 rounded-full flex-1" />
+                        <img src={`${profile?.avatar_url}`} alt="User's Google or custom avatar" className="h-20 w-20 sm:h-32 sm:w-32 rounded-full flex-1" />
                     </div>
                     <div className="w-full flex flex-col space-y-3 justify-center h-full">
-                        {isOwner && <div className="flex items-center gap-4 sm:gap-8">
-                            <h1>{dict.profile.welcome}</h1>
-                            <div className="flex items-center gap-2">
-                                <IconContext.Provider value={{
-                                    weight: 'fill',
-                                    size: '1.5rem',
-                                }}>
-                                    <ShareNetworkIcon onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/profile/${identifier}`); setShowCopied(true); }} className="icon" />
-                                </IconContext.Provider>
-                            </div>
-                        </div>}
-                        <h2 className="text-3xl font-bold">{profile?.nickname ?? user?.user_metadata.full_name}</h2>
+                        {isOwner && <h1>{dict.profile.welcome}</h1>}
+                        <h2 className="text-3xl font-bold">{profile?.nickname}</h2>
                         <div className="text-sm flex gap-4 sm:items-center">
                             {
                                 profileCountLoading
@@ -160,17 +149,18 @@ const Profile = ({ userId }: { userId: string; }) => {
                                     : <>
                                         <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${identifier}/connections?view=following`}><b>{profileCount.following}</b>{dict.profile.following}</Link>
                                         <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${identifier}/connections?view=followers`}><b>{profileCount.followers}</b>{dict.profile.followers}</Link>
+                                        <ShareNetworkIcon weight="fill" size={20} onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/profile/${identifier}`); setShowCopied(true); }} className="icon" />
                                     </>
                             }
                         </div>
-                        <div className="flex gap-8">
+                        <div className="flex gap-6">
                             {!isOwner && <FollowButton userId={profile?.id} />}
                             <TomatoCount count={profile?.study_sessions.reduce((sum, session) => session.sessions + sum, 0) ?? 0} label={dict.profile.total} locale={dict.langSubTag as LocaleType} />
                         </div>
                     </div>
                     <div className={`text-sm absolute right-0 bottom-0 pointer-events-none transition-all duration-200 ease-in-out bg-foreground px-4 py-2 rounded-lg text-accent font-bold ${showCopied ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>{dict.profile.copied}</div>
                 </section>
-                <section className="mt-8 px-4 py-4 card border-none flex items-center grow min-h-10 h-fit">
+                <section className="mt-8 px-4 py-4 card border-none flex items-center min-h-10 h-fit grow">
                     {
                         isOwner ?
                             (<>
@@ -181,7 +171,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                     }
                 </section>
             </div>
-            <div className="md:flex gap-16">
+            <div className="md:flex gap-16 max-w-4xl w-full">
                 <section className="space-y-2 mt-8 rounded-lg flex-1">
                     <div className="flex gap-2">
                         <img src={`${fluentRepo}/Trophy/Color/trophy_color.svg`} alt="Fluent Trophy emoji" className="w-6 h-auto" />

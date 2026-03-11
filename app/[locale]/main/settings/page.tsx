@@ -87,7 +87,6 @@ const SettingPage = () => {
     };
 
     const handleLogout = async () => {
-        // Always clear local auth state; this helps recover from corrupted/stale sessions.
         const { error } = await supabase.auth.signOut({ scope: 'local' });
         if (error) {
             toast(undefined, dict.error.logOut, "errorAuth");
@@ -96,6 +95,7 @@ const SettingPage = () => {
         }
         queryClient.clear();
         clearLocalStorage();
+        router.push(`/${dict.langSubTag}/main/signin`);
         return;
     };
 
@@ -295,33 +295,32 @@ const SettingPage = () => {
     };
 
     return (
-        <div className="text-accent relative" >
-            <section className="flex gap-8 items-start">
+        <div className="text-accent relative grow flex flex-col justify-center items-center gap-12 px-4" >
+            <section className="flex gap-8 items-start w-full max-w-md justify-center">
                 <button type="button" className="relative" onClick={handleTriggerUpload}>
-                    {!!user || !!profile ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-20 w-20 rounded-lg" /> : <UserCircleIcon className='icon h-20 w-20' weight="fill" />}
-                    {/* <img src={formData?.avatar_url ?? profile?.avatar_url} className="h-20 w-auto rounded-lg" alt="User's profile picture" /> */}
+                    {!!user || !!profile ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-20 min-w-20 rounded-lg" /> : <UserCircleIcon className='icon h-20 w-20' weight="fill" />}
                     <div className="absolute top-0 grid place-items-center h-20 w-20 opacity-0 bg-accent rounded-lg hover:opacity-50">
                         <PlusIcon size={30} weight="bold" className="text-white z-10" />
                     </div>
                 </button>
-                <div className="space-y-4">
-                    <div className="space-y-2">
+                <div className="space-y-4 grow">
+                    <div className="flex flex-col gap-2">
                         <h1 className="text-xl">{dict.setting.question}</h1>
-                        <input className="px-4 py-2 outline-none card" type="text" name="nickname" id="nickname" value={formData.nickname} onChange={(e) => handleUpdateFormData(e)} />
+                        <input className="px-4 py-2 outline-none card max-w-full" type="text" name="nickname" id="nickname" value={formData.nickname} onChange={(e) => handleUpdateFormData(e)} />
                     </div>
                     <div className="space-y-2">
                         <h3>{dict.setting.handle}</h3>
-                        <div className="card px-4 py-2 inline-block">
-                            <span className="text-muted-foreground ">@ </span><input type="text" name="handle" id="handle" className="outline-none" value={formData.handle} onChange={e => handleUpdateFormData(e)} placeholder={dict.setting.handlePlaceHolder} />
+                        <div className="card px-4 py-2 flex gap-1">
+                            <span className="text-muted-foreground font-bold inline-block">@</span><input type="text" name="handle" id="handle" className="outline-none grow inline-block" value={formData.handle} onChange={e => handleUpdateFormData(e)} placeholder={dict.setting.handlePlaceHolder} />
                         </div>
                     </div>
                 </div>
             </section>
-            <div className={`gap-6 justify-end flex mt-8 transition-all duration-500 ease-in-out ${shallowEqual(profile, formData) ? 'opacity-0 translate-y-2 pointer-events-none' : 'opacity-100 translate-y-0'} font-bold`}>
+            <div className={`gap-6 justify-end flex w-full max-w-md transition-all duration-500 ease-in-out ${shallowEqual(profile, formData) ? 'opacity-0 translate-y-2 pointer-events-none' : 'opacity-100 translate-y-0'} font-bold`}>
                 <button type="button" onClick={handleCancleForm} className="bg-foreground px-3 py-1 rounded-xl">{dict.ui.cancel}</button>
                 <button type="button" onClick={sendForm} className={`px-4 py-1 bg-blue-600 border-4 border-blue-500 text-white rounded-xl`}>{dict.ui.save}</button>
             </div>
-            <section className="mt-28" >
+            <section className="w-full max-w-sm" >
                 <button type="button" className="flex gap-4 items-center" onClick={() => setShowDangerZone(prev => !prev)}>
                     <h2 className="font-semibold text-rose-500">{dict.setting.danger}</h2>
                     <ArrowCircleRightIcon weight="fill" size={24} className={`icon text-rose-500 ${showDangerZone ? 'rotate-90' : 'rotate-0'}`} />

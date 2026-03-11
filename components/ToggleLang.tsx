@@ -26,8 +26,8 @@ const ToggleLang = ({ locale, pathName }: { locale: LocaleType, pathName: string
     }, [handleKeys]);
 
     return (
-        <button type="button" className="p-2 rounded-md bg-background flex justify-center items-center transition-all duration-200 ease-out hover:translate-y-0.5" onClick={changeLocale}>
-            <TranslateIcon weight={'bold'} className="text-muted"/>
+        <button type="button" className="p-2 rounded-md bg-foreground flex justify-center items-center transition-all duration-200 ease-out hover:translate-y-0.5" onClick={changeLocale}>
+            <TranslateIcon weight={'bold'} className="text-muted" />
         </button>
     );
 };

@@ -14,8 +14,8 @@ const CardSkeletonWHeader = () => {
 
 const ProfileSkeleton = () => {
     return (
-        <div className='text-accent w-full px-2 mt-12 animate-pulse'>
-            <div className="sm:flex justify-between gap-8">
+        <div className='text-accent w-full mt-12 animate-pulse grow flex flex-col justify-center px-4 items-center'>
+            <div className="sm:flex justify-between gap-8 max-w-4xl w-full">
                 <section className="flex gap-6 items-center relative">
                     <div className="h-20 w-20 rounded-full bg-foreground"></div>
                     <div className="space-y-4">
@@ -28,7 +28,7 @@ const ProfileSkeleton = () => {
                 <section className="mt-8 py-8 bg-foreground rounded-lg flex items-center grow">
                 </section>
             </div>
-            <div className="md:flex gap-16">
+            <div className="md:flex gap-16 w-full max-w-4xl">
                 <CardSkeletonWHeader />
                 <CardSkeletonWHeader />
             </div>

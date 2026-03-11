@@ -5,8 +5,10 @@ import ToggleTheme from "@/components/ToggleTheme";
 import useAuth from "@/hooks/useAuth";
 import { useDict } from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
+import { useToast } from "@/hooks/useToast";
+import { signInWithGoogle } from "@/lib/supabase";
 import { NavContext } from "@/providers/nav-context";
-import { GearIcon, HouseIcon, IconContext, InfoIcon, ListIcon, LogIcon, ScreencastIcon, SquaresFourIcon, TimerIcon, TranslateIcon, UserCircleIcon, UsersIcon } from "@phosphor-icons/react";
+import { GearIcon, GoogleLogoIcon, HouseIcon, IconContext, ListIcon, LogIcon, ScreencastIcon, SquaresFourIcon, TimerIcon, UserCircleIcon, UsersIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
@@ -15,21 +17,22 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 export default function App({ children }: { children: ReactNode; }) {
   const [timerOn, setTimerOn] = useState(false);
   const [isPixel, setIsPixel] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { user } = useAuth();
   const pathName = usePathname();
   const { dict, locale } = useDict();
+  const { toast } = useToast();
 
   function NavItem({ destination, title, icon, className, isAvatar = false }: { destination: string; title: string; icon: ReactNode; className?: string; isAvatar?: boolean; }) {
-    const path = pathName.endsWith('/') ? pathName.slice(0, -1) : pathName;
-    const isActive = destination.endsWith(path);
+    const currentPath = pathName.replace(`/${locale}/main`, '');
+    const noTrailingDestination = destination.endsWith('/') ? destination.slice(0, -1) : destination;
+    const isActive = currentPath === noTrailingDestination;
     return (
-      <Link href={destination} className={`flex gap-2 items-center ${isActive ? 'text-accent' : 'text-muted hover:text-muted-foreground'} ${className}`}>
-        <span className={`${isAvatar ? 'md:static' : 'md:hidden'}`}>
+      <Link href={`/${locale}/main${destination}`} className={`hover:underline underline-offset-4 flex gap-2 items-center ${isActive ? 'text-absolute' : 'text-muted-foreground hover:text-accent'} ${className}`}>
+        <span className={` ${isAvatar ? 'md:static' : 'md:hidden'}`}>
           {icon}
         </span>
-        <span className={`${'font-semibold'} text-xl md:text-base ${isAvatar && 'md:hidden'}`}>{title}</span>
+        <span className={`${isActive ? 'font-semibold' : 'font-base'} text-xl md:text-base ${isAvatar && 'md:hidden'}`}>{title}</span>
       </Link>
     );
   }
@@ -47,24 +50,22 @@ export default function App({ children }: { children: ReactNode; }) {
     return () => window.removeEventListener('keydown', handleKeys);
   }, []);
 
-  const navFunc = (isActive: boolean) => {
-    return `${isActive ? 'text-accent' : 'text-muted hover:text-muted-foreground'}`;
-  };
-
   useEffect(() => {
     localStorage.setItem('isPixel', JSON.stringify(isPixel));
   }, [isPixel]);
 
   const { data: profile } = useProfile(user?.id, {
-    select: (p: { avatar_url: string; handle: string; nickname: string; }) => ({ avatar_url: p.avatar_url, handle: p.handle, nickname: p.nickname })
+    select: (p: { avatar_url: string; handle: string; nickname: string; id: string; }) => ({ avatar_url: p.avatar_url, handle: p.handle, nickname: p.nickname, id: p.id })
   });
 
   const navContextValue = useMemo(() => ({ isPixel, timerOn }), [isPixel, timerOn]);
 
+  const identifier = profile?.handle ? `@${profile.handle}` : profile?.id;
+
   return (
     <div className={`flex flex-col relative min-h-screen ${locale === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-jp'} bg-background`}>
       <button onClick={() => setShowMenu(prev => !prev)} type="button" className="bg-foreground p-2 absolute top-6 right-4 z-30 rounded-lg md:hidden">
-        <ListIcon weight="bold" size={28} className="text-accent" />
+        <ListIcon weight="bold" size={28} className="text-muted hover:text-muted-foreground" />
       </button>
       <nav className={`bg-extreme items-center fixed md:static md:justify-between p-4 top-0 right-0 z-30 w-4/5 md:w-full h-screen md:h-auto ${showMenu ? 'flex flex-col md:flex-row ' : 'hidden md:flex'}`}>
         <IconContext.Provider value={{
@@ -75,41 +76,42 @@ export default function App({ children }: { children: ReactNode; }) {
             <div className="flex w-full items-center">
               <ToggleTheme />
               <button onClick={() => setShowMenu(false)} className="p-2 rounded-md bg-background ml-auto md:hidden">
-                <ListIcon weight="bold" className="text-accent" />
+                <ListIcon weight="bold" className="text-muted hover:text-muted-foreground" />
               </button>
             </div>
             <div className="grid grid-cols-3 md:flex items-center gap-2 w-full">
               <ToggleLang locale={locale} pathName={pathName} />
-              <button type="button" className="p-2 rounded-md bg-background flex justify-center hover:translate-y-0.5 transition-all duration-200 ease-out">
+              <button type="button" className="p-2 rounded-md bg-foreground flex justify-center hover:translate-y-0.5 transition-all duration-200 ease-out">
                 <SquaresFourIcon className={`icon ${isPixel && 'text-accent'}`} onClick={() => setIsPixel(prev => !prev)} weight="fill" />
               </button>
-              <button type="button" onClick={() => setTimerOn(prev => !prev)} className="p-2 rounded-md bg-background flex justify-center hover:translate-y-0.5 transition-all duration-200 ease-out">
+              <button type="button" onClick={() => setTimerOn(prev => !prev)} className="p-2 rounded-md bg-foreground flex justify-center hover:translate-y-0.5 transition-all duration-200 ease-out">
                 <TimerIcon className={`cursor-pointer ${timerOn ? 'text-accent' : 'text-muted hover:text-muted-foreground'} icon`} />
               </button>
             </div>
           </div>
           <div className="flex justify-around items-center h-full">
             <div className="px-4 flex gap-12 md:gap-4 flex-col md:flex-row">
-              <NavItem destination={`/${locale}/main`} icon={<HouseIcon className="" />} title="Home" />
-              <NavItem destination={`/${locale}/main/profile/${user?.id}/rooms`} icon={<ScreencastIcon className="md:size-10" />} title="Rooms" />
-              <NavItem destination={`/${locale}/main/profile/${user?.id}/records`} title="Records" icon={<LogIcon className="md:size-10" />} />
-              <NavItem destination={`/${locale}/main/profile/${user?.id}/connections`} icon={<UsersIcon className="md:size-10" />} title="Connections" />
-              <NavItem destination={`/${locale}/main/settings`} icon={<GearIcon className="md:size-10" />} title="Settings" />
-              <NavItem isAvatar destination={user?.id ? `/${locale}/main/profile/${profile?.handle ? `@${profile.handle}` : user.id}` : `/${locale}/main/signin`} icon={user ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-6 w-6 rounded-full" /> : <UserCircleIcon className='icon' />} title={profile?.nickname || "Profile"} />
+              <NavItem destination={`/`} icon={<HouseIcon className="" />} title={dict.home.title} />
+              {identifier ?
+                <>
+                  <NavItem destination={`/profile/${identifier}/rooms`} icon={<ScreencastIcon className="md:size-10" />} title={dict.nav.rooms} />
+                  <NavItem destination={`/profile/${identifier}/records`} title={dict.nav.records} icon={<LogIcon className="md:size-10" />} />
+                  <NavItem destination={`/profile/${identifier}/connections`} icon={<UsersIcon className="md:size-10" />} title={dict.nav.connections} />
+                  <NavItem destination={`/settings`} icon={<GearIcon className="md:size-10" />} title={dict.setting.title} />
+                  <NavItem isAvatar destination={identifier ? `/profile/${identifier}` : `/signin`} icon={user ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-6 min-w-6 rounded-full" /> : <UserCircleIcon className='icon' />} title={profile?.nickname || "Profile"} />
+                </> :
+                <button onClick={() => signInWithGoogle(toast, dict)} type="button" className="flex gap-2 card px-4 py-1 text-muted items-center hover:translate-y-0.5 transition-all duration-200 ease-out">
+                  <GoogleLogoIcon className="" weight="bold" size={16} />
+                  <span className="font-semibold">{dict.login.title}</span>
+                </button>
+              }
             </div>
           </div>
         </IconContext.Provider>
       </nav>
-      <div className="px-4 grow flex flex-col">
-        <NavContext.Provider value={navContextValue}>
-          {children}
-        </NavContext.Provider>
-      </div>
-      <div className={`flex flex-col gap-4 fixed bottom-16 right-4 select-none ${showInfo ? 'opacity-100 translate-y-0' : 'pointer-events-none opacity-0 translate-y-10'} icon`}>
-        <Link onClick={() => setShowInfo(false)} href={`/${dict.langSubTag}/main/terms`} className="inline-block px-4 py-2 text-accent text-sm ml-auto card">🔏 {dict.policy.header}</Link>
-        <a className={``} href="https://www.producthunt.com/products/zach-s-tomato?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-zach-s-tomato" target="_blank" rel="noopener noreferrer"><img alt="Zach's Tomato - Minimal + Responsive Pomodoro Timer | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1071002&amp;theme=neutral&amp;t=1770089203158" /></a>
-      </div>
-      <InfoIcon weight="fill" className={`bg-background cursor-pointer rounded-full fixed text-muted hover:text-accent bottom-4 right-4 icon ${showInfo ? 'rotate-180' : 'rotate-0'}`} size={30} onClick={() => setShowInfo(prev => !prev)} />
+      <NavContext.Provider value={navContextValue}>
+        {children}
+      </NavContext.Provider>
     </div>
   );
 

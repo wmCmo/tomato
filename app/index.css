@@ -77,7 +77,10 @@
     }
 
     .inline-code {
-        @apply text-[0.95em] rounded px-1.5 py-0.5 bg-foreground text-accent
+        @apply text-[0.95em] rounded px-1.5 py-0.5 bg-foreground text-accent text-wrap;
+
+        word-break: normal;
+        overflow-wrap: anywhere;
     }
 
     .scrollbar-muted {

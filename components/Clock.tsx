@@ -68,7 +68,6 @@ const Clock = ({ isPixel }: { isPixel: boolean; }) => {
     const workerRef = useRef<number | null>(null);
     const clockStateRef = useRef(clockState);
 
-
     useEffect(() => {
         clockStateRef.current = clockState;
     }, [clockState]);
