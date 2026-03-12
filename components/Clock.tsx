@@ -75,7 +75,10 @@ const Clock = ({ isPixel }: { isPixel: boolean; }) => {
     useEffect(() => {
         getAudio();
         const newClockState = readClockState();
-        if (newClockState) setClockState(newClockState);
+        if (newClockState) {
+            clockStateRef.current = newClockState;
+            setClockState(newClockState);
+        };
         return () => {
             try {
                 localStorage.setItem(clockStateKey, JSON.stringify(clockStateRef.current));
