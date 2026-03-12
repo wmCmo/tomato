@@ -3,7 +3,7 @@ import { ProfileType } from "@/types/Profile";
 
 export default async function fetchProfile(
     userId: string | undefined,
-): Promise<ProfileType> {
+): Promise<ProfileType | null> {
     if (!userId) throw new Error("User ID is required");
     const useHandle = userId?.startsWith('%40');
     const identifier = useHandle ? userId?.substring(3) : userId;
@@ -23,7 +23,7 @@ export default async function fetchProfile(
             referencedTable: "study_sessions",
             ascending: false,
         })
-        .single();
+        .maybeSingle();
     if (error) {
         console.error("Supabase Error:", {
             message: error.message,
@@ -31,6 +31,7 @@ export default async function fetchProfile(
             hint: error.hint,
             code: error.code
         });
+        if (error.code === '22P02') return null;
         throw error;
     }
     return data;

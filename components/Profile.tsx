@@ -18,6 +18,7 @@ import fetchFollowing from "../queries/following";
 import Error from "./Error";
 import FollowButton from "./FollowButton";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
+import NotFoundPage from "@/app/not-found";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -101,7 +102,7 @@ const Profile = ({ userId }: { userId: string; }) => {
     const weekDays = dict.profile.days;
 
     if (isLoading) return <ProfileSkeleton />;
-    if (error) return <Error item={'Profile'} />;
+    if (error || !profile) return <Error item={'Profile'} />;
 
     const todayIndex = weekDays.indexOf(new Date().toLocaleString(dict.langTag, { weekday: "short" })) + 1;
     const sortedWeekDay = weekDays.slice(todayIndex).concat(weekDays.slice(0, todayIndex));

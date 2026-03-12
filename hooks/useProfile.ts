@@ -6,7 +6,7 @@ export default function useProfile<TData = ProfileType>(
     userId: string | undefined,
     options = {},
 ) {
-    return useQuery<ProfileType, Error, TData>({
+    return useQuery<ProfileType | null, Error, TData>({
         queryKey: ["profile", userId],
         queryFn: () => fetchProfile(userId),
         enabled: !!userId,

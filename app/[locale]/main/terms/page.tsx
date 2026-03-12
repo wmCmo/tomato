@@ -196,7 +196,7 @@ const translation = {
             },
             children: {
                 title: "Children’s Privacy",
-                desc: "Our service does not address anyone under the age of13. We do not knowingly collect personally identifiable information from children under 13. If we discover that a child under 13 has provided us with personal information, we will immediately delete this from our servers."
+                desc: "Our service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from children under 13. If we discover that a child under 13 has provided us with personal information, we will immediately delete this from our servers."
             },
             changes: {
                 title: "Changes to this Policy",

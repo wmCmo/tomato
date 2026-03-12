@@ -77,6 +77,7 @@ const en = {
         following: " Following",
         followers: " Followers",
         total: "Total",
+        user: "User"
     },
     rooms: {
         title: "'s Shared Room",
