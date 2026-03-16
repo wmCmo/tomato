@@ -2,9 +2,9 @@
 
 import TomatoCount from "@/components/TomatoCount";
 import useAuth from "@/hooks/useAuth";
-import { useDict } from "@/hooks/useDict";
+import useDict from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
-import { useToast } from "@/hooks/useToast";
+import useToast from "@/hooks/useToast";
 import { LocaleType } from "@/types/Locale";
 import { ProfileType } from "@/types/Profile";
 import { LogIcon, ShareNetworkIcon } from "@phosphor-icons/react";
@@ -18,7 +18,6 @@ import fetchFollowing from "../queries/following";
 import Error from "./Error";
 import FollowButton from "./FollowButton";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
-import NotFoundPage from "@/app/not-found";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";

@@ -1,6 +1,6 @@
 'use client';
 
-import { useDict } from '@/hooks/useDict';
+import useDict from '@/hooks/useDict';
 import BackToHome from './BackToHome';
 
 const Error = ({ item }: { item: string; }) => {

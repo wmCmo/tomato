@@ -1,6 +1,6 @@
 'use client';
 
-import { useDict } from "@/hooks/useDict";
+import useDict from "@/hooks/useDict";
 import { StudySessionType } from "@/types/StudySession";
 import { FloppyDiskIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import type { User } from "@supabase/supabase-js";
@@ -23,7 +23,7 @@ const fluentMonth = [
 
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/";
 
-const RecordCard = ({ month, entries, handleDelete, user, userId }: { month: number; entries: StudySessionType[]; handleDelete: (id: number) => void; user: User | null; userId: string; }) => {
+const RecordCard = ({ month, entries, handleDelete, user, userId }: { month: number; entries: StudySessionType[]; handleDelete: (id: number) => void; user: User | null | undefined; userId: string; }) => {
     const { dict } = useDict();
     const [isEditing, setIsEditing] = useState(false);
     if (!entries) return <></>;

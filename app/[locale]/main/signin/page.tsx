@@ -3,7 +3,7 @@
 import LoginComponent from "@/components/Login";
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import useAuth from "@/hooks/useAuth";
-import { useDict } from "@/hooks/useDict";
+import useDict from "@/hooks/useDict";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

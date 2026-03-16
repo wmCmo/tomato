@@ -3,7 +3,7 @@ import { ProfileType } from "@/types/Profile";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useProfile<TData = ProfileType>(
-    userId: string | undefined,
+    userId: string | undefined | null,
     options = {},
 ) {
     return useQuery<ProfileType | null, Error, TData>({

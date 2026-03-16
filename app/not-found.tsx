@@ -1,8 +1,8 @@
 
+import '@/app/index.css';
 import { LocaleArr, LocaleType } from "@/types/Locale";
 import { headers } from "next/headers";
 import Link from "next/link";
-import '@/app/index.css';
 
 async function getDict(locale: LocaleType) {
     return (await import(`@/dictionary/${locale}`)).default;

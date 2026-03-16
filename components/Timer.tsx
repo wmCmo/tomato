@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowCounterClockwiseIcon, Icon, IconContext, PauseIcon, PlayIcon, TrashSimpleIcon } from "@phosphor-icons/react";
+import { ArrowCounterClockwiseIcon, IconContext, PauseIcon, PlayIcon, TrashSimpleIcon } from "@phosphor-icons/react";
 import React, { ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { clearInterval, setInterval } from "worker-timers";
 import { ThemeProviderContext } from "../providers/theme-context";

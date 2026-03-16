@@ -1,6 +1,6 @@
 'use client';
 
-import { useDict } from "@/hooks/useDict";
+import useDict from "@/hooks/useDict";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { clearInterval, setInterval } from "worker-timers";
 import secToTime from "../utils/secToTime";

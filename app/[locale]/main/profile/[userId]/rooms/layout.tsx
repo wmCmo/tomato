@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ userId: s
         getDict(locale as LocaleType)
     ]);
 
-    const displayName = `${profile.nickname}${dict.rooms.title}`;
+    const displayName = `${profile?.nickname ?? dict.profile.user}${dict.rooms.title}`;
 
     return {
         title: displayName

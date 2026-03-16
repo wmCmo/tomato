@@ -1,7 +1,7 @@
 'use client';
 
-import { useDict } from "@/hooks/useDict";
-import { useToast } from "@/hooks/useToast";
+import useDict from "@/hooks/useDict";
+import useToast from "@/hooks/useToast";
 import { isLineBrowser } from "@/utils/checkBrowser";
 import { signInWithGoogle } from "../lib/supabase";
 

@@ -3,9 +3,9 @@
 import ToggleLang from "@/components/ToggleLang";
 import ToggleTheme from "@/components/ToggleTheme";
 import useAuth from "@/hooks/useAuth";
-import { useDict } from "@/hooks/useDict";
+import useDict from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
-import { useToast } from "@/hooks/useToast";
+import useToast from "@/hooks/useToast";
 import { signInWithGoogle } from "@/lib/supabase";
 import { NavContext } from "@/providers/nav-context";
 import { GearIcon, GoogleLogoIcon, HouseIcon, IconContext, ListIcon, LogIcon, ScreencastIcon, SquaresFourIcon, TimerIcon, UserCircleIcon, UsersIcon } from "@phosphor-icons/react";

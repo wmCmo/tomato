@@ -1,4 +1,4 @@
-import { useDict } from "@/hooks/useDict";
+import useDict from "@/hooks/useDict";
 import { useCallback, useRef, useState } from "react";
 
 const buttonAnimation = 'hover:translate-y-1 active:translate-y-2 transition-all duration-100 ease-in';

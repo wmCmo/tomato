@@ -4,7 +4,7 @@ import Error from "@/components/Error";
 import FollowButton from "@/components/FollowButton";
 import ConnectionsSkeleton from "@/components/ui/ConnectionsSkeleton";
 import useAuth from "@/hooks/useAuth";
-import { useDict } from "@/hooks/useDict";
+import useDict from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
 import fetchFollowers from "@/queries/follower";
 import fetchFollowing from "@/queries/following";

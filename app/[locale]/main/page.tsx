@@ -3,7 +3,7 @@
 import Clock from "@/components/Clock";
 import SideClock from "@/components/SideClock";
 import useAuth from "@/hooks/useAuth";
-import { useNavContext } from "@/hooks/useNavContext";
+import useNavContext from "@/hooks/useNavContext";
 import fetchFollowers from "@/queries/follower";
 import fetchFollowing from "@/queries/following";
 import { useQueryClient } from "@tanstack/react-query";

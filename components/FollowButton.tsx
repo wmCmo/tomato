@@ -1,14 +1,14 @@
 'use client';
 
 import useAuth from "@/hooks/useAuth";
-import { useDict } from "@/hooks/useDict";
-import { useToast } from "@/hooks/useToast";
+import useDict from "@/hooks/useDict";
+import useProfile from "@/hooks/useProfile";
+import useToast from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
 import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import checkIsFollowing from "../queries/checkIsFollowing";
-import useProfile from "@/hooks/useProfile";
 
 export default function FollowButton({ userId, style }: { userId: string | undefined; style?: React.CSSProperties; }) {
     const { user } = useAuth();

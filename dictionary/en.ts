@@ -27,7 +27,7 @@ const en = {
     home: {
         title: "Timers",
         nav: {
-            header: "Zach's Tomato",
+            header: "'s Tomato",
             desc: "Your minimal Pomodoro timer",
         },
         choices: ["Pomodoro", "Short Break", "Long Break"],
@@ -81,6 +81,15 @@ const en = {
     },
     rooms: {
         title: "'s Shared Room",
+        delete: "Are you sure you want to remove member?",
+        empty: "The room is currently empty💤",
+        invite: "Let's invite more people!",
+        roomMember: "Room members",
+        host: "Host",
+        guest: "There is a guest at your door",
+        waiting: "Waiting Room",
+        enter: "Join",
+        copied: "✅Let's share it!"
     },
     record: {
         title: "'s Record",
@@ -151,6 +160,10 @@ const en = {
         getUrl: "There was a problem getting your avatar URL.",
         updateProfile: "There was a problem updating your profile.",
         terminate: "Failed to delete your account.",
+        removeMember: "There was a problem removing a member.",
+        joinRoom: "Failed to join room.",
+        rejectJoiner: "There was a problem rejecting new participant.",
+        acceptJoiner: "There was a problem accepting new participant."
     },
     landing: {
         title: ["Minimal", "Pomodoro Timer"],

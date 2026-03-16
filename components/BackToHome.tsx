@@ -1,6 +1,6 @@
 'use client';
 
-import { useDict } from "@/hooks/useDict";
+import useDict from "@/hooks/useDict";
 import Link from "next/link";
 
 const BackToHome = () => {

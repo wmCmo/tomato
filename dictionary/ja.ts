@@ -27,7 +27,7 @@ const ja = {
     home: {
         title: "タイマー",
         nav: {
-            header: "ザカのトマト",
+            header: "のトマト",
             desc: "あなたのミニマルなポモドーロタイマー",
         },
         choices: ["ポモドーロ", "短い休憩", "長い休憩"],
@@ -81,6 +81,15 @@ const ja = {
     },
     rooms: {
         title: "のルーム",
+        delete: "メンバーを削除します。本当によろしいですか？",
+        empty: "ここにはあなたしかいないみたいです。💤",
+        invite: "このルームのURLをコピーする",
+        roomMember: "ルームメンバー",
+        host: "ホスト",
+        guest: "誰か来ているみたいですよ",
+        waiting: "承認待ち",
+        enter: "入る",
+        copied: "✅URLをコピーしました！"
     },
     record: {
         title: "の記録",
@@ -138,6 +147,10 @@ const ja = {
         getUrl: "アバターのURL取得中に問題が発生しました。",
         updateProfile: "プロフィールの更新中に問題が発生しました。",
         terminate: "アカウントの削除に失敗しました。",
+        removeMember: "メンバーの削除に失敗しました。",
+        joinRoom: "ルームの参加に問題が発生しました。",
+        rejectJoiner: "ユーザの無視に問題が発生しました。",
+        acceptJoiner: "ユーザの追加に問題が発生しました。"
     },
     landing: {
         title: ["ミニマル", "なポモドーロタイマー"],

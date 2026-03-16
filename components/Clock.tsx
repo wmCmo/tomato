@@ -1,8 +1,6 @@
 'use client';
 
 import useAuth from "@/hooks/useAuth";
-import { useDict } from "@/hooks/useDict";
-import { useToast } from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -11,6 +9,8 @@ import colorVariants from "../utils/colorVariants";
 import secToTime from "../utils/secToTime";
 import ControlButton from "./ControlButton";
 import TimeButton from "./TimeButton";
+import useDict from "@/hooks/useDict";
+import useToast from "@/hooks/useToast";
 
 let audio: HTMLAudioElement | null = null;
 function getAudio() {
@@ -25,9 +25,11 @@ const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji
 const clockStateKey = 'clock_state_v1';
 const syncedSessionIDKey = 'active_session_id';
 
+export type StatusType = 0 | 1 | 2;
+
 interface ClockState {
     sec: number;
-    status: 0 | 1 | 2;
+    status: StatusType;
     session: number;
 }
 
@@ -55,7 +57,7 @@ const defaultClockState: ClockState = {
     session: 1
 };
 
-const Clock = ({ isPixel }: { isPixel: boolean; }) => {
+const Clock = ({ isPixel = true, hasControl = true, owner = "Zach", status = 0, isPlaying = false, remaining = 1500 }: { isPixel?: boolean; hasControl?: boolean; owner?: string; status?: StatusType; isPlaying?: boolean; remaining?: number; }) => {
     const { dict } = useDict();
 
     const { user } = useAuth();
@@ -193,7 +195,7 @@ const Clock = ({ isPixel }: { isPixel: boolean; }) => {
             <section className="bg-red-300 rounded-xl p-6">
                 <a href="https://exzachly.notion.site" target="_blank" rel="noopener noreferrer">
                     <div className="flex flex-col items-center">
-                        <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{dict.home.nav.header}<img src={isPixel ? `/tomato.webp` : fluentTomato} className="w-8 h-auto" /></h1>
+                        <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{owner}{dict.home.nav.header}<img src={isPixel ? `/tomato.webp` : fluentTomato} className="w-8 h-auto" /></h1>
                         <p className="text-center text-red-400 bg-red-200 px-4 py-1 mt-2 rounded-lg font-medium">{dict.home.nav.desc}</p>
                     </div>
                 </a>
@@ -203,17 +205,19 @@ const Clock = ({ isPixel }: { isPixel: boolean; }) => {
                     <div className={`${color?.[1]} rounded-lg`}>
                         <h1 className={`text-5xl sm:text-6xl text-center py-5 sm:py-10 font-bold text-white font-display`}>{m.padStart(2, "0")} : {s.padStart(2, "0")}</h1>
                     </div>
-                    <div className="flex sm:block justify-between">
-                        <div className="flex flex-col grow mr-6 sm:mr-0 sm:px-0 gap-4 mt-8 sm:flex-row sm:justify-between">
-                            {selectTime}
+                    {hasControl &&
+                        <div className="flex sm:block justify-between">
+                            <div className="flex flex-col grow mr-6 sm:mr-0 sm:px-0 gap-4 mt-8 sm:flex-row sm:justify-between">
+                                {selectTime}
+                            </div>
+                            <div className="grid grid-cols-2 place-items-center gap-6 sm:flex justify-between sm:gap-0">
+                                <ControlButton file="reset" btnFunc={resetClock} color={color} />
+                                <ControlButton file="backward" btnFunc={() => { handleSetStatus(clockState.status); setCounting(false); }} color={color} />
+                                <ControlButton file={counting ? "pause" : "play"} btnFunc={() => setCounting(prev => !prev)} color={color} />
+                                <ControlButton file="forward" btnFunc={() => setClockState(prev => ({ ...prev, sec: 0 }))} color={color} />
+                            </div>
                         </div>
-                        <div className="grid grid-cols-2 place-items-center gap-6 sm:flex justify-between sm:gap-0">
-                            <ControlButton file="reset" btnFunc={resetClock} color={color} />
-                            <ControlButton file="backward" btnFunc={() => { handleSetStatus(clockState.status); setCounting(false); }} color={color} />
-                            <ControlButton file={counting ? "pause" : "play"} btnFunc={() => setCounting(prev => !prev)} color={color} />
-                            <ControlButton file="forward" btnFunc={() => setClockState(prev => ({ ...prev, sec: 0 }))} color={color} />
-                        </div>
-                    </div>
+                    }
                 </div>
                 <div className="mt-4 sm:mt-6 bg-neutral-300 px-8 py-4 rounded-lg text-[#33270d] drop-shadow-md">
                     <b>{dict.home.session} {clockState.session}</b>: {message}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useDict } from "@/hooks/useDict";
+import useDict from "@/hooks/useDict";
 import { useState } from "react";
 import Stopwatch from "./Stopwatch";
 import Timer from "./Timer";

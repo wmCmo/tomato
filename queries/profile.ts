@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { ProfileType } from "@/types/Profile";
 
 export default async function fetchProfile(
-    userId: string | undefined,
+    userId: string | undefined | null,
 ): Promise<ProfileType | null> {
     if (!userId) throw new Error("User ID is required");
     const useHandle = userId?.startsWith('%40');
