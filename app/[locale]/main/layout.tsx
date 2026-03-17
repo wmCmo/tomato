@@ -64,10 +64,10 @@ export default function App({ children }: { children: ReactNode; }) {
 
   return (
     <div className={`flex flex-col relative min-h-screen ${locale === 'en' ? (isPixel ? 'font-pixel' : 'font-display') : 'font-jp'} bg-background`}>
-      <button onClick={() => setShowMenu(prev => !prev)} type="button" className="bg-foreground p-2 absolute top-6 right-4 z-30 rounded-lg md:hidden">
+      <button onClick={() => setShowMenu(prev => !prev)} type="button" className="bg-foreground p-2 fixed top-6 right-4 z-30 rounded-lg md:hidden">
         <ListIcon weight="bold" size={28} className="text-muted hover:text-muted-foreground" />
       </button>
-      <nav className={`bg-extreme items-center fixed md:static md:justify-between p-4 top-0 right-0 z-30 w-4/5 md:w-full h-screen md:h-auto ${showMenu ? 'flex flex-col md:flex-row ' : 'hidden md:flex'}`}>
+      <nav className={`bg-extreme items-center fixed lg:static md:justify-between p-4 top-0 right-0 z-30 w-4/5 md:w-full h-screen md:h-auto ${showMenu ? 'flex flex-col md:flex-row ' : 'hidden md:flex'}`}>
         <IconContext.Provider value={{
           size: 20,
           weight: "fill",

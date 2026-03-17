@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { ProfileType } from "@/types/Profile";
+import ProfileType from "@/types/Profile";
 
 export default async function fetchProfile(
     userId: string | undefined | null,

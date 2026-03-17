@@ -1,5 +1,5 @@
 import fetchProfile from "@/queries/profile";
-import { ProfileType } from "@/types/Profile";
+import ProfileType from "@/types/Profile";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useProfile<TData = ProfileType>(

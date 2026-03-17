@@ -5,9 +5,10 @@ import useAuth from "@/hooks/useAuth";
 import useDict from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
 import useToast from "@/hooks/useToast";
+import checkIsFollowing from "@/queries/checkIsFollowing";
 import { LocaleType } from "@/types/Locale";
-import { ProfileType } from "@/types/Profile";
-import { LogIcon, ShareNetworkIcon } from "@phosphor-icons/react";
+import ProfileType from "@/types/Profile";
+import { LogIcon, ScreencastIcon, ShareNetworkIcon } from "@phosphor-icons/react";
 import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -37,6 +38,18 @@ const Profile = ({ userId }: { userId: string; }) => {
         queryKey: ["profileCount", profile?.id],
         queryFn: profile?.id ? () => countProfile(profile.id) : skipToken,
         staleTime: 60 * 1000
+    });
+
+    const { data: isFollowing, isLoading: isFollowingLoading } = useQuery({
+        queryKey: ["isFollowing", user?.id, profile?.id],
+        queryFn: (user?.id && profile?.id) ? () => checkIsFollowing(user.id, profile.id) : skipToken,
+        staleTime: Infinity
+    });
+
+    const { data: isFollowed, isLoading: isFollowedLoading } = useQuery({
+        queryKey: ["isFollowed", profile?.id, user?.id],
+        queryFn: (user?.id && profile?.id) ? () => checkIsFollowing(profile.id, user.id) : skipToken,
+        staleTime: 1000 * 60 * 20
     });
 
     useEffect(() => {
@@ -98,11 +111,11 @@ const Profile = ({ userId }: { userId: string; }) => {
     }, [profile?.study_sessions]);
 
     const { dict } = useDict();
-    const weekDays = dict.profile.days;
 
     if (isLoading) return <ProfileSkeleton />;
     if (error || !profile) return <Error item={'Profile'} />;
 
+    const weekDays = dict.profile.days;
     const todayIndex = weekDays.indexOf(new Date().toLocaleString(dict.langTag, { weekday: "short" })) + 1;
     const sortedWeekDay = weekDays.slice(todayIndex).concat(weekDays.slice(0, todayIndex));
     const weekMaxTomato = Math.max(1, ...oneWeekSession);
@@ -131,6 +144,7 @@ const Profile = ({ userId }: { userId: string; }) => {
     const isOwner = user?.id === profile?.id;
     const studySessions = profile?.study_sessions;
     const identifier = profile?.handle ? `@${profile.handle}` : userId;
+
 
     return (
         <div className='text-accent flex flex-col justify-center px-6 grow items-center py-12'>
@@ -236,6 +250,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                     </div>
                 </section >
             </div>
+            {isFollowed && isFollowing && <Link className="bg-foreground text-muted-foreground hover:text-accent hover:translate-y-0.5 active:translate-y-1 px-4 py-2 mt-8 rounded-full font-bold flex gap-2 items-center icon" href={`/${dict.langSubTag}/main/profile/${identifier}/rooms`}><ScreencastIcon weight="fill" />Join the room</Link>}
         </div >
     );
 };

@@ -16,17 +16,16 @@ export default function ClockPage() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (user?.id) {
-      queryClient.prefetchQuery({
-        queryKey: ["followers", user.id],
-        queryFn: () => fetchFollowers(user.id)
-      });
+    if (!user?.id) return;
+    queryClient.prefetchQuery({
+      queryKey: ["followers", user.id],
+      queryFn: () => fetchFollowers(user.id)
+    });
 
-      queryClient.prefetchQuery({
-        queryKey: ["following", user.id],
-        queryFn: () => fetchFollowing(user.id)
-      });
-    }
+    queryClient.prefetchQuery({
+      queryKey: ["following", user.id],
+      queryFn: () => fetchFollowing(user.id)
+    });
   }, [user?.id, queryClient]);
 
   return (

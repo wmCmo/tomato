@@ -1,18 +1,26 @@
 'use client';
 
 import useAuth from "@/hooks/useAuth";
+import useDict from "@/hooks/useDict";
+import useToast from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
-import { useQueryClient } from "@tanstack/react-query";
+import ClockState, { StatusType } from "@/types/ClockState";
+import RoomStatusType from "@/types/RoomStatus";
+import getEndsAt from "@/utils/getEndsAt";
+import roomStatusToClockState from "@/utils/roomStatusToClockState";
+import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { clearInterval, setInterval } from "worker-timers";
 import colorVariants from "../utils/colorVariants";
 import secToTime from "../utils/secToTime";
 import ControlButton from "./ControlButton";
 import TimeButton from "./TimeButton";
-import useDict from "@/hooks/useDict";
-import useToast from "@/hooks/useToast";
+import getRoomStatus from "@/queries/roomStatus";
+import RoomSkeleton from "@/components/ui/RoomSkeleton";
 
 let audio: HTMLAudioElement | null = null;
+
 function getAudio() {
     if (!audio && typeof window !== 'undefined') {
         audio = new Audio('/ticks.ogg');
@@ -21,144 +29,234 @@ function getAudio() {
     return audio;
 }
 
-const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg";
-const clockStateKey = 'clock_state_v1';
-const syncedSessionIDKey = 'active_session_id';
+export const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg";
 
-export type StatusType = 0 | 1 | 2;
+export const statusToSec = [1500, 300, 900];
 
-interface ClockState {
-    sec: number;
-    status: StatusType;
-    session: number;
-}
-
-function readClockState(): ClockState | null {
-    try {
-        const raw = localStorage.getItem(clockStateKey);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (typeof parsed !== 'object' || parsed === null) return null;
-        const { sec, status, session } = parsed;
-        if (typeof sec !== 'number' || !Number.isFinite(sec) || sec < 0) return null;
-        if (![0, 1, 2].includes(status)) return null;
-        if (typeof session !== 'number' || !Number.isFinite(session) || session < 1) return null;
-        return { sec, status, session };
-    } catch {
-        return null;
-    }
-}
-
-const statusToSec = [1500, 300, 900];
-
-const defaultClockState: ClockState = {
+export const defaultClockState: ClockState = {
     sec: statusToSec[0],
     status: 0,
-    session: 1
+    session: 1,
+    counting: false,
+    current_session: null
 };
 
-const Clock = ({ isPixel = true, hasControl = true, owner = "Zach", status = 0, isPlaying = false, remaining = 1500 }: { isPixel?: boolean; hasControl?: boolean; owner?: string; status?: StatusType; isPlaying?: boolean; remaining?: number; }) => {
+const Clock = ({
+    isPixel = true,
+    owner = "Zach",
+    isHost = true,
+    roomStatus
+}: {
+    isPixel?: boolean;
+    owner?: string;
+    roomStatus?: RoomStatusType | null | undefined;
+    isHost?: boolean;
+}) => {
     const { dict } = useDict();
+    const { toast } = useToast();
 
     const { user } = useAuth();
     const queryClient = useQueryClient();
-    const { toast } = useToast();
 
-    const [clockState, setClockState] = useState(defaultClockState);
-    const [counting, setCounting] = useState(false);
+    const { data: myRoom, isLoading: myRoomLoading, error: myRoomError } = useQuery({
+        queryKey: ["roomStatus", user?.id],
+        queryFn: user?.id ? () => getRoomStatus(user.id) : skipToken,
+        staleTime: Infinity
+    });
+
+    const [clockState, setClockState] = useState(() => roomStatusToClockState(myRoom, roomStatus, isHost));
 
     const workerRef = useRef<number | null>(null);
     const clockStateRef = useRef(clockState);
 
     useEffect(() => {
+        getAudio();
+    }, []);
+
+    useEffect(() => {
         clockStateRef.current = clockState;
     }, [clockState]);
 
-    useEffect(() => {
-        getAudio();
-        const newClockState = readClockState();
-        if (newClockState) {
-            clockStateRef.current = newClockState;
-            setClockState(newClockState);
+    const broadcastStatus = useCallback(async (endsAt: string, status: StatusType, counting: boolean) => {
+        if (!user?.id || !isHost) return;
+        console.log('Start broadcasting');
+        const lastEdited = new Date();
+        const { error } = await supabase
+            .from('room_status')
+            .upsert([{
+                id: user.id,
+                isPlaying: counting,
+                status,
+                ends_at: endsAt,
+                last_edited: lastEdited
+            }], {
+                onConflict: 'id'
+            });
+
+        if (error) {
+            toast(undefined, dict.error.updateDb, "errorDb");
+            console.error(error.code, error.message);
+            return;
+        }
+
+        queryClient.setQueryData(["roomStatus", user.id], (old: {}) => {
+            if (!old) return old;
+            return { ...old, isPlaying: counting, status, ends_at: endsAt, last_edited: lastEdited };
+        });
+
+    }, [user?.id, isHost, queryClient, toast, dict.error.updateDb]);
+
+    const handleSetStatus = useCallback(async (newStatus: StatusType, updateSession = false, continueTimer = false) => {
+        const newClockState: ClockState = {
+            ...clockStateRef.current,
+            session: updateSession ? clockStateRef.current.session + 1 : clockStateRef.current.session,
+            sec: statusToSec[newStatus],
+            counting: continueTimer,
+            status: newStatus
         };
+        setClockState(newClockState);
+        if (user?.id) {
+            if (updateSession) {
+                if (myRoom?.current_session) {
+                    console.log('running handle set status');
+                    const { error } = await supabase
+                        .from('study_sessions')
+                        .update({ sessions: newClockState.session })
+                        .eq('id', myRoom.current_session);
+                    if (error) {
+                        console.error(error.code, error.message);
+                        throw error;
+                    }
+                } else {
+                    let data, err;
+                    ({ data, error: err } = await supabase
+                        .from('study_sessions')
+                        .insert([{
+                            user_id: user.id,
+                            sessions: newClockState.session
+                        }])
+                        .select()
+                        .single());
+                    console.log('Created new record');
+                    if (data) {
+                        setClockState(prev => ({
+                            ...prev,
+                            current_session: data.id
+                        }));
+                        (
+                            { error: err } = await supabase
+                                .from("room_status")
+                                .update({ current_session: data.id })
+                                .eq("id", user.id)
+                        );
+                        queryClient.setQueryData(["roomStatus", user.id], (old: RoomStatusType) => {
+                            if (!old) return old;
+                            return { ...old, current_session: data.id };
+                        });
+                    }
+                    if (err) {
+                        console.error(err);
+                        throw err;
+                    }
+                }
+            }
+
+            queryClient.setQueryData(["roomStatus", user.id], (old: RoomStatusType) => {
+                if (!old) return old;
+                return { ...old, status: newStatus, session: { sessions: newClockState.session }, isPlaying: continueTimer };
+            });
+            queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+
+            broadcastStatus(getEndsAt(statusToSec[newStatus]), newStatus, continueTimer);
+        }
+
+    }, [user?.id, myRoom?.current_session, queryClient]);
+
+    useEffect(() => {
+        if (isHost) return;
+
+        const channel = supabase
+            .channel(`study_sessions:${roomStatus?.id}`)
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "study_sessions",
+                    filter: `user_id=eq.${roomStatus?.id}`
+                },
+                (payLoad) => {
+                    console.log('syncing with host', payLoad);
+                    handleSetStatus(clockState.status, true, clockState.counting);
+                }
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event: "UPDATE",
+                    schema: "public",
+                    table: "study_sessions",
+                    filter: `user_id=eq.${roomStatus?.id}`
+                },
+                (payload) => {
+                    console.log('syncing with host', payload);
+                    handleSetStatus(clockState.status, true, clockState.counting);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            void supabase.removeChannel(channel);
+        };
+    }, [isHost, roomStatus?.id, clockState.status, clockState.counting, handleSetStatus]);
+
+    useEffect(() => {
+        if (isHost) return;
+        setClockState(roomStatusToClockState(myRoom, roomStatus, isHost));
+    }, [roomStatus, myRoom, isHost]);
+
+    useEffect(() => {
         return () => {
             try {
-                localStorage.setItem(clockStateKey, JSON.stringify(clockStateRef.current));
+                console.log('Saving session on unmount');
+                broadcastStatus(getEndsAt(clockStateRef.current.sec), clockStateRef.current.status, clockStateRef.current.counting);
             } catch (error) {
                 console.error("Failed to save session:", error);
             }
         };
-    }, []);
-
-    const handleSetStatus = useCallback(async (newStatus: 0 | 1 | 2, updateSession = false) => {
-        const newSession = updateSession ? clockState.session + 1 : clockState.session;
-        setClockState(prev => {
-            return {
-                ...prev,
-                sec: statusToSec[newStatus],
-                status: newStatus,
-                session: newSession
-            };
-        });
-        if (updateSession && user) {
-            if (typeof window === "undefined") return;
-            const syncedSessionId = localStorage.getItem(syncedSessionIDKey);
-            if (syncedSessionId) {
-                const { error } = await supabase
-                    .from('study_sessions')
-                    .update({ sessions: newSession })
-                    .eq('id', syncedSessionId);
-                if (!error) {
-                    await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
-                    return;
-                }
-                console.error(error.code, error.message);
-                throw error;
-            } else {
-                const { data, error } = await supabase
-                    .from('study_sessions')
-                    .insert([{
-                        user_id: user.id,
-                        sessions: newSession
-                    }])
-                    .select()
-                    .single();
-                console.log('Created new record');
-                if (data) {
-                    if (typeof window !== "undefined") {
-                        localStorage.setItem(syncedSessionIDKey, data.id);
-                    }
-                    await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
-                    return;
-                }
-                console.error(error);
-                throw error;
-            }
-        }
-    }, [user, supabase, clockState.session]);
+    }, [broadcastStatus]);
 
     useEffect(() => {
         if (clockState.sec !== 0) return;
         getAudio()?.play();
-        setCounting(true);
+        setClockState(prev => ({
+            ...prev,
+            counting: true
+        }));
+        if (!isHost) return;
         const syncPromise = clockState.status === 0
-            ? handleSetStatus(clockState.session % 2 === 0 ? 2 : 1)
-            : handleSetStatus(0, true);
+            ? handleSetStatus(clockState.session % 2 === 0 ? 2 : 1, false, true)
+            : handleSetStatus(0, true, true);
 
         syncPromise.catch(error => {
             console.error("Background sync failed, but timer is still ticking:", error);
             toast(undefined, dict.error.updateDb, 'errorDb');
         });
-    }, [clockState.sec, clockState.status, clockState.session, handleSetStatus]);
+    }, [clockState.sec, clockState.status, clockState.session, handleSetStatus, dict.error.updateDb, toast]);
 
     useEffect(() => {
-        if (counting) {
+        if (clockState.counting) {
             workerRef.current = setInterval(() => {
                 setClockState(prev => ({
                     ...prev,
                     sec: Math.max(0, prev.sec - 1)
                 }));
             }, 1000);
+        } else {
+            if (workerRef.current) {
+                clearInterval(workerRef.current);
+                workerRef.current = null;
+            }
         }
 
         return () => {
@@ -167,53 +265,81 @@ const Clock = ({ isPixel = true, hasControl = true, owner = "Zach", status = 0, 
                 workerRef.current = null;
             }
         };
-    }, [counting]);
+    }, [clockState.counting]);
 
-    function resetClock() {
-        setCounting(false);
+    async function resetClock() {
+        setClockState(prev => ({
+            ...prev,
+            counting: false
+        }));
+
         setClockState(defaultClockState);
 
-        try {
-            if (typeof window === "undefined") return;
-            localStorage.removeItem(clockStateKey);
-            localStorage.removeItem(syncedSessionIDKey);
-        } catch {
-            //ignore storage errors
+        const endsAt = getEndsAt(statusToSec[0]);
+        const payLoad = {
+            current_session: null,
+            ends_at: endsAt,
+            status: 0,
+            last_edited: new Date()
+        };
+        if (!user?.id) return;
+        const { error } = await supabase
+            .from("room_status")
+            .update(payLoad)
+            .eq("id", user.id);
+        if (error) {
+            toast(undefined, dict.error.updateDb, "errorDb");
+            console.error(error);
+            return;
         }
+        queryClient.setQueryData(["roomStatus", user?.id], (old: typeof myRoom) => {
+            if (!old) return old;
+            return { ...old, ...payLoad };
+        });
     };
 
-    const color = colorVariants[clockState?.status || 0];
+    if (!isHost && myRoomLoading) return <RoomSkeleton />;
+
+    const color = colorVariants[clockState.status];
 
     const { s, m } = secToTime(clockState.sec);
 
-    const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.home.choices[choice]} onClick={handleSetStatus} status={choice as ClockState['status']} key={choice} color={color} />);
+    const selectTime = [0, 1, 2].map(choice => <TimeButton name={dict.home.choices[choice]} setClockState={setClockState} onClick={handleSetStatus} status={choice as ClockState['status']} key={choice} color={color} />);
 
-    const message = counting ? clockState.status === 0 ? dict.home.messages.work : dict.home.messages.rest : dict.home.messages.start;
+    const message = clockState.counting ? clockState.status === 0 ? dict.home.messages.work : dict.home.messages.rest : dict.home.messages.start;
 
     return (
         <div className={`select-none flex flex-col justify-center`}>
             <section className="bg-red-300 rounded-xl p-6">
                 <a href="https://exzachly.notion.site" target="_blank" rel="noopener noreferrer">
                     <div className="flex flex-col items-center">
-                        <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{owner}{dict.home.nav.header}<img src={isPixel ? `/tomato.webp` : fluentTomato} className="w-8 h-auto" /></h1>
+                        <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{owner}{dict.home.nav.header}<Image src={isPixel ? `/tomato.webp` : fluentTomato} alt="Fluent tomato emoji" height={32} width={32} /></h1>
                         <p className="text-center text-red-400 bg-red-200 px-4 py-1 mt-2 rounded-lg font-medium">{dict.home.nav.desc}</p>
                     </div>
                 </a>
             </section>
             <main className="mt-4 sm:mt-8">
-                <div className={`${color?.[0]} p-8 shadow-md rounded-xl ${color?.[2]}`}>
-                    <div className={`${color?.[1]} rounded-lg`}>
+                <div className={`${color[0]} p-8 shadow-md rounded-xl ${color[2]}`}>
+                    <div className={`${color[1]} rounded-lg`}>
                         <h1 className={`text-5xl sm:text-6xl text-center py-5 sm:py-10 font-bold text-white font-display`}>{m.padStart(2, "0")} : {s.padStart(2, "0")}</h1>
                     </div>
-                    {hasControl &&
+                    {isHost &&
                         <div className="flex sm:block justify-between">
                             <div className="flex flex-col grow mr-6 sm:mr-0 sm:px-0 gap-4 mt-8 sm:flex-row sm:justify-between">
                                 {selectTime}
                             </div>
                             <div className="grid grid-cols-2 place-items-center gap-6 sm:flex justify-between sm:gap-0">
                                 <ControlButton file="reset" btnFunc={resetClock} color={color} />
-                                <ControlButton file="backward" btnFunc={() => { handleSetStatus(clockState.status); setCounting(false); }} color={color} />
-                                <ControlButton file={counting ? "pause" : "play"} btnFunc={() => setCounting(prev => !prev)} color={color} />
+                                <ControlButton file="backward" btnFunc={() => { handleSetStatus(clockState.status); setClockState(prev => ({ ...prev, counting: false })); }} color={color} />
+                                <ControlButton file={clockState.counting ? "pause" : "play"} btnFunc={() => {
+                                    const newCounting = !clockStateRef.current.counting;
+                                    const newClockState = {
+                                        ...clockStateRef.current,
+                                        counting: newCounting,
+                                    };
+                                    setClockState(newClockState);
+                                    broadcastStatus(getEndsAt(clockStateRef.current.sec), newClockState.status, newClockState.counting);
+                                }} color={color} />
                                 <ControlButton file="forward" btnFunc={() => setClockState(prev => ({ ...prev, sec: 0 }))} color={color} />
                             </div>
                         </div>

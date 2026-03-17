@@ -1,4 +1,4 @@
-export interface StudySessionType {
+export default interface StudySessionType {
     id: number;
     created_at: string;
     sessions: number;

@@ -1,6 +1,6 @@
 export default function RoomSkeleton() {
     return (
-        <div className="grow flex g-6 flex-col lg:flex-row items-center justify-around animate-pulse">
+        <div className="px-4 grow flex g-6 flex-col lg:flex-row items-center justify-around animate-pulse">
 
             <div className="mt-4 bg-foreground flex flex-col items-center py-8 max-w-sm w-full rounded-lg px-12">
                 <h3 className="text-center text-white bg-muted py-4 text-5xl md:text-6xl rounded-lg w-full font-display h-20"></h3>

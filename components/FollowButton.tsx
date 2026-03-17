@@ -24,7 +24,7 @@ export default function FollowButton({ userId, style }: { userId: string | undef
 
     const { data: isFollowing, isLoading: isFollowingLoading } = useQuery({
         queryKey: ["isFollowing", user?.id, profile?.id],
-        queryFn: profile?.id ? () => checkIsFollowing(user?.id, profile?.id) : skipToken,
+        queryFn: (user?.id && profile?.id) ? () => checkIsFollowing(user.id, profile.id) : skipToken,
         staleTime: Infinity
     });
 

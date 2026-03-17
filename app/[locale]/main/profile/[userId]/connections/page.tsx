@@ -31,12 +31,12 @@ export default function ConnectionPage() {
 
     const { data: following, isLoading: followingLoading, error: followingError } = useQuery({
         queryKey: ['following', profile?.id],
-        queryFn: profile?.id ? () => fetchFollowing(profile?.id) : skipToken
+        queryFn: profile?.id ? () => fetchFollowing(profile.id) : skipToken
     });
 
     const { data: followers, isLoading: followersLoading, error: followersError } = useQuery({
         queryKey: ['followers', profile?.id],
-        queryFn: profile?.id ? () => fetchFollowers(userId) : skipToken
+        queryFn: profile?.id ? () => fetchFollowers(profile.id) : skipToken
     });
 
     if (isLoading) return <ConnectionsSkeleton />;

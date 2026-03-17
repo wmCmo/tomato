@@ -23,7 +23,7 @@ function useConfirm() {
     }, []);
 
     const modal = state.open ? (
-        <div onClick={() => onClose(false)} className="fixed inset-0 grid place-items-center bg-background/60 backdrop-blur-lg text-accent px-4">
+        <div onClick={() => onClose(false)} className="fixed inset-0 grid place-items-center bg-background/60 backdrop-blur-lg text-accent px-4 z-30">
             <div onClick={e => e.stopPropagation()} className="card py-8 text-center max-w-lg w-full space-y-6 px-4">
                 <h3 className="text-lg font-bold">
                     {state.message}

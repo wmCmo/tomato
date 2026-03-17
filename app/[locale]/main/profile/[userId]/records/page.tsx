@@ -12,8 +12,8 @@ import useProfile from "@/hooks/useProfile";
 import useToast from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
 import { LocaleType } from "@/types/Locale";
-import { ProfileType } from "@/types/Profile";
-import { StudySessionType } from "@/types/StudySession";
+import ProfileType from "@/types/Profile";
+import StudySessionType from "@/types/StudySession";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -108,7 +108,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
                                         <TomatoCount count={[...months.values()].flat().reduce((sum, entry) => sum + entry.sessions, 0)} label={dict.record.thisYear} locale={dict.langSubTag as LocaleType} />
                                     </div>
                                     {[...months.entries()].map(([month, entries]) => {
-                                        return <RecordCard key={month} user={user} userId={userId} month={month} entries={entries} handleDelete={handleDelete} />;
+                                        return <RecordCard key={month} profile={profile?.id} userId={user?.id} month={month} entries={entries} handleDelete={handleDelete} />;
                                     })}
                                 </section>
                             );

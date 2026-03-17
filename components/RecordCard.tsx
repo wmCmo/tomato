@@ -1,7 +1,7 @@
 'use client';
 
 import useDict from "@/hooks/useDict";
-import { StudySessionType } from "@/types/StudySession";
+import StudySessionType from "@/types/StudySession";
 import { FloppyDiskIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
@@ -23,7 +23,7 @@ const fluentMonth = [
 
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/";
 
-const RecordCard = ({ month, entries, handleDelete, user, userId }: { month: number; entries: StudySessionType[]; handleDelete: (id: number) => void; user: User | null | undefined; userId: string; }) => {
+const RecordCard = ({ month, entries, handleDelete, profile, userId }: { month: number; entries: StudySessionType[]; handleDelete: (id: number) => void; profile: string | undefined; userId: string | undefined; }) => {
     const { dict } = useDict();
     const [isEditing, setIsEditing] = useState(false);
     if (!entries) return <></>;
@@ -36,7 +36,7 @@ const RecordCard = ({ month, entries, handleDelete, user, userId }: { month: num
                     <h3 className="font-semibold text-muted-foreground">{dict.record.months[month]}</h3>
                 </div>
                 {
-                    user?.id === userId &&
+                    profile === userId &&
                     <button type="button" onClick={() => setIsEditing(prev => !prev)} className="text-muted icon">
                         {
                             isEditing ? <FloppyDiskIcon weight="fill" /> : <PencilSimpleIcon weight="fill" />

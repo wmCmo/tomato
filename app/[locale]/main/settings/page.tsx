@@ -8,7 +8,7 @@ import useDict from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
 import useToast from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
-import { ProfileType } from "@/types/Profile";
+import ProfileType from "@/types/Profile";
 import { shallowEqual } from "@/utils/shallowEqual";
 import { ArrowCircleRightIcon, PlusIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -271,7 +271,6 @@ const SettingPage = () => {
             .eq('id', user?.id);
         if (error) {
             if (error.message.includes("duplicate key")) {
-                console.log('hello_world');
                 toast(undefined, `@${formData.handle}${dict.error.duplicatedKey}`, "errorDuplicatedKey");
                 return;
             } else {

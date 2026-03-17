@@ -1,4 +1,4 @@
-export interface ConnectionsType {
+export default interface ConnectionsType {
     id: string;
     nickname: string;
     avatar_url: string;

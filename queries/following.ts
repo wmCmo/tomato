@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { ConnectionsType } from "@/types/Connections";
+import ConnectionsType from "@/types/Connections";
 
 export default async function fetchFollowing(
     userId: string | undefined,

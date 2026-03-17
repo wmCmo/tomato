@@ -1,7 +1,8 @@
 'use client';
 
-import Clock, { StatusType } from "@/components/Clock";
+import Clock from "@/components/Clock";
 import Error from "@/components/Error";
+import SideClock from "@/components/SideClock";
 import RoomSkeleton from "@/components/ui/RoomSkeleton";
 import useAuth from "@/hooks/useAuth";
 import useConfirm from "@/hooks/useConfirm";
@@ -13,6 +14,7 @@ import { supabase } from "@/lib/supabase";
 import getMyRoom from "@/queries/myRoom";
 import getRoomParticipants from "@/queries/roomParticipants";
 import getRoomStatus from "@/queries/roomStatus";
+import { StatusType } from "@/types/ClockState";
 import { CheckSquareIcon, IconContext, ShareNetworkIcon, TrashIcon, XSquareIcon } from "@phosphor-icons/react";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,7 +26,7 @@ import { useEffect, useState } from "react";
 export default function RoomPage() {
     const { user } = useAuth();
     const { userId } = useParams<{ userId: string; }>();
-    const { isPixel } = useNavContext();
+    const { isPixel, timerOn } = useNavContext();
     const { dict } = useDict();
     const { confirm, modal } = useConfirm();
     const { toast } = useToast();
@@ -42,7 +44,7 @@ export default function RoomPage() {
     const { data: roomParticipants, isLoading: isLoadingParticipants, error: participantsError } = useQuery({
         queryKey: joinersQueryKey,
         queryFn: profile?.id ? () => getRoomParticipants(profile.id) : skipToken,
-        staleTime: Infinity
+        staleTime: 1000 * 60 * 3 //3 mins
     });
 
     const { data: myRoom, isLoading: myRoomIsLoading, error: myRoomError } = useQuery({
@@ -82,6 +84,7 @@ export default function RoomPage() {
                     }
                 }
             ).subscribe();
+
         return () => {
             supabase.removeChannel(channel);
         };
@@ -106,8 +109,11 @@ export default function RoomPage() {
                         queryClient.setQueryData(roomStatusQueryKey, payload.new);
                     }
                 }
-            );
-    }, []);
+            ).subscribe();
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [profile?.id, queryClient]);
 
     useEffect(() => {
         if (!showCopied) return;
@@ -117,57 +123,32 @@ export default function RoomPage() {
         return () => clearTimeout(copyTimer);
     }, [showCopied]);
 
-    if (profileIsLoading) return <RoomSkeleton />;
+    if (profileIsLoading || myRoomIsLoading || roomStatusLoading) return <RoomSkeleton />;
 
     if (profileError || !profile) return <Error item={dict.nav.rooms} />;
-
-    async function handleDeleteParticipant(userId: string) {
-        const ok = await confirm(dict.rooms.delete);
-        if (!ok) return;
-        const { error } = await supabase
-            .from('rooms')
-            .update({ joined_room: null, accepted: false })
-            .eq("joiner_id", userId);
-        if (error) {
-            toast(undefined, dict.error.removeMember, 'errorDb');
-            console.error(error.code, error.message);
-            return;
-        }
-        queryClient.setQueryData(joinersQueryKey, (old: typeof roomParticipants) => {
-            if (!old) return old;
-            return old.filter(s => s.joiner_id !== userId);
-        });
-    }
 
     async function handleJoin(roomId: string) {
         if (!user?.id) {
             router.push(`/${dict.langSubTag}/main/signin`);
             return;
         }
-        if (myRoom) {
-            const { error } = await supabase
-                .from('rooms')
-                .update({ joined_room: roomId })
-                .eq("joiner_id", user.id);
-            if (error) {
-                toast(undefined, dict.error.joinRoom, 'errorDb');
-                console.log(error.code, error.message);
-                return;
-            }
-
-        } else {
-            const { error } = await supabase
-                .from('rooms')
-                .insert({
+        const { error } = await supabase
+            .from('rooms')
+            .upsert(
+                [{
                     joiner_id: user.id,
                     joined_room: roomId
-                });
-            if (error) {
-                toast(undefined, dict.error.joinRoom, 'errorDb');
-                console.log(error.code, error.message);
-                return;
-            }
+                }],
+                {
+                    onConflict: "joiner_id"
+                }
+            );
+        if (error) {
+            toast(undefined, dict.error.joinRoom, 'errorDb');
+            console.error(error.code, error.message);
+            return;
         }
+
         queryClient.setQueryData(myRoomQueryKey, (old: typeof myRoom) => {
             if (!old) return old;
             return { ...old, joined_room: profile?.id };
@@ -181,21 +162,22 @@ export default function RoomPage() {
             .eq("joiner_id", userId);
         if (error) {
             toast(undefined, dict.error.acceptJoiner, 'errorDb');
-            console.log(error.code, error.message);
+            console.error(error.code, error.message);
             return;
         }
-        console.log('chaged to true', userId);
         queryClient.invalidateQueries({ queryKey: joinersQueryKey });
     }
 
     async function handleRejct(userId: string) {
+        const ok = await confirm(dict.rooms.delete);
+        if (!ok) return;
         const { error } = await supabase
             .from('rooms')
             .update({ accepted: false, joined_room: null })
             .eq("joiner_id", userId);
         if (error) {
             toast(undefined, dict.error.rejectJoiner, 'errorDb');
-            console.log(error.code, error.message);
+            console.error(error.code, error.message);
             return;
         }
         queryClient.setQueryData(myRoomQueryKey, (old: typeof myRoom) => {
@@ -216,92 +198,97 @@ export default function RoomPage() {
     const waiting = roomParticipants?.filter(s => !s.accepted);
 
     return (
-        <div className="py-12 lg:py-0 relative grow flex flex-col lg:flex-row justify-center gap-12 items-center text-accent">
-            <div className="bg-foreground card p-4 space-y-4">
-                <div className="flex items-center gap-4 justify-between">
-                    <h2 className="text-2xl font-bold">{dict.rooms.roomMember}</h2>
-                    {(!isOwner && myRoom?.joined_room !== profile.id) && <button onClick={() => handleJoin(profile.id)} type="button" className="bg-blue-400 text-white font-bold px-4 py-1 rounded-lg hover:translate-y-0.5 active:translate-y-1">{dict.rooms.enter}</button>}
-                </div>
-                <Link className="flex items-center gap-2" href={`/${dict.langSubTag}/main/profile/${profile.id}`}>
-                    <Image className="rounded-full w-5 h-5" src={profile.avatar_url} alt={`${profile.avatar_url}'s avatar picture`} width={20} height={20} />
-                    <span className="font-bold">{profile.nickname}</span>
-                    <span className="ml-2 text-sm bg-background text-muted-foreground font-bold px-2 py-1 rounded-lg">{dict.rooms.host}</span>
-                </Link>
-                <hr className="border border-muted" />
-                {
-                    accepted && accepted.length > 0 ?
-                        accepted.map(joiner => {
-                            return (
-                                <div className="flex justify-between items-center gap-4" key={joiner.joiner_id}>
-                                    <Link className="flex gap-2 items-center" href={`/${dict.langSubTag}/main/profile/${joiner.joiner_id}`}>
-                                        <Image className="rounded-full w-5 h-5" src={joiner.joiner.avatar_url} alt={`${joiner.joiner.nickname}'s avatar picture`} width={20} height={20} />
-                                        <span className="font-bold">{joiner.joiner.nickname}</span>
-                                    </Link>
-                                    {
-                                        (user?.id === joiner.joiner_id || isOwner) &&
-                                        <button type="button" onClick={() => handleRejct(joiner.joiner_id)}>
-                                            <TrashIcon weight="fill" className="text-muted hover:text-red-400 ml-auto" />
-                                        </button>
-                                    }
-                                </div>
-                            );
-                        }) :
-                        isOwner ? (
-                            waiting && waiting.length > 0 ?
-                                <div>
-                                    <p className="text-muted-foreground">{dict.rooms.guest}👀</p>
-                                </div> :
-                                <div className="space-y-2">
-                                    <p>{dict.rooms.empty}</p>
-                                    {
-                                        isOwner &&
-                                        <button onClick={handleCopy} type="button" className={`text-sm mx-auto ${showCopied ? "bg-muted" : 'bg-background'} transition-all duration-200 ease-out card flex gap-2 items-center  px-4 py-2 rounded-full font-bold hover:translate-y-0.5 active:translate-y-1`}>
-                                            {!showCopied && <ShareNetworkIcon weight="fill" />}
-                                            {showCopied ? dict.rooms.copied : dict.rooms.invite}
-                                        </button>
-                                    }
-                                </div>
-                        ) :
-                            myRoom?.joined_room !== profile.id && <p>Let's join the session!</p>
-                }
-                {
-                    waiting && waiting.length > 0 &&
-                    (
-                        <div className="mt-4">
-                            <h4 className="font-bold text-lg mt-4 mb-2">{dict.rooms.waiting}🍵</h4>
-                            {waiting.map(joiner => {
+        <div className="py-12 px-4 lg:p-0 relative grow flex flex-col lg:flex-row justify-center gap-8 lg:gap-12 items-center text-accent">
+            <Clock isPixel={isPixel} owner={profile?.nickname} roomStatus={roomStatus} isHost={isOwner} />
+            <div className="space-y-12">
+                <div className="bg-foreground card p-4 space-y-4">
+                    <div className="flex items-center gap-4 justify-between">
+                        <h2 className="text-2xl font-bold">{dict.rooms.roomMember}</h2>
+                        {(!isOwner && myRoom?.joined_room !== profile.id) && <button onClick={() => handleJoin(profile.id)} type="button" className="bg-blue-400 text-white font-bold px-4 py-1 rounded-lg hover:translate-y-0.5 active:translate-y-1">{dict.rooms.enter}</button>}
+                    </div>
+                    <Link className="flex items-center gap-2" href={`/${dict.langSubTag}/main/profile/${profile.id}`}>
+                        <Image className="rounded-full w-5 h-5" src={profile.avatar_url} alt={`${profile.avatar_url}'s avatar picture`} width={20} height={20} />
+                        <span className="font-bold">{profile.nickname}</span>
+                        <span className="ml-2 text-sm bg-background text-muted-foreground font-bold px-2 py-1 rounded-lg">{dict.rooms.host}</span>
+                    </Link>
+                    <hr className="border border-muted" />
+                    {
+                        accepted && accepted.length > 0 ?
+                            accepted.map(joiner => {
                                 return (
-                                    <div key={joiner.joiner_id} className="flex items-center justify-between gap-4">
-                                        <Link className="flex gap-2 items-center`" href={`/${dict.langSubTag}/main/profile/${joiner.joiner_id}`}>
+                                    <div className="flex justify-between items-center gap-4" key={joiner.joiner_id}>
+                                        <Link className="flex gap-2 items-center" href={`/${dict.langSubTag}/main/profile/${joiner.joiner_id}`}>
                                             <Image className="rounded-full w-5 h-5" src={joiner.joiner.avatar_url} alt={`${joiner.joiner.nickname}'s avatar picture`} width={20} height={20} />
                                             <span className="font-bold">{joiner.joiner.nickname}</span>
                                         </Link>
-
                                         {
-                                            isOwner ?
-                                                <div className="flex ml-auto gap-2   items-center">
-                                                    <IconContext.Provider value={{ weight: "fill", size: 20 }}>
-                                                        <button type="button" onClick={() => handleRejct(joiner.joiner_id)}>
-                                                            <XSquareIcon className="icon hover:text-red-400" />
-                                                        </button>
-                                                        <button type="button" onClick={() => handleAccept(joiner.joiner_id)}>
-                                                            <CheckSquareIcon className="icon hover:text-blue-400" />
-                                                        </button>
-                                                    </IconContext.Provider>
-                                                </div> :
-                                                joiner.joiner_id === user?.id &&
-                                                <button type="button" onClick={() => handleRejct(joiner.joiner_id)}>
-                                                    <TrashIcon className="icon hover:text-red-400" weight="fill" />
-                                                </button>
+                                            (user?.id === joiner.joiner_id || isOwner) &&
+                                            <button type="button" onClick={() => handleRejct(joiner.joiner_id)}>
+                                                <TrashIcon weight="fill" className="text-muted hover:text-red-400 ml-auto" />
+                                            </button>
                                         }
                                     </div>
                                 );
-                            })}
-                        </div>
-                    )
-                }
+                            }) :
+                            isOwner ? (
+                                waiting && waiting.length > 0 ?
+                                    <div>
+                                        <p className="text-muted-foreground">{dict.rooms.guest}👀</p>
+                                    </div> :
+                                    <div className="space-y-2">
+                                        <p>{dict.rooms.empty}</p>
+                                        {
+                                            isOwner &&
+                                            <button onClick={handleCopy} type="button" className={`text-sm mx-auto ${showCopied ? "bg-muted" : 'bg-background'} transition-all duration-200 ease-out card flex gap-2 items-center  px-4 py-2 rounded-full font-bold hover:translate-y-0.5 active:translate-y-1`}>
+                                                {!showCopied && <ShareNetworkIcon weight="fill" />}
+                                                {showCopied ? dict.rooms.copied : dict.rooms.invite}
+                                            </button>
+                                        }
+                                    </div>
+                            ) :
+                                myRoom?.joined_room !== profile.id && <p>Let's join the session!</p>
+                    }
+                    {
+                        waiting && waiting.length > 0 &&
+                        (
+                            <div className="mt-4">
+                                <h4 className="font-bold text-lg mt-6 mb-2">{dict.rooms.waiting}🍵</h4>
+                                <div className="space-y-2 mt-2">
+                                    {waiting.map(joiner => {
+                                        return (
+                                            <div key={joiner.joiner_id} className="flex items-center justify-between gap-4">
+                                                <Link className="flex gap-2 items-center`" href={`/${dict.langSubTag}/main/profile/${joiner.joiner_id}`}>
+                                                    <Image className="rounded-full w-5 h-5" src={joiner.joiner.avatar_url} alt={`${joiner.joiner.nickname}'s avatar picture`} width={20} height={20} />
+                                                    <span className="font-bold">{joiner.joiner.nickname}</span>
+                                                </Link>
+
+                                                {
+                                                    isOwner ?
+                                                        <div className="flex ml-auto gap-2   items-center">
+                                                            <IconContext.Provider value={{ weight: "fill", size: 20 }}>
+                                                                <button type="button" onClick={() => handleRejct(joiner.joiner_id)}>
+                                                                    <XSquareIcon className="icon hover:text-red-400" />
+                                                                </button>
+                                                                <button type="button" onClick={() => handleAccept(joiner.joiner_id)}>
+                                                                    <CheckSquareIcon className="icon hover:text-blue-400" />
+                                                                </button>
+                                                            </IconContext.Provider>
+                                                        </div> :
+                                                        joiner.joiner_id === user?.id &&
+                                                        <button type="button" onClick={() => handleRejct(joiner.joiner_id)}>
+                                                            <TrashIcon className="icon hover:text-red-400" weight="fill" />
+                                                        </button>
+                                                }
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )
+                    }
+                </div>
+                {timerOn && <SideClock />}
             </div>
-            <Clock isPixel={isPixel} hasControl={isOwner} owner={profile?.nickname} />
             {/* <div>
                 <h2>チャット欄</h2>
             </div> */}
