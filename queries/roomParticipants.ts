@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import RoomParticipantsType from "@/types/RoomParticipant";
 
 export default async function getRoomParticipants(roomId: string): Promise<RoomParticipantsType[] | null> {
     if (!roomId) throw new Error("Room ID is required");

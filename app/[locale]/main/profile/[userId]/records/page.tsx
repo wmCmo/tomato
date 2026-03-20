@@ -57,7 +57,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
 
     if (error) return <Error item={'Pomodoro sessions'} />;
 
-    async function handleDelete(sessionId: number) {
+    async function handleDelete(sessionId: string) {
         const ok = await confirm(dict.record.warning);
         if (!ok) return;
         const { error } = await supabase.from('study_sessions').delete().eq("id", sessionId);
@@ -65,11 +65,6 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
             toast(undefined, dict.error.delete, 'errorDb');
             console.error(error.code, error.message);
             return;
-        }
-
-        const localSessionId = Number(localStorage.getItem('active_session_id'));
-        if (localSessionId === sessionId) {
-            if (typeof window !== "undefined") localStorage.removeItem('active_session_id');
         }
         queryClient.setQueryData(['profile', userId], (old: ProfileType) => {
             if (!old) return old;

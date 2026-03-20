@@ -168,7 +168,7 @@ export default function RoomPage() {
         queryClient.invalidateQueries({ queryKey: joinersQueryKey });
     }
 
-    async function handleRejct(userId: string) {
+    async function handleReject(userId: string) {
         const ok = await confirm(dict.rooms.delete);
         if (!ok) return;
         const { error } = await supabase
@@ -188,8 +188,8 @@ export default function RoomPage() {
 
     function handleCopy() {
         setShowCopied(true);
-        const identifier = profile?.handle ? `@${profile.handle}` : user?.id;
-        navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/${identifier}/rooms`);
+        const identifier = profile?.handle ? `@${profile.handle}` : profile?.id;
+        navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/profile/${identifier}/rooms`);
     }
 
     const isOwner = profile?.id === user?.id;
@@ -223,7 +223,7 @@ export default function RoomPage() {
                                         </Link>
                                         {
                                             (user?.id === joiner.joiner_id || isOwner) &&
-                                            <button type="button" onClick={() => handleRejct(joiner.joiner_id)}>
+                                            <button type="button" onClick={() => handleReject(joiner.joiner_id)}>
                                                 <TrashIcon weight="fill" className="text-muted hover:text-red-400 ml-auto" />
                                             </button>
                                         }
@@ -266,7 +266,7 @@ export default function RoomPage() {
                                                     isOwner ?
                                                         <div className="flex ml-auto gap-2   items-center">
                                                             <IconContext.Provider value={{ weight: "fill", size: 20 }}>
-                                                                <button type="button" onClick={() => handleRejct(joiner.joiner_id)}>
+                                                                <button type="button" onClick={() => handleReject(joiner.joiner_id)}>
                                                                     <XSquareIcon className="icon hover:text-red-400" />
                                                                 </button>
                                                                 <button type="button" onClick={() => handleAccept(joiner.joiner_id)}>
@@ -275,7 +275,7 @@ export default function RoomPage() {
                                                             </IconContext.Provider>
                                                         </div> :
                                                         joiner.joiner_id === user?.id &&
-                                                        <button type="button" onClick={() => handleRejct(joiner.joiner_id)}>
+                                                        <button type="button" onClick={() => handleReject(joiner.joiner_id)}>
                                                             <TrashIcon className="icon hover:text-red-400" weight="fill" />
                                                         </button>
                                                 }

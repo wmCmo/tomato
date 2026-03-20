@@ -23,7 +23,7 @@ const fluentMonth = [
 
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/";
 
-const RecordCard = ({ month, entries, handleDelete, profile, userId }: { month: number; entries: StudySessionType[]; handleDelete: (id: number) => void; profile: string | undefined; userId: string | undefined; }) => {
+const RecordCard = ({ month, entries, handleDelete, profile, userId }: { month: number; entries: StudySessionType[]; handleDelete: (id: string) => void; profile: string | undefined; userId: string | undefined; }) => {
     const { dict } = useDict();
     const [isEditing, setIsEditing] = useState(false);
     if (!entries) return <></>;
