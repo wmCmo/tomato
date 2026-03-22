@@ -13,7 +13,7 @@ export default function LoginPage() {
     const { dict } = useDict();
 
     useEffect(() => {
-        if (user) router.push(`/${dict.langSubTag}/main/profile/${user.id}`);
+        if (user) router.push(`/${dict.langSubTag}/main/${user.id}`);
     }, [user, router]);
 
     if (user) return <ProfileSkeleton />;

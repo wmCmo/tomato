@@ -94,11 +94,11 @@ export default function App({ children }: { children: ReactNode; }) {
               <NavItem destination={`/`} icon={<HouseIcon className="" />} title={dict.home.title} />
               {identifier ?
                 <>
-                  <NavItem destination={`/profile/${identifier}/rooms`} icon={<ScreencastIcon className="md:size-10" />} title={dict.nav.rooms} />
-                  <NavItem destination={`/profile/${identifier}/records`} title={dict.nav.records} icon={<LogIcon className="md:size-10" />} />
-                  <NavItem destination={`/profile/${identifier}/connections`} icon={<UsersIcon className="md:size-10" />} title={dict.nav.connections} />
+                  <NavItem destination={`/${identifier}/rooms`} icon={<ScreencastIcon className="md:size-10" />} title={dict.nav.rooms} />
+                  <NavItem destination={`/${identifier}/records`} title={dict.nav.records} icon={<LogIcon className="md:size-10" />} />
+                  <NavItem destination={`/${identifier}/connections`} icon={<UsersIcon className="md:size-10" />} title={dict.nav.connections} />
                   <NavItem destination={`/settings`} icon={<GearIcon className="md:size-10" />} title={dict.setting.title} />
-                  <NavItem isAvatar destination={identifier ? `/profile/${identifier}` : `/signin`} icon={user ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-6 min-w-6 rounded-full" /> : <UserCircleIcon className='icon' />} title={profile?.nickname || "Profile"} />
+                  <NavItem isAvatar destination={identifier ? `/${identifier}` : `/signin`} icon={user ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-6 min-w-6 rounded-full" /> : <UserCircleIcon className='icon' />} title={profile?.nickname || "Profile"} />
                 </> :
                 <button onClick={() => signInWithGoogle(toast, dict)} type="button" className="flex gap-2 card px-4 py-1 text-muted items-center hover:translate-y-0.5 transition-all duration-200 ease-out">
                   <GoogleLogoIcon className="" weight="bold" size={16} />

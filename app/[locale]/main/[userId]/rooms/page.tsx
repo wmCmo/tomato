@@ -189,7 +189,7 @@ export default function RoomPage() {
     function handleCopy() {
         setShowCopied(true);
         const identifier = profile?.handle ? `@${profile.handle}` : profile?.id;
-        navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/profile/${identifier}/rooms`);
+        navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/${identifier}/rooms`);
     }
 
     const isOwner = profile?.id === user?.id;
@@ -206,7 +206,7 @@ export default function RoomPage() {
                         <h2 className="text-2xl font-bold">{dict.rooms.roomMember}</h2>
                         {(!isOwner && myRoom?.joined_room !== profile.id) && <button onClick={() => handleJoin(profile.id)} type="button" className="bg-blue-400 text-white font-bold px-4 py-1 rounded-lg hover:translate-y-0.5 active:translate-y-1">{dict.rooms.enter}</button>}
                     </div>
-                    <Link className="flex items-center gap-2" href={`/${dict.langSubTag}/main/profile/${profile.id}`}>
+                    <Link className="flex items-center gap-2" href={`/${dict.langSubTag}/main/${profile.id}`}>
                         <Image className="rounded-full w-5 h-5" src={profile.avatar_url} alt={`${profile.avatar_url}'s avatar picture`} width={20} height={20} />
                         <span className="font-bold">{profile.nickname}</span>
                         <span className="ml-2 text-sm bg-background text-muted-foreground font-bold px-2 py-1 rounded-lg">{dict.rooms.host}</span>
@@ -217,7 +217,7 @@ export default function RoomPage() {
                             accepted.map(joiner => {
                                 return (
                                     <div className="flex justify-between items-center gap-4" key={joiner.joiner_id}>
-                                        <Link className="flex gap-2 items-center" href={`/${dict.langSubTag}/main/profile/${joiner.joiner_id}`}>
+                                        <Link className="flex gap-2 items-center" href={`/${dict.langSubTag}/main/${joiner.joiner_id}`}>
                                             <Image className="rounded-full w-5 h-5" src={joiner.joiner.avatar_url} alt={`${joiner.joiner.nickname}'s avatar picture`} width={20} height={20} />
                                             <span className="font-bold">{joiner.joiner.nickname}</span>
                                         </Link>
@@ -257,7 +257,7 @@ export default function RoomPage() {
                                     {waiting.map(joiner => {
                                         return (
                                             <div key={joiner.joiner_id} className="flex items-center justify-between gap-4">
-                                                <Link className="flex gap-2 items-center`" href={`/${dict.langSubTag}/main/profile/${joiner.joiner_id}`}>
+                                                <Link className="flex gap-2 items-center`" href={`/${dict.langSubTag}/main/${joiner.joiner_id}`}>
                                                     <Image className="rounded-full w-5 h-5" src={joiner.joiner.avatar_url} alt={`${joiner.joiner.nickname}'s avatar picture`} width={20} height={20} />
                                                     <span className="font-bold">{joiner.joiner.nickname}</span>
                                                 </Link>

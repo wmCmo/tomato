@@ -161,9 +161,9 @@ const Profile = ({ userId }: { userId: string; }) => {
                                 profileCountLoading
                                     ? <div className="h-6 w-32 bg-foreground animate-pulse rounded-full"></div>
                                     : <>
-                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${identifier}/connections?view=following`}><b>{profileCount.following}</b>{dict.profile.following}</Link>
-                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/profile/${identifier}/connections?view=followers`}><b>{profileCount.followers}</b>{dict.profile.followers}</Link>
-                                        <ShareNetworkIcon weight="fill" size={20} onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/profile/${identifier}`); setShowCopied(true); }} className="icon" />
+                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/${identifier}/connections?view=following`}><b>{profileCount.following}</b>{dict.profile.following}</Link>
+                                        <Link className="hover:underline underline-offset-4" href={`/${dict.langSubTag}/main/${identifier}/connections?view=followers`}><b>{profileCount.followers}</b>{dict.profile.followers}</Link>
+                                        <ShareNetworkIcon weight="fill" size={20} onClick={() => { navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/${identifier}`); setShowCopied(true); }} className="icon" />
                                     </>
                             }
                         </div>
@@ -222,7 +222,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                             <TomatoCount count={oneWeekSession.reduce((sum, day) => sum + day, 0)} locale={dict.langSubTag as LocaleType} />
 
                         </div>
-                        <Link href={`/${dict.langSubTag}/main/profile/${identifier}/records`}>
+                        <Link href={`/${dict.langSubTag}/main/${identifier}/records`}>
                             <div className="flex gap-2 items-center cursor-pointer text-muted hover:underline underline-offset-4 hover:text-muted-foreground transition-all duration-100">
                                 <span className="text-sm">{dict.profile.viewMore}</span>
                                 <LogIcon />
@@ -250,7 +250,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                     </div>
                 </section >
             </div>
-            {isFollowed && isFollowing && <Link className="bg-foreground text-muted-foreground hover:text-accent hover:translate-y-0.5 active:translate-y-1 px-4 py-2 mt-8 rounded-full font-bold flex gap-2 items-center icon" href={`/${dict.langSubTag}/main/profile/${identifier}/rooms`}><ScreencastIcon weight="fill" />Join the room</Link>}
+            {isFollowed && isFollowing && <Link className="bg-foreground text-muted-foreground hover:text-accent hover:translate-y-0.5 active:translate-y-1 px-4 py-2 mt-8 rounded-full font-bold flex gap-2 items-center icon" href={`/${dict.langSubTag}/main/${identifier}/rooms`}><ScreencastIcon weight="fill" />Join the room</Link>}
         </div >
     );
 };

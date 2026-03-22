@@ -77,6 +77,8 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
         return;
     }
 
+    const identifier = profile?.handle ? `@${profile.handle}` : profile?.id;
+
     return (
         <main className="relative text-accent px-4 grow flex flex-col items-center py-12">
             <section className="sticky top-0 pt-12 bg-background max-w-lg w-full">
@@ -85,7 +87,7 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
                         <img src={`${fluentRepo}Potted%20plant/Color/potted_plant_color.svg`} alt="Fluent Potted Plant emoji" />
                         <h1 className="font-bold text-xl">{profile?.nickname}{dict.record.title}</h1>
                     </div>
-                    <Link href={`/${dict.langSubTag}/main/profile/${userId}`} className="flex gap-2 items-center bg-foreground rounded px-2 py-1 icon max-w-xs">
+                    <Link href={`/${dict.langSubTag}/main/${identifier}`} className="flex gap-2 items-center bg-foreground rounded px-2 py-1 icon max-w-xs">
                         <ArrowLeftIcon />
                         <span className="text-sm font-semibold">{dict.record.return}</span>
                     </Link>

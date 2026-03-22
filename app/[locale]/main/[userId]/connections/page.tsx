@@ -69,7 +69,7 @@ export default function ConnectionPage() {
                     displayList && displayList.length > 0 ?
                         displayList.map((item, _) => (
                             <div key={item.id} className="mt-4">
-                                <Link className="flex items-center gap-4" href={`/${dict.langSubTag}/main/profile/${item.handle ? `@${item.handle}` : item.id}`}>
+                                <Link className="flex items-center gap-4" href={`/${dict.langSubTag}/main/${item.handle ? `@${item.handle}` : item.id}`}>
                                     <img className="h-8 w-8 rounded-full" src={item?.avatar_url} alt={`${item.nickname}'s avatar`} />
                                     <div className="font-bold flex gap-1.5 sm:gap-4 justify-center items-start sm:items-center flex-col sm:flex-row">
                                         <p className="">{item.nickname}</p>
