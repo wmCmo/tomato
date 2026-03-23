@@ -68,6 +68,9 @@ export default function App({ children }: { children: ReactNode; }) {
       <button onClick={() => setShowMenu(prev => !prev)} type="button" className="bg-foreground p-2 fixed top-6 right-4 z-30 rounded-lg md:hidden">
         <ListIcon weight="bold" size={28} className="text-muted hover:text-muted-foreground" />
       </button>
+      <button onClick={() => setShowMenu(false)}>
+        <div className={`${showMenu ? 'fixed backdrop-blur-sm sm:hidden' : 'hidden'} w-screen h-screen z-20`}></div>
+      </button>
       <nav className={`bg-extreme items-center fixed lg:static md:justify-between p-4 top-0 right-0 z-30 w-4/5 md:w-full h-screen md:h-auto ${showMenu ? 'flex flex-col md:flex-row ' : 'hidden md:flex'}`}>
         <IconContext.Provider value={{
           size: 20,
