@@ -1,3 +1,3 @@
 import { createContext } from "react";
 
-export const NavContext = createContext<{ timerOn: boolean; isPixel: boolean; } | undefined>(undefined);
+export const NavContext = createContext<{ timerOn: boolean; isPixel: boolean; isMarathon: boolean; } | undefined>(undefined);

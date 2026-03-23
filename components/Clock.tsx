@@ -1,9 +1,11 @@
 'use client';
 
+import RoomSkeleton from "@/components/ui/RoomSkeleton";
 import useAuth from "@/hooks/useAuth";
 import useDict from "@/hooks/useDict";
 import useToast from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
+import getRoomStatus from "@/queries/roomStatus";
 import ClockState, { StatusType } from "@/types/ClockState";
 import RoomStatusType from "@/types/RoomStatus";
 import getEndsAt from "@/utils/getEndsAt";
@@ -16,8 +18,6 @@ import colorVariants from "../utils/colorVariants";
 import secToTime from "../utils/secToTime";
 import ControlButton from "./ControlButton";
 import TimeButton from "./TimeButton";
-import getRoomStatus from "@/queries/roomStatus";
-import RoomSkeleton from "@/components/ui/RoomSkeleton";
 
 let audio: HTMLAudioElement | null = null;
 
@@ -45,12 +45,14 @@ const Clock = ({
     isPixel = true,
     owner = "Zach",
     isHost = true,
-    roomStatus
+    roomStatus,
+    isMarathon
 }: {
     isPixel?: boolean;
     owner?: string;
     roomStatus?: RoomStatusType | null | undefined;
     isHost?: boolean;
+    isMarathon: boolean;
 }) => {
     const { dict } = useDict();
     const { toast } = useToast();
@@ -114,7 +116,6 @@ const Clock = ({
             counting: continueTimer,
             status: newStatus
         };
-        setClockState(newClockState);
         if (user?.id) {
             if (updateSession) {
                 if (myRoom?.current_session) {
@@ -169,7 +170,9 @@ const Clock = ({
 
             broadcastStatus(getEndsAt(statusToSec[newStatus]), newStatus, continueTimer);
         }
-
+        clockStateRef.current = newClockState;
+        if (clockStateRef.current === newClockState) return;
+        setClockState(newClockState);
     }, [user?.id, myRoom?.current_session, queryClient]);
 
     useEffect(() => {
@@ -211,8 +214,12 @@ const Clock = ({
     }, [isHost, roomStatus?.id, clockState.status, clockState.counting, handleSetStatus]);
 
     useEffect(() => {
-        if (isHost) return;
-        setClockState(roomStatusToClockState(myRoom, roomStatus, isHost));
+        console.log('run again');
+        const newState = roomStatusToClockState(myRoom, roomStatus, isHost);
+        if (clockStateRef.current === newState) return;
+        clockStateRef.current = newState;
+        console.log('They are different!');
+        setClockState(newState);
     }, [roomStatus, myRoom, isHost]);
 
     useEffect(() => {
@@ -234,9 +241,11 @@ const Clock = ({
             counting: true
         }));
         if (!isHost) return;
-        const syncPromise = clockState.status === 0
-            ? handleSetStatus(clockState.session % 2 === 0 ? 2 : 1, false, true)
-            : handleSetStatus(0, true, true);
+        const syncPromise = isMarathon ?
+            handleSetStatus(0, true, true) :
+            clockState.status === 0
+                ? handleSetStatus(clockState.session % 2 === 0 ? 2 : 1, false, true)
+                : handleSetStatus(0, true, true);
 
         syncPromise.catch(error => {
             console.error("Background sync failed, but timer is still ticking:", error);
@@ -309,8 +318,8 @@ const Clock = ({
     const message = clockState.counting ? clockState.status === 0 ? dict.home.messages.work : dict.home.messages.rest : dict.home.messages.start;
 
     return (
-        <div className={`select-none flex flex-col justify-center`}>
-            <section className="bg-red-300 rounded-xl p-6">
+        <div className={`select-none flex flex-col justify-center items-center`}>
+            <section className="bg-red-300 rounded-xl p-6 w-full">
                 <a href="https://exzachly.notion.site" target="_blank" rel="noopener noreferrer">
                     <div className="flex flex-col items-center">
                         <h1 className="text-3xl font-bold text-white text-center flex items-center gap-1">{owner}{dict.home.nav.header}<Image src={isPixel ? `/tomato.webp` : fluentTomato} alt="Fluent tomato emoji" height={32} width={32} /></h1>
@@ -318,16 +327,16 @@ const Clock = ({
                     </div>
                 </a>
             </section>
-            <main className="mt-4 sm:mt-8">
+            <main className="mt-4 sm:mt-8 max-w-lg w-full">
                 <div className={`${color[0]} p-8 shadow-md rounded-xl ${color[2]}`}>
                     <div className={`${color[1]} rounded-lg`}>
                         <h1 className={`text-5xl sm:text-6xl text-center py-5 sm:py-10 font-bold text-white font-display`}>{m.padStart(2, "0")} : {s.padStart(2, "0")}</h1>
                     </div>
                     {isHost &&
-                        <div className="flex sm:block justify-between">
-                            <div className="flex flex-col grow mr-6 sm:mr-0 sm:px-0 gap-4 mt-8 sm:flex-row sm:justify-between">
+                        <div className={`${!isMarathon && 'flex'} sm:block justify-between`}>
+                            {!isMarathon && <div className="flex flex-col grow mr-6 sm:mr-0 sm:px-0 gap-4 mt-8 sm:flex-row sm:justify-between">
                                 {selectTime}
-                            </div>
+                            </div>}
                             <div className="grid grid-cols-2 place-items-center gap-6 sm:flex justify-between sm:gap-0">
                                 <ControlButton file="reset" btnFunc={resetClock} color={color} />
                                 <ControlButton file="backward" btnFunc={() => { handleSetStatus(clockState.status); setClockState(prev => ({ ...prev, counting: false })); }} color={color} />
