@@ -2,14 +2,14 @@
 
 import Clock from "@/components/Clock";
 import SideClock from "@/components/SideClock";
+import RoomSkeleton from "@/components/ui/RoomSkeleton";
 import useAuth from "@/hooks/useAuth";
 import useNavContext from "@/hooks/useNavContext";
 import { supabase } from "@/lib/supabase";
 import fetchFollowers from "@/queries/follower";
 import fetchFollowing from "@/queries/following";
-import { StatusType } from "@/types/ClockState";
-import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-import { useQueryClient } from "@tanstack/react-query";
+import getRoomStatus from "@/queries/roomStatus";
+import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 export default function ClockPage() {
@@ -31,6 +31,12 @@ export default function ClockPage() {
     });
   }, [user?.id, queryClient]);
 
+  const { data: myRoom, isLoading: myRoomLoading } = useQuery({
+    queryKey: ["roomStatus", user?.id],
+    queryFn: user?.id ? () => getRoomStatus(user.id) : skipToken,
+    staleTime: Infinity
+  });
+
   useEffect(() => {
     if (!user?.id) return;
     const channel = supabase
@@ -42,8 +48,8 @@ export default function ClockPage() {
           schema: "public",
           table: "room_status"
         },
-        (payload: RealtimePostgresChangesPayload<{ id: string; status: StatusType; isPlaying: boolean; }>) => {
-          queryClient.setQueryData(["roomStatus", user.id], payload.new);
+        async () => {
+          await queryClient.invalidateQueries({ queryKey: ["roomStatus", user.id] });
         }
       ).subscribe();
     return () => {
@@ -51,9 +57,11 @@ export default function ClockPage() {
     };
   }, [user?.id, queryClient]);
 
+  if (myRoomLoading || !myRoom || !myRoom.session?.sessions) return <RoomSkeleton />;
+
   return (
     <main className={`grow flex flex-col gap-12 lg:gap-0 lg:flex-row lg:justify-around justify-center items-center px-4 ${timerOn && 'py-12 lg:py-0'}`}>
-      <Clock isPixel={isPixel} isMarathon={isMarathon} />
+      <Clock isPixel={isPixel} isMarathon={isMarathon} myRoom={myRoom} myRoomLoading={myRoomLoading} />
       {timerOn && <SideClock />}
     </main>
   );

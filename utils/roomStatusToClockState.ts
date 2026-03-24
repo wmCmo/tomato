@@ -9,7 +9,7 @@ export default function roomStatusToClockState(myRoom: RoomStatusType | null | u
     const sessions = myRoom?.session?.sessions;
     return {
         sec: roomStatus.ends_at ? dateToSec(roomStatus.ends_at, roomStatus.last_edited) : statusToSec[0],
-        session: sessions ? sessions: 1,
+        session: sessions ? sessions : 1,
         status: roomStatus.status,
         counting: roomStatus.isPlaying,
         current_session: roomStatus.current_session ?? null

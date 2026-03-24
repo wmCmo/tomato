@@ -59,6 +59,12 @@ export default function RoomPage() {
         staleTime: Infinity
     });
 
+    const { data: personalRoom, isLoading: personalRoomLoading } = useQuery({
+        queryKey: ["roomStatus", user?.id],
+        queryFn: user?.id ? () => getRoomStatus(user.id) : skipToken,
+        staleTime: Infinity
+    });
+
     useEffect(() => {
         if (!profile?.id) return;
         const channel = supabase
@@ -199,7 +205,7 @@ export default function RoomPage() {
 
     return (
         <div className="py-12 px-4 lg:p-0 relative grow flex flex-col lg:flex-row justify-center gap-8 lg:gap-12 items-center text-accent">
-            <Clock isPixel={isPixel} owner={profile?.nickname} roomStatus={roomStatus} isHost={isOwner} isMarathon={isMarathon} />
+            <Clock myRoom={personalRoom} myRoomLoading={personalRoomLoading} isPixel={isPixel} owner={profile?.nickname} roomStatus={roomStatus} isHost={isOwner} isMarathon={isMarathon} />
             <div className="space-y-12">
                 <div className="bg-foreground card p-4 space-y-4">
                     <div className="flex items-center gap-4 justify-between">

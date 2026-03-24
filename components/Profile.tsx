@@ -21,7 +21,6 @@ import FollowButton from "./FollowButton";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
 import getTomatoSize from "@/utils/getTomatoSize";
 import Image from "next/image";
-import formatDateEn from "@/utils/formatDateEn";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";

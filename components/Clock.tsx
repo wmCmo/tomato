@@ -5,12 +5,11 @@ import useAuth from "@/hooks/useAuth";
 import useDict from "@/hooks/useDict";
 import useToast from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
-import getRoomStatus from "@/queries/roomStatus";
 import ClockState, { StatusType } from "@/types/ClockState";
 import RoomStatusType from "@/types/RoomStatus";
 import getEndsAt from "@/utils/getEndsAt";
 import roomStatusToClockState from "@/utils/roomStatusToClockState";
-import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { clearInterval, setInterval } from "worker-timers";
@@ -46,11 +45,15 @@ const Clock = ({
     owner = "Zach",
     isHost = true,
     roomStatus,
-    isMarathon
+    isMarathon,
+    myRoom,
+    myRoomLoading,
 }: {
     isPixel?: boolean;
     owner?: string;
     roomStatus?: RoomStatusType | null | undefined;
+    myRoom?: RoomStatusType | null | undefined;
+    myRoomLoading: boolean;
     isHost?: boolean;
     isMarathon: boolean;
 }) => {
@@ -59,12 +62,6 @@ const Clock = ({
 
     const { user } = useAuth();
     const queryClient = useQueryClient();
-
-    const { data: myRoom, isLoading: myRoomLoading, error: myRoomError } = useQuery({
-        queryKey: ["roomStatus", user?.id],
-        queryFn: user?.id ? () => getRoomStatus(user.id) : skipToken,
-        staleTime: Infinity
-    });
 
     const [clockState, setClockState] = useState(() => roomStatusToClockState(myRoom, roomStatus, isHost));
 
@@ -108,11 +105,12 @@ const Clock = ({
 
     }, [user?.id, isHost, queryClient, toast, dict.error.updateDb]);
 
-    const handleSetStatus = useCallback(async (newStatus: StatusType, updateSession = false, continueTimer = false) => {
+    const handleSetStatus = useCallback(async (newStatus: StatusType, updateSession = false, continueTimer = false, clearSec = true) => {
+        const newSec = clearSec ? statusToSec[newStatus] : clockStateRef.current.sec;
         const newClockState: ClockState = {
             ...clockStateRef.current,
             session: updateSession ? clockStateRef.current.session + 1 : clockStateRef.current.session,
-            sec: statusToSec[newStatus],
+            sec: newSec,
             counting: continueTimer,
             status: newStatus
         };
@@ -168,7 +166,7 @@ const Clock = ({
             });
             queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
 
-            broadcastStatus(getEndsAt(statusToSec[newStatus]), newStatus, continueTimer);
+            broadcastStatus(getEndsAt(newSec), newStatus, continueTimer);
         }
         clockStateRef.current = newClockState;
         if (clockStateRef.current === newClockState) return;
@@ -177,7 +175,7 @@ const Clock = ({
 
     useEffect(() => {
         if (!isMarathon) return;
-        handleSetStatus(0, false, clockStateRef.current.counting);
+        handleSetStatus(0, false, clockStateRef.current.counting, false);
     }, [isMarathon, handleSetStatus]);
 
     useEffect(() => {
@@ -219,11 +217,9 @@ const Clock = ({
     }, [isHost, roomStatus?.id, clockState.status, clockState.counting, handleSetStatus]);
 
     useEffect(() => {
-        console.log('run again');
         const newState = roomStatusToClockState(myRoom, roomStatus, isHost);
         if (clockStateRef.current === newState) return;
         clockStateRef.current = newState;
-        console.log('They are different!');
         setClockState(newState);
     }, [roomStatus, myRoom, isHost]);
 
