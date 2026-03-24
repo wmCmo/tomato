@@ -176,6 +176,11 @@ const Clock = ({
     }, [user?.id, myRoom?.current_session, queryClient]);
 
     useEffect(() => {
+        if (!isMarathon) return;
+        handleSetStatus(0, false, clockStateRef.current.counting);
+    }, [isMarathon, handleSetStatus]);
+
+    useEffect(() => {
         if (isHost) return;
 
         const channel = supabase
