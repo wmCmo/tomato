@@ -4,6 +4,7 @@ import formatDateJaNoYear from "@/utils/formatDateJaNoYear";
 const ja = {
     langSubTag: "ja",
     langTag: "ja-JP",
+    appName: "ザカのトマト",
     components: {
         return2Home: "ホームページ",
     },

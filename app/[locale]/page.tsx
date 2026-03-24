@@ -4,7 +4,8 @@ import en from "@/dictionary/en";
 import ja from "@/dictionary/ja";
 import { DictType } from "@/types/DictType";
 import { LocaleType } from "@/types/Locale";
-import { GithubLogoIcon, LinkedinLogoIcon, MediumLogoIcon, NotionLogoIcon } from "@phosphor-icons/react/dist/ssr";
+import { GithubLogoIcon, LinkedinLogoIcon, MediumLogoIcon, NotionLogoIcon, TwitterLogoIcon } from "@phosphor-icons/react/dist/ssr";
+import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -13,8 +14,6 @@ const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji
 function NewPageLink({ children, href }: { children: ReactNode; href: string; }) {
   return <Link href={href} target="_blank" rel="noopener noopener">{children}</Link>;
 }
-
-
 
 const dictionaries: Record<LocaleType, DictType> = { en, ja };
 
@@ -36,7 +35,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <nav className="flex items-center justify-between m-4">
         <div className="flex items-end gap-2">
           <img src={fluentTomato} alt="Fluent tomato emoji" />
-          <h4 className="font-black">{dict.home.nav.header}</h4>
+          <h4 className="font-black">{dict.appName}</h4>
         </div>
         <div className="flex gap-4 items-center">
           <ToggleTheme />
@@ -66,7 +65,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <div className="md:hidden mt-12">
           <Call2Action />
         </div>
-        <a className={`absolute bottom-4 right-4 hidden md:block`} href="https://www.producthunt.com/products/zach-s-tomato?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-zach-s-tomato" target="_blank" rel="noopener noreferrer"><img alt="Zach's Tomato - Minimal + Responsive Pomodoro Timer | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1071002&amp;theme=neutral&amp;t=1770089203158" /></a>
+        <a className={`absolute bottom-4 right-4 hidden md:block`} href="https://www.producthunt.com/products/zach-s-tomato?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-zach-s-tomato" target="_blank" rel="noopener noreferrer"><Image alt="Zach's Tomato - Minimal + Responsive Pomodoro Timer | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1071002&amp;theme=neutral&amp;t=1770089203158" /></a>
       </section>
       <footer className="bg-foreground w-full px-8 py-8 flex gap-12 md:gap-24 flex-col md:flex-row">
         <div>
@@ -79,6 +78,9 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           <div className="flex gap-4 mt-4">
             <NewPageLink href="https://github.com/wmcmo/tomato">
               <GithubLogoIcon weight="fill" size={20} />
+            </NewPageLink>
+            <NewPageLink href="https://x.com/zachstomato">
+              <TwitterLogoIcon weight="fill" size={20} />
             </NewPageLink>
             <NewPageLink href="https://exzachly.notion.site/">
               <NotionLogoIcon weight="fill" size={20} />

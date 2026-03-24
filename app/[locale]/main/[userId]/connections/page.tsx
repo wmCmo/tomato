@@ -9,6 +9,7 @@ import useProfile from "@/hooks/useProfile";
 import fetchFollowers from "@/queries/follower";
 import fetchFollowing from "@/queries/following";
 import { skipToken, useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -70,7 +71,7 @@ export default function ConnectionPage() {
                         displayList.map((item, _) => (
                             <div key={item.id} className="mt-4">
                                 <Link className="flex items-center gap-4" href={`/${dict.langSubTag}/main/${item.handle ? `@${item.handle}` : item.id}`}>
-                                    <img className="h-8 w-8 rounded-full" src={item?.avatar_url} alt={`${item.nickname}'s avatar`} />
+                                    <Image width={32} height={32} className="rounded-full" src={item?.avatar_url} alt={`${item.nickname}'s avatar`} />
                                     <div className="font-bold flex gap-1.5 sm:gap-4 justify-center items-start sm:items-center flex-col sm:flex-row">
                                         <p className="">{item.nickname}</p>
                                         {item.handle && <p className="text-xs text-muted-foreground bg-foreground px-2 py-1 rounded-lg">@ {item.handle}</p>}

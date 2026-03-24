@@ -4,6 +4,7 @@ import formatDateEnNoYear from "@/utils/formatDateEnNoYear";
 const en = {
     langSubTag: "en",
     langTag: "en-US",
+    appName: "Zach's Tomato",
     components: {
         return2Home: "Home",
     },

@@ -12,6 +12,7 @@ import ProfileType from "@/types/Profile";
 import { shallowEqual } from "@/utils/shallowEqual";
 import { ArrowCircleRightIcon, PlusIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
+import NextImage from "next/image";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
@@ -298,7 +299,7 @@ const SettingPage = () => {
         <div className="text-accent relative grow flex flex-col justify-center items-center gap-12 px-4" >
             <section className="flex gap-8 items-start w-full max-w-md justify-center">
                 <button type="button" className="relative" onClick={handleTriggerUpload}>
-                    {!!user || !!profile ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-20 min-w-20 rounded-lg" /> : <UserCircleIcon className='icon h-20 w-20' weight="fill" />}
+                    {!!user || !!profile ? <NextImage width={80} height={80} src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-20 min-w-20 rounded-lg" /> : <UserCircleIcon className='icon h-20 w-20' weight="fill" />}
                     <div className="absolute top-0 grid place-items-center h-20 w-20 opacity-0 bg-accent rounded-lg hover:opacity-50">
                         <PlusIcon size={30} weight="bold" className="text-white z-10" />
                     </div>

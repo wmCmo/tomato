@@ -218,7 +218,7 @@ export default async function TermsOfUse({ params }: { params: Promise<{ locale:
 
     return (
         <div className="text-accent mt-10 leading-6 pb-8 px-4 flex flex-col items-center">
-            <div className="sticky top-0 pt-10 bg-background max-w-lg">
+            <div className="sticky top-0 pt-10 bg-background max-w-lg w-full">
                 <Link href={`/${localeTag}/main/terms#policy`}>
                     <h1 className="text-3xl font-bold flex gap-2 text-left"><img src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Locked%20with%20pen/Color/locked_with_pen_color.svg" alt="Fluent Scroll emoji" /> {locale.policy.title}</h1>
                 </Link>

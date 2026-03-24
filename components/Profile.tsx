@@ -20,6 +20,7 @@ import Error from "./Error";
 import FollowButton from "./FollowButton";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
 import getTomatoSize from "@/utils/getTomatoSize";
+import Image from "next/image";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -150,9 +151,9 @@ const Profile = ({ userId }: { userId: string; }) => {
     return (
         <div className='text-accent flex flex-col justify-center px-6 grow items-center py-12'>
             <div className="md:flex justify-between max-w-4xl w-full">
-                <section className="flex gap-6 items-center relative min-w-sm">
+                <section className="flex gap-6 items-center relative">
                     <div className="flex flex-col items-center gap-2">
-                        <img src={`${profile?.avatar_url}`} alt="User's Google or custom avatar" className="h-20 w-20 sm:h-32 sm:w-32 rounded-full flex-1" />
+                        <Image width={128} height={128} src={`${profile?.avatar_url}`} alt="User's Google or custom avatar" className="rounded-full flex-1" />
                     </div>
                     <div className="w-full flex flex-col space-y-3 justify-center h-full">
                         {isOwner && <h1>{dict.profile.welcome}</h1>}
@@ -168,7 +169,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                                     </>
                             }
                         </div>
-                        <div className="flex gap-6">
+                        <div className="space-y-4 sm:space-y-0 sm:flex gap-6">
                             {!isOwner && <FollowButton userId={profile?.id} />}
                             <TomatoCount count={profile?.study_sessions.reduce((sum, session) => session.sessions + sum, 0) ?? 0} label={dict.profile.total} locale={dict.langSubTag as LocaleType} />
                         </div>

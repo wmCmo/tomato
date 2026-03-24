@@ -9,6 +9,7 @@ import useToast from "@/hooks/useToast";
 import { signInWithGoogle } from "@/lib/supabase";
 import { NavContext } from "@/providers/nav-context";
 import { GearIcon, GoogleLogoIcon, HouseIcon, IconContext, ListIcon, LogIcon, PersonSimpleRunIcon, ScreencastIcon, SquaresFourIcon, TimerIcon, UserCircleIcon, UsersIcon } from "@phosphor-icons/react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
@@ -105,7 +106,7 @@ export default function App({ children }: { children: ReactNode; }) {
                   <NavItem destination={`/${identifier}/records`} title={dict.nav.records} icon={<LogIcon className="md:size-10" />} />
                   <NavItem destination={`/${identifier}/connections`} icon={<UsersIcon className="md:size-10" />} title={dict.nav.connections} />
                   <NavItem destination={`/settings`} icon={<GearIcon className="md:size-10" />} title={dict.setting.title} />
-                  <NavItem isAvatar destination={identifier ? `/${identifier}` : `/signin`} icon={user ? <img src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-6 min-w-6 rounded-full" /> : <UserCircleIcon className='icon' />} title={profile?.nickname || "Profile"} />
+                  <NavItem isAvatar destination={identifier ? `/${identifier}` : `/signin`} icon={user ? <Image src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" width={24} height={24} className="h-6 min-w-6 rounded-full" /> : <UserCircleIcon className='icon' />} title={profile?.nickname || "Profile"} />
                 </> :
                 <button onClick={() => signInWithGoogle(toast, dict)} type="button" className="flex gap-2 card px-4 py-1 text-muted items-center hover:translate-y-0.5 transition-all duration-200 ease-out">
                   <GoogleLogoIcon className="" weight="bold" size={16} />
