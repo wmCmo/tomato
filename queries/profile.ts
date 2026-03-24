@@ -16,6 +16,7 @@ export default async function fetchProfile(
             avatar_url,
             bio,
             emoji,
+            created_at,
             study_sessions(id, created_at, sessions, last_edited)
         `)
         .eq(useHandle ? "handle" : "id", identifier)

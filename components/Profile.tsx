@@ -21,6 +21,7 @@ import FollowButton from "./FollowButton";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
 import getTomatoSize from "@/utils/getTomatoSize";
 import Image from "next/image";
+import formatDateEn from "@/utils/formatDateEn";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -234,7 +235,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                     <div className="flex gap-1 justify-center md:justify-around px-4 md:px-16 py-8 card">
                         {sortedWeekDay.map((day, index) => {
                             const amount = oneWeekSession.at(index) ?? 0;
-                            const src = getTomatoSize(weekMaxTomato, amount)
+                            const src = getTomatoSize(weekMaxTomato, amount);
                             return (
                                 <div key={index} className="flex flex-col gap-1 items-center justify-between min-w-9 relative">
                                     <p className={`text-center text-sm ${index === 6 && 'font-bold'}`}>{day}</p>
@@ -246,7 +247,8 @@ const Profile = ({ userId }: { userId: string; }) => {
                     </div>
                 </section >
             </div>
-            {isFollowed && isFollowing && <Link className="bg-foreground text-muted-foreground hover:text-accent hover:translate-y-0.5 active:translate-y-1 px-4 py-2 mt-8 rounded-full font-bold flex gap-2 items-center icon" href={`/${dict.langSubTag}/main/${identifier}/rooms`}><ScreencastIcon weight="fill" />Join the room</Link>}
+            {isFollowed && isFollowing && <Link className="bg-foreground text-muted-foreground hover:text-accent hover:translate-y-0.5 active:translate-y-1 px-4 py-2 mt-8 rounded-full font-bold flex gap-2 items-center icon" href={`/${dict.langSubTag}/main/${identifier}/rooms`}><ScreencastIcon weight="fill" />{dict.profile.joinRoom}</Link>}
+            <p className="mt-8">{dict.profile.memberSince}: <b>{dict.profile.formatDate(new Date(profile.created_at))}</b></p>
         </div >
     );
 };

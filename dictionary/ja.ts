@@ -78,7 +78,9 @@ const ja = {
         following: "フォロー中",
         followers: "フォロワー",
         total: "収穫",
-        user: "ユーザ"
+        user: "ユーザ",
+        joinRoom: "ルームに参加",
+        memberSince: "農園の誕生日"
     },
     rooms: {
         title: "のルーム",
