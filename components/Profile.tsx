@@ -19,6 +19,7 @@ import fetchFollowing from "../queries/following";
 import Error from "./Error";
 import FollowButton from "./FollowButton";
 import ProfileSkeleton from "./ui/ProfileSkeleton";
+import getTomatoSize from "@/utils/getTomatoSize";
 
 const medals = ['1st', '2nd', '3rd'];
 const fluentRepo = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets";
@@ -232,13 +233,7 @@ const Profile = ({ userId }: { userId: string; }) => {
                     <div className="flex gap-1 justify-center md:justify-around px-4 md:px-16 py-8 card">
                         {sortedWeekDay.map((day, index) => {
                             const amount = oneWeekSession.at(index) ?? 0;
-                            const sizePercent = amount / weekMaxTomato;
-                            let src;
-                            if (sizePercent > 0.8) src = '100';
-                            else if (sizePercent > 0.6) src = '80';
-                            else if (sizePercent > 0.4) src = '60';
-                            else if (sizePercent > 0.2) src = '40';
-                            else if (sizePercent > 0) src = '20';
+                            const src = getTomatoSize(weekMaxTomato, amount)
                             return (
                                 <div key={index} className="flex flex-col gap-1 items-center justify-between min-w-9 relative">
                                     <p className={`text-center text-sm ${index === 6 && 'font-bold'}`}>{day}</p>

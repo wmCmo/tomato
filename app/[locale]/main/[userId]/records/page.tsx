@@ -105,7 +105,8 @@ const RecordPage = ({ params }: { params: Promise<{ userId: string; }>; }) => {
                                         <TomatoCount count={[...months.values()].flat().reduce((sum, entry) => sum + entry.sessions, 0)} label={dict.record.thisYear} locale={dict.langSubTag as LocaleType} />
                                     </div>
                                     {[...months.entries()].map(([month, entries]) => {
-                                        return <RecordCard key={month} profile={profile?.id} userId={user?.id} month={month} entries={entries} handleDelete={handleDelete} />;
+                                        const maxInMonth = Math.max(1, ...entries.map((entry: StudySessionType) => entry.sessions));
+                                        return <RecordCard key={month} profile={profile?.id} userId={user?.id} month={month} entries={entries} handleDelete={handleDelete} maxInMonth={maxInMonth} />;
                                     })}
                                 </section>
                             );
