@@ -57,7 +57,7 @@ export default function ClockPage() {
     };
   }, [user?.id, queryClient]);
 
-  if (myRoomLoading || !myRoom || !myRoom.session?.sessions) return <RoomSkeleton />;
+  if (user?.id && myRoomLoading) return <RoomSkeleton />;
 
   return (
     <main className={`grow flex flex-col gap-12 lg:gap-0 lg:flex-row lg:justify-around justify-center items-center px-4 ${timerOn && 'py-12 lg:py-0'}`}>

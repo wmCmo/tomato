@@ -98,7 +98,7 @@ const Clock = ({
             return;
         }
 
-        queryClient.setQueryData(["roomStatus", user.id], (old: {}) => {
+        queryClient.setQueryData(["roomStatus", user.id], (old: RoomStatusType) => {
             if (!old) return old;
             return { ...old, isPlaying: counting, status, ends_at: endsAt, last_edited: lastEdited };
         });
@@ -109,7 +109,7 @@ const Clock = ({
         const newSec = clearSec ? statusToSec[newStatus] : clockStateRef.current.sec;
         const newClockState: ClockState = {
             ...clockStateRef.current,
-            session: updateSession ? clockStateRef.current.session + 1 : clockStateRef.current.session,
+            session: updateSession ? clockState.session + 1 : clockState.session,
             sec: newSec,
             counting: continueTimer,
             status: newStatus
@@ -117,7 +117,6 @@ const Clock = ({
         if (user?.id) {
             if (updateSession) {
                 if (myRoom?.current_session) {
-                    console.log('running handle set status');
                     const { error } = await supabase
                         .from('study_sessions')
                         .update({ sessions: newClockState.session })
@@ -167,11 +166,10 @@ const Clock = ({
             queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
 
             broadcastStatus(getEndsAt(newSec), newStatus, continueTimer);
+        } else {
+            setClockState(newClockState);
         }
-        clockStateRef.current = newClockState;
-        if (clockStateRef.current === newClockState) return;
-        setClockState(newClockState);
-    }, [user?.id, myRoom?.current_session, queryClient]);
+    }, [clockState.session, user?.id, myRoom?.current_session, queryClient]);
 
     useEffect(() => {
         if (!isMarathon) return;
@@ -226,7 +224,6 @@ const Clock = ({
     useEffect(() => {
         return () => {
             try {
-                console.log('Saving session on unmount');
                 broadcastStatus(getEndsAt(clockStateRef.current.sec), clockStateRef.current.status, clockStateRef.current.counting);
             } catch (error) {
                 console.error("Failed to save session:", error);
@@ -278,21 +275,15 @@ const Clock = ({
     }, [clockState.counting]);
 
     async function resetClock() {
-        setClockState(prev => ({
-            ...prev,
-            counting: false
-        }));
-
         setClockState(defaultClockState);
-
-        const endsAt = getEndsAt(statusToSec[0]);
+        if (!user?.id) return;
         const payLoad = {
             current_session: null,
-            ends_at: endsAt,
+            ends_at: getEndsAt(statusToSec[0]),
             status: 0,
-            last_edited: new Date()
+            last_edited: new Date(),
+            isPlaying: false,
         };
-        if (!user?.id) return;
         const { error } = await supabase
             .from("room_status")
             .update(payLoad)
@@ -302,9 +293,9 @@ const Clock = ({
             console.error(error);
             return;
         }
-        queryClient.setQueryData(["roomStatus", user?.id], (old: typeof myRoom) => {
+        queryClient.setQueryData(["roomStatus", user?.id], (old: RoomStatusType) => {
             if (!old) return old;
-            return { ...old, ...payLoad };
+            return { ...old, ...payLoad, session: { sessions: 1 } };
         });
     };
 

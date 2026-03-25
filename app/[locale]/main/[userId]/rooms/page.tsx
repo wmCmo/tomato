@@ -112,7 +112,7 @@ export default function RoomPage() {
                 (payload: RealtimePostgresChangesPayload<{ id: string; status: StatusType; isPlaying: boolean; }>) => {
                     const payLoadId = 'id' in payload.new ? payload.new.id : null;
                     if (payLoadId === profile.id) {
-                        queryClient.setQueryData(roomStatusQueryKey, payload.new);
+                        queryClient.invalidateQueries({ queryKey: roomStatusQueryKey });
                     }
                 }
             ).subscribe();
