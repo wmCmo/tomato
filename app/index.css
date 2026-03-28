@@ -93,14 +93,12 @@
     }
 
     .scrollbar-muted::-webkit-scrollbar-track {
-        background: var(--foreground);
-        border-radius: 9999px;
+        background: transparent
     }
 
     .scrollbar-muted::-webkit-scrollbar-thumb {
         background: var(--muted);
         border-radius: 9999px;
-        border: 2px solid var(--foreground);
     }
 
     .scrollbar-muted::-webkit-scrollbar-thumb:hover {

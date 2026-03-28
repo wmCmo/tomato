@@ -1,5 +1,6 @@
 'use client';
 
+import ChatRoom from "@/components/ChatRoom";
 import Clock from "@/components/Clock";
 import Error from "@/components/Error";
 import SideClock from "@/components/SideClock";
@@ -21,7 +22,7 @@ import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function RoomPage() {
     const { user } = useAuth();
@@ -129,6 +130,62 @@ export default function RoomPage() {
         return () => clearTimeout(copyTimer);
     }, [showCopied]);
 
+    const isOwner = profile?.id === user?.id;
+
+    const updateActiveRoom = useCallback(async (chatRoomId: string) => {
+        if (!isOwner || roomStatus?.current_chat_room || !profile?.id) return;
+        await supabase
+            .from('room_status')
+            .update({ current_chat_room: chatRoomId })
+            .eq("id", profile.id);
+        queryClient.invalidateQueries({ queryKey: ["roomStatus", profile.id] });
+        console.log('where are here');
+    }, [queryClient, profile?.id, roomStatus?.current_chat_room, isOwner]);
+
+    const newChatRoom = useCallback(async (init: boolean) => {
+        if (!isOwner || !profile?.id) return;
+
+        if (init) {
+            const { data: chatRoom, error } = await supabase
+                .from('chats')
+                .select(`id, updated_at`)
+                .order("updated_at", { ascending: false })
+                .eq("owner", profile.id)
+                .limit(1)
+                .maybeSingle();
+
+            if (error) {
+                console.error(error.code, error.message);
+                return;
+            }
+            if (chatRoom) {
+                updateActiveRoom(chatRoom.id);
+                return;
+            }
+
+        }
+        const { data, error } = await supabase
+            .from('chats')
+            .insert({ owner: profile.id })
+            .select()
+            .single();
+
+        if (error) {
+            console.error(error.code, error.message);
+            toast(undefined, "Could not create new chat room", "errorDb");
+            return;
+        }
+        if (data) {
+            updateActiveRoom(data.id);
+            console.log("inserting new chat room");
+        };
+    }, [isOwner, profile?.id]);
+
+
+    useEffect(() => {
+        newChatRoom(true);
+    }, [newChatRoom]);
+
     if (profileIsLoading || myRoomIsLoading || roomStatusLoading) return <RoomSkeleton />;
 
     if (profileError || !profile) return <Error item={dict.nav.rooms} />;
@@ -198,15 +255,14 @@ export default function RoomPage() {
         navigator.clipboard.writeText(`https://ztomato.vercel.app/${dict.langSubTag}/main/${identifier}/rooms`);
     }
 
-    const isOwner = profile?.id === user?.id;
-
     const accepted = roomParticipants?.filter(s => s.accepted);
     const waiting = roomParticipants?.filter(s => !s.accepted);
 
     return (
-        <div className="py-12 px-4 lg:p-0 relative grow flex flex-col lg:flex-row justify-center gap-8 lg:gap-12 items-center text-accent">
+        <div className="py-12 px-4 lg:p-0 relative grow flex flex-col lg:flex-row justify-center gap-8 lg:justify-around items-center text-accent">
             <Clock myRoom={personalRoom} myRoomLoading={personalRoomLoading} isPixel={isPixel} owner={profile?.nickname} roomStatus={roomStatus} isHost={isOwner} isMarathon={isMarathon} />
-            <div className="space-y-12">
+            {timerOn && <SideClock />}
+            <div className="space-y-12 flex flex-col items-center">
                 <div className="bg-foreground card p-4 space-y-4">
                     <div className="flex items-center gap-4 justify-between">
                         <h2 className="text-2xl font-bold">{dict.rooms.roomMember}</h2>
@@ -252,7 +308,7 @@ export default function RoomPage() {
                                         }
                                     </div>
                             ) :
-                                myRoom?.joined_room !== profile.id && <p>Let's join the session!</p>
+                                myRoom?.joined_room !== profile.id && <p>{dict.rooms.joinNow}</p>
                     }
                     {
                         waiting && waiting.length > 0 &&
@@ -293,11 +349,8 @@ export default function RoomPage() {
                         )
                     }
                 </div>
-                {timerOn && <SideClock />}
+                {roomStatus?.current_chat_room && <ChatRoom isHost={isOwner} profile={profile} user={user} currentChatRoom={roomStatus.current_chat_room} />}
             </div>
-            {/* <div>
-                <h2>チャット欄</h2>
-            </div> */}
             {modal}
         </div >
     );

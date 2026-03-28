@@ -80,7 +80,7 @@ const en = {
         total: "Total",
         user: "User",
         joinRoom: "Join the Room",
-        memberSince: "Member since"
+        memberSince: "Member since",
     },
     rooms: {
         title: "'s Shared Room",
@@ -92,7 +92,8 @@ const en = {
         guest: "There is a guest at your door",
         waiting: "Waiting Room",
         enter: "Join",
-        copied: "✅Let's share it!"
+        copied: "✅Let's share it!",
+        joinNow: "Let's join the room!",
     },
     record: {
         title: "'s Record",
@@ -166,7 +167,7 @@ const en = {
         removeMember: "There was a problem removing a member.",
         joinRoom: "Failed to join room.",
         rejectJoiner: "There was a problem rejecting new participant.",
-        acceptJoiner: "There was a problem accepting new participant."
+        acceptJoiner: "There was a problem accepting new participant.",
     },
     landing: {
         title: ["Minimal", "Pomodoro Timer"],

@@ -80,7 +80,7 @@ const ja = {
         total: "収穫",
         user: "ユーザ",
         joinRoom: "ルームに参加",
-        memberSince: "農園の誕生日"
+        memberSince: "農園の誕生日",
     },
     rooms: {
         title: "のルーム",
@@ -92,7 +92,8 @@ const ja = {
         guest: "誰か来ているみたいですよ",
         waiting: "承認待ち",
         enter: "入る",
-        copied: "✅URLをコピーしました！"
+        copied: "✅URLをコピーしました！",
+        joinNow: "ルームに参加しよう！",
     },
     record: {
         title: "の記録",
@@ -153,7 +154,7 @@ const ja = {
         removeMember: "メンバーの削除に失敗しました。",
         joinRoom: "ルームの参加に問題が発生しました。",
         rejectJoiner: "ユーザの無視に問題が発生しました。",
-        acceptJoiner: "ユーザの追加に問題が発生しました。"
+        acceptJoiner: "ユーザの追加に問題が発生しました。",
     },
     landing: {
         title: ["ミニマル", "なポモドーロタイマー"],

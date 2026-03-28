@@ -7,5 +7,6 @@ export default interface RoomStatusType {
     ends_at?: string;
     last_edited: string;
     current_session?: string;
+    current_chat_room?: string;
     session?: { sessions?: number; };
 }

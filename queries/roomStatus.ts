@@ -12,6 +12,7 @@ export default async function getRoomStatus(roomId: string) {
             ends_at,
             last_edited,
             current_session,
+            current_chat_room,
             session:study_sessions!room_status_current_session_fkey (sessions)
         `)
         .eq("id", roomId)
