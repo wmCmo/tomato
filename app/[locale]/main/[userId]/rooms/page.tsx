@@ -88,6 +88,7 @@ export default function RoomPage() {
                             queryClient.invalidateQueries({ queryKey: myRoomQueryKey });
                         }
                         queryClient.invalidateQueries({ queryKey: joinersQueryKey });
+                        queryClient.invalidateQueries({ queryKey: ["messages", profile.id, roomStatus?.current_chat_room] });
                     }
                 }
             ).subscribe();
@@ -139,7 +140,6 @@ export default function RoomPage() {
             .update({ current_chat_room: chatRoomId })
             .eq("id", profile.id);
         queryClient.invalidateQueries({ queryKey: ["roomStatus", profile.id] });
-        console.log('where are here');
     }, [queryClient, profile?.id, roomStatus?.current_chat_room, isOwner]);
 
     const newChatRoom = useCallback(async (init: boolean) => {
@@ -349,7 +349,7 @@ export default function RoomPage() {
                         )
                     }
                 </div>
-                {roomStatus?.current_chat_room && <ChatRoom isHost={isOwner} profile={profile} user={user} currentChatRoom={roomStatus.current_chat_room} />}
+                {roomStatus?.current_chat_room && <ChatRoom isHost={isOwner} profile={profile} user={user} currentChatRoom={roomStatus.current_chat_room} accepted={isOwner || myRoom?.accepted} />}
             </div>
             {modal}
         </div >

@@ -94,6 +94,12 @@ const en = {
         enter: "Join",
         copied: "✅Let's share it!",
         joinNow: "Let's join the room!",
+        chatBox: {
+            title: "Chat",
+            newStory: "Your new journey starts here",
+            chatWMembers: "Chat with other members",
+            participate: "You can join the room to participate in this conversation"
+        }
     },
     record: {
         title: "'s Record",

@@ -94,6 +94,12 @@ const ja = {
         enter: "入る",
         copied: "✅URLをコピーしました！",
         joinNow: "ルームに参加しよう！",
+        chatBox: {
+            title: "チャットルーム",
+            newStory: "新たな出会いはここから始まる",
+            chatWMembers: "他のメンバーとチャットする",
+            participate: "このチャットに参加するにはこのルームに参加する必要があります"
+        }
     },
     record: {
         title: "の記録",

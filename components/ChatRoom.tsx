@@ -10,7 +10,7 @@ import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-export default function ChatRoom({ isHost, profile, user, currentChatRoom }: { isHost: boolean; profile: ProfileType; user: User | null | undefined; currentChatRoom: string | undefined; }) {
+export default function ChatRoom({ isHost, profile, user, currentChatRoom, accepted }: { isHost: boolean; profile: ProfileType; user: User | null | undefined; currentChatRoom: string | undefined; accepted: boolean; }) {
     const chatBoxRef = useRef<HTMLTextAreaElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -107,9 +107,9 @@ export default function ChatRoom({ isHost, profile, user, currentChatRoom }: { i
     }
 
     return (
-        <div className="card max-w-md w-full p-4 space-y-4">
+        <div className="card max-w-lg w-full p-4 space-y-4">
             <div className="flex items-center justify-between">
-                <h2 className="font-bold text-2xl">チャットルーム</h2>
+                <h2 className="font-bold text-2xl">{dict.rooms.chatBox.title}</h2>
                 {isHost &&
                     <div className="flex gap-2">
                         <IconContext.Provider value={{ weight: "fill", size: 24 }}>
@@ -123,35 +123,55 @@ export default function ChatRoom({ isHost, profile, user, currentChatRoom }: { i
                     </div>
                 }
             </div>
-            <div className="bg-background min-h-40 flex flex-col p-2 rounded-md">
+            <div className="bg-background min-h-40 flex flex-col p-2 rounded-md relative top-0 left-0">
+                {
+                    !accepted &&
+                    <div className="absolute grid place-items-center w-full h-full z-20 backdrop-blur-xs -m-2 p-4">
+                        <p className="text-center font-bold">{dict.rooms.chatBox.participate}</p>
+                    </div>
+                }
                 {currentChatRoom ?
-                    <div className="grow overflow-y-scroll scrollbar-muted min-h-40 max-h-80 px-2 space-y-4">
-                        {
-                            (messages && messages.length > 0) ?
-                                profilesLoading ?
-                                    <div>
-                                        {/* another skeleton here */}
-                                    </div> :
-                                    messages.map(message => {
-                                        const user = userMap[message.sent_by];
-                                        return (
-                                            <div key={message.id} className="space-y-1">
-                                                <div className="flex gap-2 items-center">
-                                                    <Image src={user.avatar_url} alt={`${user.nickname}'s avatar`} height={16} width={16} className="rounded-full h-4 w-4" />
-                                                    <span className="font-bold">{user.nickname}</span>
-                                                    <span className="text-sm text-muted-foreground">{dict.profile.formatDate(new Date(message.created_at))}</span>
+                    accepted ?
+                        <div className="grow overflow-y-scroll scrollbar-muted min-h-40 max-h-80 px-2 space-y-4">
+                            {
+                                (messages && messages.length > 0) ?
+                                    profilesLoading ?
+                                        <div>
+                                            {/* another skeleton here */}
+                                        </div> :
+                                        messages.map(message => {
+                                            const user = userMap[message.sent_by];
+                                            return (
+                                                <div key={message.id} className="space-y-1">
+                                                    <div className="flex gap-2 items-center">
+                                                        <Image src={user.avatar_url} alt={`${user.nickname}'s avatar`} height={16} width={16} className="rounded-full h-4 w-4" />
+                                                        <span className="font-bold">{user.nickname}</span>
+                                                        <span className="text-sm text-muted-foreground">{dict.profile.formatDate(new Date(message.created_at))}</span>
+                                                    </div>
+                                                    <div className="flex">
+                                                        <span className="bg-foreground px-4 py-1 rounded-xl">{message.message}</span>
+                                                    </div>
                                                 </div>
-                                                <div className="flex">
-                                                    <span className="bg-foreground px-4 py-1 rounded-xl">{message.message}</span>
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                :
-                                <div className="text-muted-foreground italic">新たな出会いはここから始まる</div>
-                        }
-                        <div ref={bottomRef} />
-                    </div> :
+                                            );
+                                        })
+                                    :
+                                    <div className="text-muted-foreground italic">{dict.rooms.chatBox.newStory}</div>
+                            }
+                            <div ref={bottomRef} />
+                        </div> :
+                        <div className="space-y-4">
+                            {Array.from({ length: 5 }).map((_, index) => (
+                                <div key={index} className="space-y-1">
+                                    <div className="flex gap-2 items-center">
+                                        <div className="h-4 w-4 rounded-full bg-muted-foreground"></div>
+                                        <div className={`h-2 ${'w-' + ((index + 1) * 4)} bg-foreground rounded-full`}></div>
+                                        <div className={`h-2 w-8 bg-foreground rounded-full`}></div>
+                                    </div>
+                                    <div className="bg-foreground w-32 h-4 rounded-full">
+                                    </div>
+                                </div>
+                            ))}
+                        </div> :
                     <div>
                         {/* skeleton here */}
                     </div>
@@ -163,7 +183,7 @@ export default function ChatRoom({ isHost, profile, user, currentChatRoom }: { i
                                 e.preventDefault();
                                 handleSubmit();
                             }
-                        }} value={message} name="message" id="message" placeholder="他のメンバーとチャットする" className="outline-none px-2 py-1 w-full h-8 resize-none" />
+                        }} value={message} name="message" id="message" placeholder={dict.rooms.chatBox.chatWMembers} className="outline-none px-2 pt-2 min-w-60 w-full h-8 resize-none text-sm" />
                     </div>
                     <button type="button" onClick={handleSubmit}>
                         <PaperPlaneTiltIcon weight="fill" size={24} className="text-rose-400 mr-2" />
