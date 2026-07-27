@@ -4,7 +4,6 @@ import useDict from "@/hooks/useDict";
 import StudySessionType from "@/types/StudySession";
 import getTomatoSize from "@/utils/getTomatoSize";
 import { FloppyDiskIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
-import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 
 const fluentMonth = [
@@ -12,7 +11,7 @@ const fluentMonth = [
     'Ogre',
     'Cherry blossom',
     'Backpack',
-    'Cap streamer',
+    'Carp streamer',
     'Umbrella with rain drops',
     'Fireworks',
     'Red paper lantern',
