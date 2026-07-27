@@ -15,6 +15,7 @@ import getMyRoom from "@/queries/myRoom";
 import getRoomParticipants from "@/queries/roomParticipants";
 import getRoomStatus from "@/queries/roomStatus";
 import { StatusType } from "@/types/ClockState";
+import roomStatusToClockState from "@/utils/roomStatusToClockState";
 import { CheckSquareIcon, IconContext, ShareNetworkIcon, TrashIcon, XSquareIcon } from "@phosphor-icons/react";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -129,6 +130,8 @@ export default function RoomPage() {
         return () => clearTimeout(copyTimer);
     }, [showCopied]);
 
+    const [clockState, setClockState] = useState(() => roomStatusToClockState(roomStatus, personalRoom, false));
+
     if (profileIsLoading || myRoomIsLoading || roomStatusLoading) return <RoomSkeleton />;
 
     if (profileError || !profile) return <Error item={dict.nav.rooms} />;
@@ -205,7 +208,7 @@ export default function RoomPage() {
 
     return (
         <div className="py-12 px-4 lg:p-0 relative grow flex flex-col lg:flex-row justify-center gap-8 lg:gap-12 items-center text-accent">
-            <Clock myRoom={personalRoom} myRoomLoading={personalRoomLoading} isPixel={isPixel} owner={profile?.nickname} roomStatus={roomStatus} isHost={isOwner} isMarathon={isMarathon} />
+            <Clock clockState={clockState} setClockState={setClockState} myRoom={personalRoom} myRoomLoading={personalRoomLoading} isPixel={isPixel} owner={profile?.nickname} roomStatus={roomStatus} isHost={isOwner} isMarathon={isMarathon} />
             <div className="space-y-12">
                 <div className="bg-foreground card p-4 space-y-4">
                     <div className="flex items-center gap-4 justify-between">

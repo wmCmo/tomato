@@ -11,7 +11,7 @@ import getEndsAt from "@/utils/getEndsAt";
 import roomStatusToClockState from "@/utils/roomStatusToClockState";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { clearInterval, setInterval } from "worker-timers";
 import colorVariants from "../utils/colorVariants";
 import secToTime from "../utils/secToTime";
@@ -48,6 +48,8 @@ const Clock = ({
     isMarathon,
     myRoom,
     myRoomLoading,
+    clockState,
+    setClockState
 }: {
     isPixel?: boolean;
     owner?: string;
@@ -56,14 +58,14 @@ const Clock = ({
     myRoomLoading: boolean;
     isHost?: boolean;
     isMarathon: boolean;
+    clockState: ClockState;
+    setClockState: Dispatch<SetStateAction<ClockState>>;
 }) => {
     const { dict } = useDict();
     const { toast } = useToast();
 
     const { user } = useAuth();
     const queryClient = useQueryClient();
-
-    const [clockState, setClockState] = useState(() => roomStatusToClockState(myRoom, roomStatus, isHost));
 
     const workerRef = useRef<number | null>(null);
     const clockStateRef = useRef(clockState);

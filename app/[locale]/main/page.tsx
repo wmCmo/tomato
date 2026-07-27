@@ -9,8 +9,9 @@ import { supabase } from "@/lib/supabase";
 import fetchFollowers from "@/queries/follower";
 import fetchFollowing from "@/queries/following";
 import getRoomStatus from "@/queries/roomStatus";
+import roomStatusToClockState from "@/utils/roomStatusToClockState";
 import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function ClockPage() {
   const { isPixel, timerOn, isMarathon } = useNavContext();
@@ -31,11 +32,19 @@ export default function ClockPage() {
     });
   }, [user?.id, queryClient]);
 
-  const { data: myRoom, isLoading: myRoomLoading } = useQuery({
+  const { data: myRoom, isLoading: myRoomLoading, isSuccess } = useQuery({
     queryKey: ["roomStatus", user?.id],
     queryFn: user?.id ? () => getRoomStatus(user.id) : skipToken,
-    staleTime: Infinity
+    staleTime: Infinity,
   });
+
+  const [clockState, setClockState] = useState(() => roomStatusToClockState(myRoom, myRoom, true));
+
+  useEffect(() => {
+    if (isSuccess && myRoom) {
+      setClockState(() => roomStatusToClockState(myRoom, myRoom, true));
+    }
+  }, [isSuccess, myRoom]);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -57,11 +66,11 @@ export default function ClockPage() {
     };
   }, [user?.id, queryClient]);
 
-  if (user?.id && myRoomLoading) return <RoomSkeleton />;
+  if (myRoomLoading) return <RoomSkeleton />;
 
   return (
     <main className={`grow flex flex-col gap-12 lg:gap-0 lg:flex-row lg:justify-around justify-center items-center px-4 ${timerOn && 'py-12 lg:py-0'}`}>
-      <Clock isPixel={isPixel} isMarathon={isMarathon} myRoom={myRoom} myRoomLoading={myRoomLoading} />
+      <Clock isPixel={isPixel} clockState={clockState} setClockState={setClockState} isMarathon={isMarathon} myRoom={myRoom} myRoomLoading={myRoomLoading} />
       {timerOn && <SideClock />}
     </main>
   );
