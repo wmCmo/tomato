@@ -1,6 +1,6 @@
 'use client';
 
-import ClockState from "@/types/ClockState";
+import { ClockState } from "@/types/ClockState";
 import { Dispatch, SetStateAction } from "react";
 
 const TimeButton = ({ color, onClick, status, name, setClockState }: { color: string[]; onClick: (newStatus: 0 | 1 | 2, updateSession?: boolean) => Promise<void>; status: 0 | 1 | 2; name: string; setClockState: Dispatch<SetStateAction<ClockState>>; }) => {

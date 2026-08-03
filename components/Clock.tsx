@@ -5,7 +5,7 @@ import useAuth from "@/hooks/useAuth";
 import useDict from "@/hooks/useDict";
 import useToast from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
-import ClockState, { StatusType } from "@/types/ClockState";
+import { ClockState, StatusType } from "@/types/ClockState";
 import RoomStatusType from "@/types/RoomStatus";
 import getEndsAt from "@/utils/getEndsAt";
 import roomStatusToClockState from "@/utils/roomStatusToClockState";
@@ -17,6 +17,7 @@ import colorVariants from "../utils/colorVariants";
 import secToTime from "../utils/secToTime";
 import ControlButton from "./ControlButton";
 import TimeButton from "./TimeButton";
+import { shallowEqual } from "@/utils/shallowEqual";
 
 let audio: HTMLAudioElement | null = null;
 
@@ -69,6 +70,7 @@ const Clock = ({
 
     const workerRef = useRef<number | null>(null);
     const clockStateRef = useRef(clockState);
+    const guardRef = useRef(false);
 
     useEffect(() => {
         getAudio();
@@ -78,10 +80,9 @@ const Clock = ({
         clockStateRef.current = clockState;
     }, [clockState]);
 
-    const broadcastStatus = useCallback(async (endsAt: string, status: StatusType, counting: boolean) => {
+    const broadcastStatus = useCallback(async (endsAt: string, status: StatusType, counting: boolean, lastEdited: string) => {
         if (!user?.id || !isHost) return;
         console.log('Start broadcasting');
-        const lastEdited = new Date();
         const { error } = await supabase
             .from('room_status')
             .upsert([{
@@ -99,19 +100,13 @@ const Clock = ({
             console.error(error.code, error.message);
             return;
         }
-
-        queryClient.setQueryData(["roomStatus", user.id], (old: RoomStatusType) => {
-            if (!old) return old;
-            return { ...old, isPlaying: counting, status, ends_at: endsAt, last_edited: lastEdited };
-        });
-
     }, [user?.id, isHost, queryClient, toast, dict.error.updateDb]);
 
     const handleSetStatus = useCallback(async (newStatus: StatusType, updateSession = false, continueTimer = false, clearSec = true) => {
         const newSec = clearSec ? statusToSec[newStatus] : clockStateRef.current.sec;
         const newClockState: ClockState = {
             ...clockStateRef.current,
-            session: updateSession ? clockState.session + 1 : clockState.session,
+            session: updateSession ? clockStateRef.current.session + 1 : clockStateRef.current.session,
             sec: newSec,
             counting: continueTimer,
             status: newStatus
@@ -161,17 +156,19 @@ const Clock = ({
                 }
             }
 
+            const endsAt = getEndsAt(newSec);
+            const lastEdited = new Date().toUTCString();
             queryClient.setQueryData(["roomStatus", user.id], (old: RoomStatusType) => {
                 if (!old) return old;
-                return { ...old, status: newStatus, session: { sessions: newClockState.session }, isPlaying: continueTimer };
+                return { ...old, status: newStatus, session: { sessions: newClockState.session }, isPlaying: continueTimer, ends_at: endsAt, last_edited: lastEdited };
             });
             queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
 
-            broadcastStatus(getEndsAt(newSec), newStatus, continueTimer);
+            broadcastStatus(endsAt, newStatus, continueTimer, lastEdited);
         } else {
             setClockState(newClockState);
         }
-    }, [clockState.session, user?.id, myRoom?.current_session, queryClient]);
+    }, [user?.id, myRoom?.current_session, queryClient]);
 
     useEffect(() => {
         if (!isMarathon) return;
@@ -193,7 +190,7 @@ const Clock = ({
                 },
                 (payLoad) => {
                     console.log('syncing with host', payLoad);
-                    handleSetStatus(clockState.status, true, clockState.counting);
+                    handleSetStatus(clockStateRef.current.status, true, clockStateRef.current.counting);
                 }
             )
             .on(
@@ -206,7 +203,7 @@ const Clock = ({
                 },
                 (payload) => {
                     console.log('syncing with host', payload);
-                    handleSetStatus(clockState.status, true, clockState.counting);
+                    handleSetStatus(clockStateRef.current.status, true, clockStateRef.current.counting);
                 }
             )
             .subscribe();
@@ -214,11 +211,11 @@ const Clock = ({
         return () => {
             void supabase.removeChannel(channel);
         };
-    }, [isHost, roomStatus?.id, clockState.status, clockState.counting, handleSetStatus]);
+    }, [isHost, roomStatus?.id, handleSetStatus]);
 
     useEffect(() => {
         const newState = roomStatusToClockState(myRoom, roomStatus, isHost);
-        if (clockStateRef.current === newState) return;
+        if (shallowEqual(clockStateRef.current, newState)) return;
         clockStateRef.current = newState;
         setClockState(newState);
     }, [roomStatus, myRoom, isHost]);
@@ -226,7 +223,7 @@ const Clock = ({
     useEffect(() => {
         return () => {
             try {
-                broadcastStatus(getEndsAt(clockStateRef.current.sec), clockStateRef.current.status, clockStateRef.current.counting);
+                broadcastStatus(getEndsAt(clockStateRef.current.sec), clockStateRef.current.status, clockStateRef.current.counting, new Date().toUTCString());
             } catch (error) {
                 console.error("Failed to save session:", error);
             }
@@ -234,7 +231,14 @@ const Clock = ({
     }, [broadcastStatus]);
 
     useEffect(() => {
-        if (clockState.sec !== 0) return;
+        if (clockState.sec !== 0) {
+            guardRef.current = false;
+            return;
+        } else if (guardRef.current) {
+            return;
+        } else {
+            guardRef.current = true;
+        }
         getAudio()?.play();
         setClockState(prev => ({
             ...prev,
@@ -341,7 +345,7 @@ const Clock = ({
                                         counting: newCounting,
                                     };
                                     setClockState(newClockState);
-                                    broadcastStatus(getEndsAt(clockStateRef.current.sec), newClockState.status, newClockState.counting);
+                                    handleSetStatus(clockStateRef.current.status, false, newCounting, false);
                                 }} color={color} />
                                 <ControlButton file="forward" btnFunc={() => setClockState(prev => ({ ...prev, sec: 0 }))} color={color} />
                             </div>

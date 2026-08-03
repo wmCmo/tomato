@@ -1,7 +1,7 @@
 import { defaultClockState, statusToSec } from "@/components/Clock";
-import ClockState from "@/types/ClockState";
 import RoomStatusType from "@/types/RoomStatus";
 import dateToSec from "@/utils/dateToSec";
+import { ClockState } from "@/types/ClockState";
 
 export default function roomStatusToClockState(
     myRoom: RoomStatusType | null | undefined,
@@ -13,7 +13,8 @@ export default function roomStatusToClockState(
     const sessions = myRoom?.session?.sessions;
     return {
         sec: roomStatus.ends_at
-            ? dateToSec(roomStatus.ends_at, roomStatus.last_edited)
+            ? roomStatus.isPlaying ? dateToSec(roomStatus.ends_at, new Date().toUTCString())
+                : dateToSec(roomStatus.ends_at, roomStatus.last_edited)
             : statusToSec[0],
         session: sessions ? sessions : 1,
         status: roomStatus.status,
