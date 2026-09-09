@@ -27,7 +27,7 @@ import { useEffect, useState } from "react";
 export default function RoomPage() {
     const { user } = useAuth();
     const { userId } = useParams<{ userId: string; }>();
-    const { isPixel, timerOn, isMarathon } = useNavContext();
+    const { isPixel, timerOn, isMarathon, isMuted } = useNavContext();
     const { dict } = useDict();
     const { confirm, modal } = useConfirm();
     const { toast } = useToast();
@@ -208,7 +208,7 @@ export default function RoomPage() {
 
     return (
         <div className="py-12 px-4 lg:p-0 relative grow flex flex-col lg:flex-row justify-center gap-8 lg:gap-12 items-center text-accent">
-            <Clock clockState={clockState} setClockState={setClockState} myRoom={personalRoom} myRoomLoading={personalRoomLoading} isPixel={isPixel} owner={profile?.nickname} roomStatus={roomStatus} isHost={isOwner} isMarathon={isMarathon} />
+            <Clock clockState={clockState} setClockState={setClockState} isMuted={isMuted} myRoom={personalRoom} myRoomLoading={personalRoomLoading} isPixel={isPixel} owner={profile?.nickname} roomStatus={roomStatus} isHost={isOwner} isMarathon={isMarathon} />
             <div className="space-y-12">
                 <div className="bg-foreground card p-4 space-y-4">
                     <div className="flex items-center gap-4 justify-between">

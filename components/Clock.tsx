@@ -45,6 +45,7 @@ const Clock = ({
     isPixel = true,
     owner = "Zach",
     isHost = true,
+    isMuted,
     roomStatus,
     isMarathon,
     myRoom,
@@ -58,6 +59,7 @@ const Clock = ({
     myRoom?: RoomStatusType | null | undefined;
     myRoomLoading: boolean;
     isHost?: boolean;
+    isMuted: boolean;
     isMarathon: boolean;
     clockState: ClockState;
     setClockState: Dispatch<SetStateAction<ClockState>>;
@@ -239,7 +241,9 @@ const Clock = ({
         } else {
             guardRef.current = true;
         }
-        getAudio()?.play();
+        if (!isMuted) {
+            getAudio()?.play();
+        }
         setClockState(prev => ({
             ...prev,
             counting: true
