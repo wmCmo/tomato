@@ -14,7 +14,7 @@ import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export default function ClockPage() {
-  const { isPixel, timerOn, isMarathon } = useNavContext();
+  const { isPixel, timerOn, isMarathon, isMuted } = useNavContext();
   const { user } = useAuth();
 
   const queryClient = useQueryClient();
@@ -70,7 +70,7 @@ export default function ClockPage() {
 
   return (
     <main className={`grow flex flex-col gap-12 lg:gap-0 lg:flex-row lg:justify-around justify-center items-center px-4 ${timerOn && 'py-12 lg:py-0'}`}>
-      <Clock isPixel={isPixel} clockState={clockState} setClockState={setClockState} isMarathon={isMarathon} myRoom={myRoom} myRoomLoading={myRoomLoading} />
+      <Clock isPixel={isPixel} clockState={clockState} setClockState={setClockState} isMuted={isMuted} isMarathon={isMarathon} myRoom={myRoom} myRoomLoading={myRoomLoading} />
       {timerOn && <SideClock />}
     </main>
   );

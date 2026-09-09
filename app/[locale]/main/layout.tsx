@@ -8,7 +8,7 @@ import useProfile from "@/hooks/useProfile";
 import useToast from "@/hooks/useToast";
 import { signInWithGoogle } from "@/lib/supabase";
 import { NavContext } from "@/providers/nav-context";
-import { GearIcon, GoogleLogoIcon, HouseIcon, IconContext, ListIcon, LogIcon, PersonSimpleRunIcon, ScreencastIcon, SquaresFourIcon, TimerIcon, UserCircleIcon, UsersIcon } from "@phosphor-icons/react";
+import { GearIcon, GoogleLogoIcon, HouseIcon, IconContext, ListIcon, LogIcon, PersonSimpleRunIcon, ScreencastIcon, SpeakerSimpleXIcon, SquaresFourIcon, TimerIcon, UserCircleIcon, UsersIcon } from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,6 +19,7 @@ export default function App({ children }: { children: ReactNode; }) {
   const [timerOn, setTimerOn] = useState(false);
   const [isPixel, setIsPixel] = useState(false);
   const [isMarathon, setIsMarathon] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { user } = useAuth();
   const pathName = usePathname();
@@ -60,7 +61,7 @@ export default function App({ children }: { children: ReactNode; }) {
     select: (p: { avatar_url: string; handle: string; nickname: string; id: string; }) => ({ avatar_url: p.avatar_url, handle: p.handle, nickname: p.nickname, id: p.id })
   });
 
-  const navContextValue = useMemo(() => ({ isPixel, timerOn, isMarathon }), [isPixel, timerOn, isMarathon]);
+  const navContextValue = useMemo(() => ({ isPixel, timerOn, isMarathon, isMuted }), [isPixel, timerOn, isMarathon, isMuted]);
 
   const identifier = profile?.handle ? `@${profile.handle}` : profile?.id;
 
@@ -84,7 +85,7 @@ export default function App({ children }: { children: ReactNode; }) {
                 <ListIcon weight="bold" className="text-muted hover:text-muted-foreground" />
               </button>
             </div>
-            <div className="grid grid-cols-4 md:flex items-center gap-2 w-full">
+            <div className="grid grid-cols-3 md:flex items-center gap-2 w-full">
               <ToggleLang locale={locale} pathName={pathName} />
               <button type="button" onClick={() => setIsPixel(prev => !prev)} className="p-2 rounded-md bg-foreground flex justify-center hover:translate-y-0.5 transition-all duration-200 ease-out">
                 <SquaresFourIcon className={`icon ${isPixel && 'text-accent'}`} />
@@ -94,6 +95,9 @@ export default function App({ children }: { children: ReactNode; }) {
               </button>
               <button type="button" onClick={() => setIsMarathon(prev => !prev)} className="p-2 rounded-md bg-foreground flex justify-center hover:translate-y-0.5 icon">
                 <PersonSimpleRunIcon className={`${isMarathon ? 'text-accent' : 'text-muted hover:text-muted-foreground'} icon`} />
+              </button>
+              <button type="button" onClick={() => setIsMuted(prev => !prev)} className="p-2 rounded-md bg-foreground flex justify-center hover:translate-y-0.5 icon">
+                <SpeakerSimpleXIcon className={`${isMuted ? 'text-accent' : 'text-muted hover:text-muted-foreground'} icon`} />
               </button>
             </div>
           </div>
