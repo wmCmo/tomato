@@ -34,8 +34,8 @@ const ja = {
         choices: ["ポモドーロ", "短い休憩", "長い休憩"],
         messages: {
             start: "さあ、作業を始めましょう！",
-            work: "集中して取り組みましょう！",
-            rest: "休憩の時間です！",
+            work: "集中して頑張りましょう！",
+            rest: "休憩です！",
         },
         session: "回数",
     },
@@ -80,7 +80,7 @@ const ja = {
         total: "収穫",
         user: "ユーザ",
         joinRoom: "ルームに参加",
-        memberSince: "農園の誕生日"
+        memberSince: "ファームの誕生日"
     },
     rooms: {
         title: "のルーム",
