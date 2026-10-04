@@ -72,6 +72,7 @@ const Clock = ({
     const workerRef = useRef<number | null>(null);
     const clockStateRef = useRef(clockState);
     const guardRef = useRef(false);
+    const endsAtRef = useRef<number>(null);
 
     useEffect(() => {
         getAudio();
@@ -261,27 +262,19 @@ const Clock = ({
     }, [clockState.sec, clockState.status, clockState.session, handleSetStatus, dict.error.updateDb, toast]);
 
     useEffect(() => {
-        if (clockState.counting) {
-            workerRef.current = setInterval(() => {
-                setClockState(prev => ({
-                    ...prev,
-                    sec: Math.max(0, prev.sec - 1)
-                }));
-            }, 1000);
-        } else {
-            if (workerRef.current) {
-                clearInterval(workerRef.current);
-                workerRef.current = null;
-            }
-        }
+        if (!clockState.counting) { endsAtRef.current = null; return; }
+        endsAtRef.current = Date.now() + (clockState.sec * 1000);
 
-        return () => {
-            if (workerRef.current) {
-                clearInterval(workerRef.current);
-                workerRef.current = null;
-            }
+        const sync = () => {
+            if (endsAtRef.current === null) return;
+            const sec = Math.max(0, Math.ceil((endsAtRef.current - Date.now()) / 1000));
+            setClockState(prev => prev.sec === sec ? prev : { ...prev, sec });
         };
-    }, [clockState.counting]);
+
+        const id = setInterval(sync, 1000);
+        document.addEventListener('visibilitychange', sync);
+        return () => { clearInterval(id); document.removeEventListener('visibilitychange', sync); };
+    }, [clockState.counting, clockState.status, clockState.session]);
 
     async function resetClock() {
         setClockState(defaultClockState);
