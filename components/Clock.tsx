@@ -11,13 +11,14 @@ import getEndsAt from "@/utils/getEndsAt";
 import roomStatusToClockState from "@/utils/roomStatusToClockState";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react";
 import { clearInterval, setInterval } from "worker-timers";
 import colorVariants from "../utils/colorVariants";
 import secToTime from "../utils/secToTime";
 import ControlButton from "./ControlButton";
 import TimeButton from "./TimeButton";
 import { shallowEqual } from "@/utils/shallowEqual";
+import { fluentTomato } from "@/components/ui/AppLogo";
 
 let audio: HTMLAudioElement | null = null;
 
@@ -28,8 +29,6 @@ function getAudio() {
     }
     return audio;
 }
-
-export const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg";
 
 export const statusToSec = [1500, 300, 900];
 

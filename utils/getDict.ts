@@ -1,3 +1,4 @@
+import { DictType } from "@/types/DictType";
 import { LocaleType } from "@/types/Locale";
 
 const dictionaries = {

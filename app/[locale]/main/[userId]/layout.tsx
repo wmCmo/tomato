@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ userId: s
     return {
         title: {
             default: displayName,
-            template: `%s | ${dict.home.nav.header}`,
+            template: `%s | ${profile?.nickname}${dict.home.nav.header}`,
         },
     };
 }

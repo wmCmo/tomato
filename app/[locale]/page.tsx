@@ -1,5 +1,6 @@
 import ToggleLang from "@/components/ToggleLang";
 import ToggleTheme from "@/components/ToggleTheme";
+import AppLogo, { fluentTomato } from "@/components/ui/AppLogo";
 import en from "@/dictionary/en";
 import ja from "@/dictionary/ja";
 import { DictType } from "@/types/DictType";
@@ -8,8 +9,6 @@ import { GithubLogoIcon, LinkedinLogoIcon, MediumLogoIcon, NotionLogoIcon, Twitt
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
-
-const fluentTomato = "https://raw.githubusercontent.com/microsoft/fluentui-emoji/refs/heads/main/assets/Tomato/Color/tomato_color.svg";
 
 function NewPageLink({ children, href }: { children: ReactNode; href: string; }) {
   return <Link href={href} target="_blank" rel="noopener noopener">{children}</Link>;
@@ -33,10 +32,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   return (
     <main className={`${locale === 'en' ? 'font-display' : 'font-jp'} text-accent flex flex-col bg-background min-h-screen`}>
       <nav className="flex items-center justify-between m-4">
-        <div className="flex items-end gap-2">
-          <img src={fluentTomato} alt="Fluent tomato emoji" />
-          <h4 className="font-black">{dict.appName}</h4>
-        </div>
+        <AppLogo dict={dict} />
         <div className="flex gap-4 items-center">
           <ToggleTheme />
           <ToggleLang locale={locale} pathName="/" />
@@ -45,7 +41,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <section className="font-bold flex flex-col md:gap-8 md:flex-row-reverse items-center justify-center px-4 min-h-screen -mt-8">
         <div className="">
           <div className="flex justify-center md:justify-start">
-            <p className="font-mono bg-foreground font-bold px-4 py-1 rounded-full">v2.9.1</p>
+            <p className="font-mono bg-foreground font-bold px-4 py-1 rounded-full">v2.10.0</p>
           </div>
           <h1 className="text-6xl text-center font-black md:text-left mt-4 text-rose-400">{dict.landing.title[0]}</h1>
           <h2 className="text-4xl text-center mt-2 md:text-left">{dict.landing.title[1]}</h2>

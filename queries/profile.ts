@@ -4,9 +4,14 @@ import ProfileType from "@/types/Profile";
 export default async function fetchProfile(
     userId: string | undefined | null,
 ): Promise<ProfileType | null> {
-    if (!userId) throw new Error("User ID is required");
-    const useHandle = userId?.startsWith('%40');
-    const identifier = useHandle ? userId?.substring(3) : userId;
+    if (!userId || typeof userId !== 'string') throw new Error("User ID is required");
+    const useHandle = userId.startsWith('%40') || userId.startsWith("@");
+    let identifier = userId;
+    if (userId.startsWith("%40")) {
+        identifier = userId.substring(3);
+    } else if (userId.startsWith("@")) {
+        identifier = userId.substring(1);
+    }
     const { data, error } = await supabase
         .from("profiles")
         .select(`

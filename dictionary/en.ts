@@ -80,7 +80,12 @@ const en = {
         total: "Total",
         user: "User",
         joinRoom: "Join the Room",
-        memberSince: "Member since"
+        memberSince: "Member since",
+        share: {
+            harvested: "Harvested",
+            thisWeek: "This Week",
+            best: "Best Session",
+        }
     },
     rooms: {
         title: "'s Shared Room",
@@ -92,7 +97,13 @@ const en = {
         guest: "There is a guest at your door",
         waiting: "Waiting Room",
         enter: "Join",
-        copied: "✅Let's share it!"
+        copied: "✅Let's share it!",
+        preview: {
+            title: " invited you to a Pomodoro session.",
+            desc: "Let's focus together! Open the link and join my room.😏",
+            inRoom: " people in this session",
+            invitation: "Room Invitation"
+        }
     },
     record: {
         title: "'s Record",

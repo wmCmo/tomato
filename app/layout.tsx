@@ -24,7 +24,7 @@ const DESCRIPTION = "Your Minimal Pomodoro Timer";
 const SITE_URL = "https://ztomato.vercel.app";
 
 export const metadata: Metadata = {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_VERCEL_URL ?? "http://loalhost:3000/"),
+    metadataBase: new URL(process.env.NODE_ENV === "development" ? `http://localhost:${process.env.PORT}` : SITE_URL),
     title: { default: APP_NAME, template: `%s | ${APP_NAME}` },
     description: DESCRIPTION,
     applicationName: APP_NAME,
@@ -48,10 +48,7 @@ export const metadata: Metadata = {
         images: [{ url: "/og.png" }],
     },
     twitter: {
-        card: "summary",
-        title: APP_NAME,
-        description: DESCRIPTION,
-        images: ["/og.png"],
+        card: "summary_large_image",
     },
     alternates: {
         canonical: SITE_URL,

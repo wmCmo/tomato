@@ -80,7 +80,12 @@ const ja = {
         total: "収穫",
         user: "ユーザ",
         joinRoom: "ルームに参加",
-        memberSince: "ファームの誕生日"
+        memberSince: "ファームの誕生日",
+        share: {
+            harvested: "収穫",
+            thisWeek: "今週",
+            best: "自己ベスト",
+        }
     },
     rooms: {
         title: "のルーム",
@@ -92,7 +97,13 @@ const ja = {
         guest: "誰か来ているみたいですよ",
         waiting: "承認待ち",
         enter: "入る",
-        copied: "✅URLをコピーしました！"
+        copied: "✅URLをコピーしました！",
+        preview: {
+            title: "さんがポモドーロに誘っています 👀",
+            desc: "一緒に集中して作業しよう！「入る」を押してみて~ 😏",
+            inRoom: "人が参加中",
+            invitation: "ルームへの招待"
+        }
     },
     record: {
         title: "の記録",
