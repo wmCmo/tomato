@@ -1,8 +1,9 @@
-import sharp from "sharp";
 
 export async function avatarToPng(url: string | null | undefined): Promise<string | null> {
     if (!url) return null;
     try {
+        const sharp = (await import("sharp")).default;
+
         const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
         if (!res.ok) return null;
 
