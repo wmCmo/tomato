@@ -276,6 +276,23 @@ const Clock = ({
         return () => { clearInterval(id); document.removeEventListener('visibilitychange', sync); };
     }, [clockState.counting, clockState.status, clockState.session]);
 
+    // Window title for desktop tools (the Exzachly pet reads it), e.g. "Focus until 21:45 · Zach's Tomato".
+    // Changes only with the phase or run state, never per second. Phase words stay English so they parse
+    // the same in every UI language; only your own timer is shown, never a room you're watching.
+    const baseTitleRef = useRef<string | null>(null);
+    useEffect(() => {
+        baseTitleRef.current = document.title;
+        return () => { if (baseTitleRef.current !== null) document.title = baseTitleRef.current; };
+    }, []);
+    useEffect(() => {
+        const base = baseTitleRef.current;
+        if (!isHost || base === null) return;
+        if (!clockState.counting || endsAtRef.current === null) { document.title = base; return; }
+        const phase = ['Focus', 'Break', 'Long break'][clockState.status];
+        const until = new Date(endsAtRef.current).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+        document.title = `${phase} until ${until} · ${base}`;
+    }, [clockState.counting, clockState.status, clockState.session, isHost]);
+
     async function resetClock() {
         setClockState(defaultClockState);
         if (!user?.id) return;
