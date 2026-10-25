@@ -219,6 +219,7 @@ const Clock = ({
         const newState = roomStatusToClockState(myRoom, roomStatus, isHost);
         if (shallowEqual(clockStateRef.current, newState)) return;
         clockStateRef.current = newState;
+        endsAtRef.current = newState.counting ? Date.now() + newState.sec * 1000 : null;
         setClockState(newState);
     }, [roomStatus, myRoom, isHost]);
 
