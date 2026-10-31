@@ -1,16 +1,17 @@
 'use client';
 
 import ErrorComponent from "@/components/Error";
+import PreferencesSection from "@/components/PreferencesSection";
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import useAuth from "@/hooks/useAuth";
 import useConfirm from "@/hooks/useConfirm";
 import useDict from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
 import useToast from "@/hooks/useToast";
-import { supabase } from "@/lib/supabase";
+import { signInWithGoogle, supabase } from "@/lib/supabase";
 import ProfileType from "@/types/Profile";
 import { shallowEqual } from "@/utils/shallowEqual";
-import { ArrowCircleRightIcon, PlusIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { ArrowCircleRightIcon, GoogleLogoIcon, PlusIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
@@ -59,11 +60,6 @@ const SettingPage = () => {
     const { confirm, modal } = useConfirm();
     const { toast } = useToast();
 
-
-    useEffect(() => {
-        if (authLoading) return;
-        if (!user) router.push(`/${dict.langSubTag}/main/signin`);
-    }, [user, router, authLoading]);
 
     if (isLoading) return <ProfileSkeleton />;
     if (authLoading) return <ProfileSkeleton />;
@@ -296,7 +292,18 @@ const SettingPage = () => {
     };
 
     return (
-        <div className="text-accent relative grow flex flex-col justify-center items-center gap-12 px-4" >
+        <div className="text-accent relative grow flex flex-col justify-center items-center gap-12 px-4 py-8" >
+            {/* Preferences are open to everyone; the profile and danger zone need an account. */}
+            {!user ? <>
+                <PreferencesSection />
+                <section className="w-full max-w-md space-y-4">
+                    <h2 className="text-xl font-semibold">{dict.setting.profile}</h2>
+                    <button onClick={() => signInWithGoogle(toast, dict)} type="button" className="flex gap-2 card px-4 py-2 text-muted items-center hover:translate-y-0.5 transition-all duration-200 ease-out">
+                        <GoogleLogoIcon weight="bold" size={16} />
+                        <span className="font-semibold">{dict.setting.signInForProfile}</span>
+                    </button>
+                </section>
+            </> : <>
             <section className="flex gap-8 items-start w-full max-w-md justify-center">
                 <button type="button" className="relative" onClick={handleTriggerUpload}>
                     {!!user || !!profile ? <NextImage width={80} height={80} src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" className="h-20 min-w-20 rounded-lg" /> : <UserCircleIcon className='icon h-20 w-20' weight="fill" />}
@@ -321,6 +328,7 @@ const SettingPage = () => {
                 <button type="button" onClick={handleCancleForm} className="bg-foreground px-3 py-1 rounded-xl">{dict.ui.cancel}</button>
                 <button type="button" onClick={sendForm} className={`px-4 py-1 bg-blue-600 border-4 border-blue-500 text-white rounded-xl`}>{dict.ui.save}</button>
             </div>
+            <PreferencesSection />
             <section className="w-full max-w-sm" >
                 <button type="button" className="flex gap-4 items-center" onClick={() => setShowDangerZone(prev => !prev)}>
                     <h2 className="font-semibold text-rose-500">{dict.setting.danger}</h2>
@@ -332,6 +340,7 @@ const SettingPage = () => {
                     <DangerButton handleClick={handleLogout} content={dict.setting.logout} isRed={false} />
                 </div>}
             </section>
+            </>}
             {modal}
             <input type="file" name="avatar" id="avatar" ref={fileInputRef} onChange={refreshPreviewAfterUpload} accept="image/*" style={{ display: 'none' }} />
         </div>

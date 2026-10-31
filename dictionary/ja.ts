@@ -136,6 +136,15 @@ const ja = {
         },
         logout: "ログアウト",
         errorItem: "プロフィール",
+        profile: "プロフィール",
+        signInForProfile: "ログインするとプロフィールを編集できます",
+        preferences: "環境設定",
+        language: "言語",
+        longBreak: {
+            label: "長い休憩までのポモドーロ数",
+            unit: "回",
+            hint: "ルームではホストの設定が使われます。",
+        },
     },
     notFound: {
         title: "404 ページが見つかりません",

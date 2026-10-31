@@ -149,6 +149,15 @@ const en = {
         },
         logout: "Logout",
         errorItem: "information",
+        profile: "Profile",
+        signInForProfile: "Log in to edit your profile",
+        preferences: "Preferences",
+        language: "Language",
+        longBreak: {
+            label: "Long break after every",
+            unit: "pomodoros",
+            hint: "In a room, the host's setting decides.",
+        },
     },
     notFound: {
         title: "404 Page Not Found",

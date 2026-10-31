@@ -2,6 +2,7 @@
 
 import RoomSkeleton from "@/components/ui/RoomSkeleton";
 import useAuth from "@/hooks/useAuth";
+import usePreferences from "@/hooks/usePreferences";
 import useDict from "@/hooks/useDict";
 import useToast from "@/hooks/useToast";
 import { supabase } from "@/lib/supabase";
@@ -67,6 +68,8 @@ const Clock = ({
     const { toast } = useToast();
 
     const { user } = useAuth();
+    // Only the host's value matters in a room: the host's page is the one that picks the next break.
+    const { longBreakInterval } = usePreferences();
     const queryClient = useQueryClient();
 
     const workerRef = useRef<number | null>(null);
@@ -253,7 +256,7 @@ const Clock = ({
         const syncPromise = isMarathon ?
             handleSetStatus(0, true, true) :
             clockState.status === 0
-                ? handleSetStatus(clockState.session % 2 === 0 ? 2 : 1, false, true)
+                ? handleSetStatus(clockState.session % longBreakInterval === 0 ? 2 : 1, false, true)
                 : handleSetStatus(0, true, true);
 
         syncPromise.catch(error => {

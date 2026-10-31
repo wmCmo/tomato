@@ -1,10 +1,10 @@
 'use client';
 
-import ToggleLang from "@/components/ToggleLang";
 import ToggleTheme from "@/components/ToggleTheme";
 import useAuth from "@/hooks/useAuth";
 import useDict from "@/hooks/useDict";
 import useProfile from "@/hooks/useProfile";
+import { useLocaleShortcut } from "@/hooks/useSwitchLocale";
 import useToast from "@/hooks/useToast";
 import { signInWithGoogle } from "@/lib/supabase";
 import { NavContext } from "@/providers/nav-context";
@@ -25,6 +25,7 @@ export default function App({ children }: { children: ReactNode; }) {
   const pathName = usePathname();
   const { dict, locale } = useDict();
   const { toast } = useToast();
+  useLocaleShortcut();
 
   function NavItem({ destination, title, icon, className, isAvatar = false }: { destination: string; title: string; icon: ReactNode; className?: string; isAvatar?: boolean; }) {
     const currentPath = pathName.replace(`/${locale}/main`, '');
@@ -85,8 +86,7 @@ export default function App({ children }: { children: ReactNode; }) {
                 <ListIcon weight="bold" className="text-muted hover:text-muted-foreground" />
               </button>
             </div>
-            <div className="grid grid-cols-3 md:flex items-center gap-2 w-full">
-              <ToggleLang locale={locale} pathName={pathName} />
+            <div className="grid grid-cols-2 md:flex items-center gap-2 w-full">
               <button type="button" onClick={() => setIsPixel(prev => !prev)} className="p-2 rounded-md bg-foreground flex justify-center hover:translate-y-0.5 transition-all duration-200 ease-out">
                 <SquaresFourIcon className={`icon ${isPixel && 'text-accent'}`} />
               </button>
@@ -112,10 +112,13 @@ export default function App({ children }: { children: ReactNode; }) {
                   <NavItem destination={`/settings`} icon={<GearIcon className="md:size-10" />} title={dict.setting.title} />
                   <NavItem isAvatar destination={identifier ? `/${identifier}` : `/signin`} icon={user ? <Image src={profile?.avatar_url ?? user?.user_metadata?.avatar_url} alt="user avatar" width={24} height={24} className="h-6 min-w-6 rounded-full" /> : <UserCircleIcon className='icon' />} title={profile?.nickname || "Profile"} />
                 </> :
-                <button onClick={() => signInWithGoogle(toast, dict)} type="button" className="flex gap-2 card px-4 py-1 text-muted items-center hover:translate-y-0.5 transition-all duration-200 ease-out">
-                  <GoogleLogoIcon className="" weight="bold" size={16} />
-                  <span className="font-semibold">{dict.login.title}</span>
-                </button>
+                <>
+                  <NavItem destination={`/settings`} icon={<GearIcon className="md:size-10" />} title={dict.setting.title} />
+                  <button onClick={() => signInWithGoogle(toast, dict)} type="button" className="flex gap-2 card px-4 py-1 text-muted items-center hover:translate-y-0.5 transition-all duration-200 ease-out">
+                    <GoogleLogoIcon className="" weight="bold" size={16} />
+                    <span className="font-semibold">{dict.login.title}</span>
+                  </button>
+                </>
               }
             </div>
           </div>
